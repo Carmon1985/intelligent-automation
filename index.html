@@ -779,11 +779,11 @@
         complexityValueDisplay.textContent = Math.floor(load);
         
         // Track color changes using data attributes instead of checking the style directly
-        if (load >= 2000 && complexityProgress.getAttribute('data-color-level') !== '3') {
+        if (load >= 1700 && complexityProgress.getAttribute('data-color-level') !== '3') {
           complexityProgress.style.backgroundColor = '#FF6B35'; // Orange-red
           complexityProgress.setAttribute('data-color-level', '3');
           showBusinessMessage("process", processLoadMessages[2]);
-        } else if (load >= 1200 && load < 2000 && complexityProgress.getAttribute('data-color-level') !== '2') {
+        } else if (load >= 1200 && load < 1700 && complexityProgress.getAttribute('data-color-level') !== '2') {
           complexityProgress.style.backgroundColor = '#FF8C00'; // Dark orange
           complexityProgress.setAttribute('data-color-level', '2');
           showBusinessMessage("process", processLoadMessages[1]);
