@@ -528,7 +528,7 @@
     </section>
   </div>
   
-  <script>
+<script>
     document.addEventListener('DOMContentLoaded', function() {
       // Basic setup
       const mazeContainer = document.getElementById('mazeContainer');
@@ -591,6 +591,8 @@
       let isEffectActive = false;
       let collisionCount = 0;
       let headCollisionCount = 0; // Separate counter for head collisions
+      let wallCollisionCount = 0; // Track wall collisions separately
+      let headObstacleCollisions = new Set(); // To track which heads have collided with which obstacles
       let lastFrameTime = performance.now();
       let waveCountdownMax = 15000 / waveFrequencyFactor;
       let waveCountdown = waveCountdownMax;
@@ -756,154 +758,133 @@
         }, duration);
       }
       
-	  
+      // Add these variables for threshold tracking
+      let processLoadThresholds = {
+        threshold1: { value: PROCESS_LOAD_GOAL * 0.25, triggered: false },
+        threshold2: { value: PROCESS_LOAD_GOAL * 0.5, triggered: false },
+        threshold3: { value: PROCESS_LOAD_GOAL * 0.75, triggered: false }
+      };
+      
+      const processLoadMessages = [
+        "Process complexity is increasing - resource allocation optimization suggested.",
+        "Process load at critical threshold - tactical intervention recommended.",
+        "Maximum process complexity approaching - strategic intervention required."
+      ];
 
-		// Add these variables for threshold tracking
-		let processLoadThresholds = {
-		  threshold1: { value: PROCESS_LOAD_GOAL * 0.25, triggered: false },
-		  threshold2: { value: PROCESS_LOAD_GOAL * 0.5, triggered: false },
-		  threshold3: { value: PROCESS_LOAD_GOAL * 0.75, triggered: false }
-		};
-		
-		const processLoadMessages = [
-		  "Process complexity is increasing - resource allocation optimization suggested.",
-		  "Process load at critical threshold - tactical intervention recommended.",
-		  "Maximum process complexity approaching - strategic intervention required."
-		];
+      // Then modify the updateProcessLoad function
+      function updateProcessLoad(load) {
+        // Update the progress bar
+        const percent = Math.min((load / PROCESS_LOAD_GOAL) * 100, 100);
+        complexityProgress.style.width = percent + '%';
+        complexityValueDisplay.textContent = Math.floor(load);
+        
+        // Track color changes using data attributes instead of checking the style directly
+        if (load >= 2000 && complexityProgress.getAttribute('data-color-level') !== '3') {
+          complexityProgress.style.backgroundColor = '#FF6B35'; // Orange-red
+          complexityProgress.setAttribute('data-color-level', '3');
+          showBusinessMessage("process", processLoadMessages[2]);
+        } else if (load >= 1200 && load < 2000 && complexityProgress.getAttribute('data-color-level') !== '2') {
+          complexityProgress.style.backgroundColor = '#FF8C00'; // Dark orange
+          complexityProgress.setAttribute('data-color-level', '2');
+          showBusinessMessage("process", processLoadMessages[1]);
+        } else if (load >= 500 && load < 1200 && complexityProgress.getAttribute('data-color-level') !== '1') {
+          complexityProgress.style.backgroundColor = '#FFA500'; // Orange
+          complexityProgress.setAttribute('data-color-level', '1');
+          showBusinessMessage("process", processLoadMessages[0]);
+        } else if (load < 500 && complexityProgress.getAttribute('data-color-level') !== '0') {
+          // Reset to default color if below threshold
+          complexityProgress.style.backgroundColor = '#FFD700'; // Default gold color
+          complexityProgress.setAttribute('data-color-level', '0');
+        }
+        
+        // Check for game completion
+        if (load >= PROCESS_LOAD_GOAL && !processLoadGoalReached) {
+          processLoadGoalReached = true;
+          overlayMessage.style.display = 'flex';
+        }
+      }
 
-		// Then modify the updateProcessLoad function
-		function updateProcessLoad(load) {
-		  // Update the progress bar
-		  const percent = Math.min((load / PROCESS_LOAD_GOAL) * 100, 100);
-		  complexityProgress.style.width = percent + '%';
-		  complexityValueDisplay.textContent = Math.floor(load);
-		  
-		  // Track color changes using data attributes instead of checking the style directly
-		  if (load >= 2000 && complexityProgress.getAttribute('data-color-level') !== '3') {
-			complexityProgress.style.backgroundColor = '#FF6B35'; // Orange-red
-			complexityProgress.setAttribute('data-color-level', '3');
-			showBusinessMessage("process", processLoadMessages[2]);
-		  } else if (load >= 1200 && load < 2000 && complexityProgress.getAttribute('data-color-level') !== '2') {
-			complexityProgress.style.backgroundColor = '#FF8C00'; // Dark orange
-			complexityProgress.setAttribute('data-color-level', '2');
-			showBusinessMessage("process", processLoadMessages[1]);
-		  } else if (load >= 500 && load < 1200 && complexityProgress.getAttribute('data-color-level') !== '1') {
-			complexityProgress.style.backgroundColor = '#FFA500'; // Orange
-			complexityProgress.setAttribute('data-color-level', '1');
-			showBusinessMessage("process", processLoadMessages[0]);
-		  } else if (load < 500 && complexityProgress.getAttribute('data-color-level') !== '0') {
-			// Reset to default color if below threshold
-			complexityProgress.style.backgroundColor = '#FFD700'; // Default gold color
-			complexityProgress.setAttribute('data-color-level', '0');
-		  }
-		  
-		  // Check for game completion
-		  if (load >= PROCESS_LOAD_GOAL && !processLoadGoalReached) {
-			processLoadGoalReached = true;
-			overlayMessage.style.display = 'flex';
-		  }
-		}
+      // Add this new function to check thresholds and display messages
+      function checkProcessLoadThresholds(load) {
+        // Check each threshold in order
+        if (load >= processLoadThresholds.threshold3.value && !processLoadThresholds.threshold3.triggered) {
+          showProcessLoadMessage('threshold3');
+          processLoadThresholds.threshold3.triggered = true;
+          
+          // Visual indicator for high load
+          complexityProgress.style.backgroundColor = '#FF4500'; // OrangeRed for critical
+        }
+        else if (load >= processLoadThresholds.threshold2.value && !processLoadThresholds.threshold2.triggered) {
+          showProcessLoadMessage('threshold2');
+          processLoadThresholds.threshold2.triggered = true;
+          
+          // Visual indicator for medium load
+          complexityProgress.style.backgroundColor = '#FFA500'; // Orange for warning
+        }
+        else if (load >= processLoadThresholds.threshold1.value && !processLoadThresholds.threshold1.triggered) {
+          showProcessLoadMessage('threshold1');
+          processLoadThresholds.threshold1.triggered = true;
+          
+          // Visual indicator for initial load
+          complexityProgress.style.backgroundColor = '#FFD700'; // Gold for notice
+        }
+      }
 
-		// Add this new function to check thresholds and display messages
-		function checkProcessLoadThresholds(load) {
-		  // Check each threshold in order
-		  if (load >= processLoadThresholds.threshold3.value && !processLoadThresholds.threshold3.triggered) {
-			showProcessLoadMessage('threshold3');
-			processLoadThresholds.threshold3.triggered = true;
-			
-			// Visual indicator for high load
-			complexityProgress.style.backgroundColor = '#FF4500'; // OrangeRed for critical
-		  }
-		  else if (load >= processLoadThresholds.threshold2.value && !processLoadThresholds.threshold2.triggered) {
-			showProcessLoadMessage('threshold2');
-			processLoadThresholds.threshold2.triggered = true;
-			
-			// Visual indicator for medium load
-			complexityProgress.style.backgroundColor = '#FFA500'; // Orange for warning
-		  }
-		  else if (load >= processLoadThresholds.threshold1.value && !processLoadThresholds.threshold1.triggered) {
-			showProcessLoadMessage('threshold1');
-			processLoadThresholds.threshold1.triggered = true;
-			
-			// Visual indicator for initial load
-			complexityProgress.style.backgroundColor = '#FFD700'; // Gold for notice
-		  }
-		}
+      // Add this function to show the process load messages
+      function showProcessLoadMessage(threshold) {
+        const messages = processLoadMessages;
+        const message = messages[parseInt(threshold.charAt(threshold.length - 1)) - 1];
+        
+        // Clear any existing message timeout
+        if (messageTimeout) {
+          clearTimeout(messageTimeout);
+        }
+        
+        // Use the businessMessage element to display the process load message
+        businessMessage.textContent = message;
+        businessMessage.style.opacity = 1;
+        
+        // Apply special styling for process load messages
+        businessMessage.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
+        businessMessage.style.color = '#FFD700';
+        businessMessage.style.padding = '10px 15px';
+        businessMessage.style.borderLeft = '3px solid #FFD700';
+        
+        // Set timeout to fade out and restore styling
+        messageTimeout = setTimeout(() => {
+          businessMessage.style.opacity = 0;
+          setTimeout(() => {
+            // Reset styling after fade
+            businessMessage.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
+            businessMessage.style.borderLeft = 'none';
+            businessMessage.style.padding = '5px 15px';
+          }, 500);
+        }, 5000); // Show for 5 seconds
+        
+        // Also display as tooltip for additional visibility
+        showTooltip(message, 4000);
+      }
 
-		// Add this function to show the process load messages
-		function showProcessLoadMessage(threshold) {
-		  const messages = processLoadMessages[threshold];
-		  const message = messages[Math.floor(Math.random() * messages.length)];
-		  
-		  // Clear any existing message timeout
-		  if (messageTimeout) {
-			clearTimeout(messageTimeout);
-		  }
-		  
-		  // Use the businessMessage element to display the process load message
-		  businessMessage.textContent = message;
-		  businessMessage.style.opacity = 1;
-		  
-		  // Apply special styling for process load messages
-		  businessMessage.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
-		  businessMessage.style.color = '#FFD700';
-		  businessMessage.style.padding = '10px 15px';
-		  businessMessage.style.borderLeft = '3px solid #FFD700';
-		  
-		  // Set timeout to fade out and restore styling
-		  messageTimeout = setTimeout(() => {
-			businessMessage.style.opacity = 0;
-			setTimeout(() => {
-			  // Reset styling after fade
-			  businessMessage.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
-			  businessMessage.style.borderLeft = 'none';
-			  businessMessage.style.padding = '5px 15px';
-			}, 500);
-		  }, 5000); // Show for 5 seconds
-		  
-		  // Also display as tooltip for additional visibility
-		  showTooltip(message, 4000);
-		}
-
-		// Add this to the clear button event listener to reset thresholds
-		clearButton.addEventListener('click', function() {
-		  // ... existing code ...
-		  
-		  // Reset threshold triggers
-		  processLoadThresholds.threshold1.triggered = false;
-		  processLoadThresholds.threshold2.triggered = false;
-		  processLoadThresholds.threshold3.triggered = false;
-		  
-		  // Reset progress bar color
-		  complexityProgress.style.backgroundColor = '#FFD700';
-		});
-
-		// Same for the restart button
-		restartButton.addEventListener('click', function() {
-		  clearButton.click();
-		  // The threshold resets will be handled by the clear button event
-		});
-	  
       // Show business message
-		function showBusinessMessage(category, message) {
-		  // Clear any existing message timeout
-		  if (messageTimeout) {
-			clearTimeout(messageTimeout);
-		  }
-		  
-		  // Display the message
-		  businessMessage.textContent = message || 
-			(businessMessages[category] ? 
-			 businessMessages[category][Math.floor(Math.random() * businessMessages[category].length)] : 
-			 "Process status updated.");
-		  
-		  businessMessage.style.opacity = 1;
-		  
-		  // Set timeout to fade out after EXACTLY 3 seconds
-		  messageTimeout = setTimeout(() => {
-			businessMessage.style.opacity = 0;
-		  }, 3000); // Exactly 3 seconds as required
-		}
+      function showBusinessMessage(category, message) {
+        // Clear any existing message timeout
+        if (messageTimeout) {
+          clearTimeout(messageTimeout);
+        }
+        
+        // Display the message
+        businessMessage.textContent = message || 
+          (businessMessages[category] ? 
+           businessMessages[category][Math.floor(Math.random() * businessMessages[category].length)] : 
+           "Process status updated.");
+        
+        businessMessage.style.opacity = 1;
+        
+        // Set timeout to fade out after EXACTLY 3 seconds
+        messageTimeout = setTimeout(() => {
+          businessMessage.style.opacity = 0;
+        }, 3000); // Exactly 3 seconds as required
+      }
       
       // Create enhanced particles effect
       function createParticles(x, y) {
@@ -922,18 +903,18 @@
       }
       
       // Update wave countdown
-		function updateWaveCountdown(deltaTime) {
-		  waveCountdown -= deltaTime;
-		  // Set the new countdown max each time the frequency changes
-		  waveCountdownMax = 15000 / waveFrequencyFactor;
-		  const percent = Math.max((waveCountdown / waveCountdownMax) * 100, 0);
-		  waveCountdownProgress.style.width = percent + '%';
-		  
-		  if (waveCountdown <= 0) {
-			triggerWave();
-			waveCountdown = waveCountdownMax; // Reset countdown with new max value
-		  }
-		}
+      function updateWaveCountdown(deltaTime) {
+        waveCountdown -= deltaTime;
+        // Set the new countdown max each time the frequency changes
+        waveCountdownMax = 15000 / waveFrequencyFactor;
+        const percent = Math.max((waveCountdown / waveCountdownMax) * 100, 0);
+        waveCountdownProgress.style.width = percent + '%';
+        
+        if (waveCountdown <= 0) {
+          triggerWave();
+          waveCountdown = waveCountdownMax; // Reset countdown with new max value
+        }
+      }
       
       // Trigger a new wave of obstacles
       function triggerWave() {
@@ -987,7 +968,8 @@
               // Collision detected, change direction of both heads
               changeDirection(i);
               changeDirection(j);
-              headCollisionCount++; // This doesn't affect process load
+              headCollisionCount++; // Count head collisions
+              collisionCount++; // Add to main collision count for process load
               createParticles((heads[i].x + heads[j].x) / 2, (heads[i].y + heads[j].y) / 2);
               showTooltip("Resource conflict detected - redirecting workflow.");
             }
@@ -1074,54 +1056,58 @@
         requestAnimationFrame(gameLoop);
       }
       
-      // Update process load - head collisions don't count
-      function updateProcessLoad(load) {
-        const percent = Math.min((load / PROCESS_LOAD_GOAL) * 100, 100);
-        complexityProgress.style.width = percent + '%';
-        complexityValueDisplay.textContent = Math.floor(load);
-        
-        if (load >= PROCESS_LOAD_GOAL && !processLoadGoalReached) {
-          processLoadGoalReached = true;
-          overlayMessage.style.display = 'flex';
-        }
-      }
-      
       // Update game state
       function update() {
         // Update obstacles
         updateObstacles();
         
         // Update heads
-        heads.forEach(head => {
+        heads.forEach((head, i) => {
           // Move the head
           head.x += head.dirX;
           head.y += head.dirY;
           
-          // Bounce off walls
+          // Bounce off walls - no longer increment collisionCount
           if (head.x - DOT_RADIUS <= 0 || head.x + DOT_RADIUS >= canvas.width) {
             head.dirX = -head.dirX;
             head.x = Math.max(DOT_RADIUS, Math.min(canvas.width - DOT_RADIUS, head.x));
-            collisionCount++;
+            wallCollisionCount++; // Wall collisions tracked separately
           }
           if (head.y - DOT_RADIUS <= 0 || head.y + DOT_RADIUS >= canvas.height) {
             head.dirY = -head.dirY;
             head.y = Math.max(DOT_RADIUS, Math.min(canvas.height - DOT_RADIUS, head.y));
-            collisionCount++;
+            wallCollisionCount++; // Wall collisions tracked separately
           }
           
           // Check collisions with obstacles
-          obstacles.forEach(obstacle => {
-            if (head.x + DOT_RADIUS > obstacle.x && head.x - DOT_RADIUS < obstacle.x + obstacle.width &&
-                head.y + DOT_RADIUS > obstacle.y && head.y - DOT_RADIUS < obstacle.y + obstacle.height) {
-              // Collision detected
-              const angle = Math.atan2(head.y - (obstacle.y + obstacle.height/2), 
-                                     head.x - (obstacle.x + obstacle.width/2));
-              head.dirX = Math.cos(angle) * SPEED;
-              head.dirY = Math.sin(angle) * SPEED;
-              collisionCount++;
+          obstacles.forEach((obstacle, obsIndex) => {
+            if (head.x + DOT_RADIUS > obstacle.x && 
+                head.x - DOT_RADIUS < obstacle.x + obstacle.width &&
+                head.y + DOT_RADIUS > obstacle.y && 
+                head.y - DOT_RADIUS < obstacle.y + obstacle.height) {
               
-              // Always create particles on obstacle collision
-              createParticles(head.x, head.y);
+              // Create a unique collision ID
+              const collisionId = `${i}-${obsIndex}`;
+              
+              // Only count the collision if it hasn't been recorded yet
+              if (!headObstacleCollisions.has(collisionId)) {
+                headObstacleCollisions.add(collisionId);
+                
+                // Collision detected
+                const angle = Math.atan2(
+                  head.y - (obstacle.y + obstacle.height/2), 
+                  head.x - (obstacle.x + obstacle.width/2)
+                );
+                head.dirX = Math.cos(angle) * SPEED;
+                head.dirY = Math.sin(angle) * SPEED;
+                collisionCount++; // Obstacle collisions still count
+                
+                // Create particles on obstacle collision
+                createParticles(head.x, head.y);
+              }
+            } else {
+              // If not colliding, remove any collision records for this head-obstacle pair
+              headObstacleCollisions.delete(`${i}-${obsIndex}`);
             }
           });
           
@@ -1148,7 +1134,7 @@
           }
         }
         
-        // Update process load (based only on obstacle collisions, not head collisions)
+        // Update process load (based only on obstacle collisions and head collisions)
         const processLoad = collisionCount * 50;
         updateProcessLoad(processLoad);
         
@@ -1258,24 +1244,26 @@
       });
       
       // Wave frequency slider
-		waveFrequencySlider.addEventListener('input', function() {
-		  waveFrequencyFactor = parseFloat(this.value);
-		  waveFrequencyValue.textContent = waveFrequencyFactor.toFixed(1);
-		  // Update the waveCountdownMax
-		  waveCountdownMax = 15000 / waveFrequencyFactor;
-		  // Reset the current countdown to match the new max (maintain the same percentage)
-		  const currentPercent = waveCountdown / (15000 / (waveFrequencyFactor - (this.value - this.oldValue)));
-		  waveCountdown = currentPercent * waveCountdownMax;
-		  
-		  showBusinessMessage('waveFrequency');
-		});
-		// Add an event listener to track the old value
-		waveFrequencySlider.addEventListener('mousedown', function() {
-		  this.oldValue = parseFloat(this.value);
-		});
-		waveFrequencySlider.addEventListener('touchstart', function() {
-		  this.oldValue = parseFloat(this.value);
-		});
+      waveFrequencySlider.addEventListener('input', function() {
+        waveFrequencyFactor = parseFloat(this.value);
+        waveFrequencyValue.textContent = waveFrequencyFactor.toFixed(1);
+        // Update the waveCountdownMax
+        waveCountdownMax = 15000 / waveFrequencyFactor;
+        // Reset the current countdown to match the new max (maintain the same percentage)
+        const currentPercent = waveCountdown / (15000 / (waveFrequencyFactor - (this.value - (this.oldValue || this.value))));
+        waveCountdown = currentPercent * waveCountdownMax;
+        
+        showBusinessMessage('waveFrequency');
+      });
+      
+      // Add an event listener to track the old value
+      waveFrequencySlider.addEventListener('mousedown', function() {
+        this.oldValue = parseFloat(this.value);
+      });
+      
+      waveFrequencySlider.addEventListener('touchstart', function() {
+        this.oldValue = parseFloat(this.value);
+      });
       
       // Obstacle size slider
       obstacleSizeSlider.addEventListener('input', function() {
@@ -1322,10 +1310,21 @@
         obstacles = [];
         collisionCount = 0;
         headCollisionCount = 0;
+        wallCollisionCount = 0;
+        headObstacleCollisions.clear(); // Clear the collision tracking
         waveCountdown = waveCountdownMax;
         updateProcessLoad(0);
         processLoadGoalReached = false;
         overlayMessage.style.display = 'none';
+        
+        // Reset threshold triggers
+        processLoadThresholds.threshold1.triggered = false;
+        processLoadThresholds.threshold2.triggered = false;
+        processLoadThresholds.threshold3.triggered = false;
+        
+        // Reset progress bar color
+        complexityProgress.style.backgroundColor = '#FFD700';
+        complexityProgress.removeAttribute('data-color-level');
         
         showBusinessMessage('containerSize'); // Show a reset message
       });
@@ -1335,7 +1334,7 @@
         clearButton.click();
       });
       
-      // Canvas click
+      // Canvas click event - only create particles when clicking on heads or obstacles
       canvas.addEventListener('click', function(event) {
         const rect = canvas.getBoundingClientRect();
         const mouseX = event.clientX - rect.left;
@@ -1370,8 +1369,7 @@
           }
         }
         
-        // Create particles on click even if not hitting anything specific
-        createParticles(mouseX, mouseY);
+        // Removed particle creation on empty space clicks
       });
       
       // Make sure business messages show on all slider changes
