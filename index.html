@@ -757,25 +757,6 @@
       }
       
 	  
-	
-		// Define process load threshold messages
-		const processLoadMessages = {
-		  threshold1: [
-			"Process complexity is increasing - resource allocation optimization suggested.",
-			"Initial complexity threshold reached - consider workflow streamlining measures.",
-			"System load reaching first optimization threshold - review bottlenecks."
-		  ],
-		  threshold2: [
-			"Process load at critical threshold - tactical intervention recommended.",
-			"Workflow complexity requires additional oversight - escalation protocols activated.",
-			"Mid-level complexity threshold breached - implementing adaptive measures."
-		  ],
-		  threshold3: [
-			"Maximum process complexity approaching - strategic intervention required.",
-			"System at high saturation - deploying advanced containment protocols.",
-			"Critical process load detected - intelligent automation safeguards engaged."
-		  ]
-		};
 
 		// Add these variables for threshold tracking
 		let processLoadThresholds = {
@@ -783,16 +764,40 @@
 		  threshold2: { value: PROCESS_LOAD_GOAL * 0.5, triggered: false },
 		  threshold3: { value: PROCESS_LOAD_GOAL * 0.75, triggered: false }
 		};
+		
+		const processLoadMessages = [
+		  "Process complexity is increasing - resource allocation optimization suggested.",
+		  "Process load at critical threshold - tactical intervention recommended.",
+		  "Maximum process complexity approaching - strategic intervention required."
+		];
 
 		// Then modify the updateProcessLoad function
 		function updateProcessLoad(load) {
+		  // Update the progress bar
 		  const percent = Math.min((load / PROCESS_LOAD_GOAL) * 100, 100);
 		  complexityProgress.style.width = percent + '%';
 		  complexityValueDisplay.textContent = Math.floor(load);
 		  
-		  // Check thresholds and show appropriate messages
-		  checkProcessLoadThresholds(load);
+		  // Track color changes using data attributes instead of checking the style directly
+		  if (load >= 2000 && complexityProgress.getAttribute('data-color-level') !== '3') {
+			complexityProgress.style.backgroundColor = '#FF6B35'; // Orange-red
+			complexityProgress.setAttribute('data-color-level', '3');
+			showBusinessMessage("process", processLoadMessages[2]);
+		  } else if (load >= 1200 && load < 2000 && complexityProgress.getAttribute('data-color-level') !== '2') {
+			complexityProgress.style.backgroundColor = '#FF8C00'; // Dark orange
+			complexityProgress.setAttribute('data-color-level', '2');
+			showBusinessMessage("process", processLoadMessages[1]);
+		  } else if (load >= 500 && load < 1200 && complexityProgress.getAttribute('data-color-level') !== '1') {
+			complexityProgress.style.backgroundColor = '#FFA500'; // Orange
+			complexityProgress.setAttribute('data-color-level', '1');
+			showBusinessMessage("process", processLoadMessages[0]);
+		  } else if (load < 500 && complexityProgress.getAttribute('data-color-level') !== '0') {
+			// Reset to default color if below threshold
+			complexityProgress.style.backgroundColor = '#FFD700'; // Default gold color
+			complexityProgress.setAttribute('data-color-level', '0');
+		  }
 		  
+		  // Check for game completion
 		  if (load >= PROCESS_LOAD_GOAL && !processLoadGoalReached) {
 			processLoadGoalReached = true;
 			overlayMessage.style.display = 'flex';
@@ -880,26 +885,25 @@
 		});
 	  
       // Show business message
-      function showBusinessMessage(category) {
-        if (!businessMessages[category]) return;
-        
-        const messages = businessMessages[category];
-        const message = messages[Math.floor(Math.random() * messages.length)];
-        
-        // Clear any existing message timeout
-        if (messageTimeout) {
-          clearTimeout(messageTimeout);
-        }
-        
-        // Display the message
-        businessMessage.textContent = message;
-        businessMessage.style.opacity = 1;
-        
-        // Set timeout to fade out
-        messageTimeout = setTimeout(() => {
-          businessMessage.style.opacity = 0;
-        }, 3000);
-      }
+		function showBusinessMessage(category, message) {
+		  // Clear any existing message timeout
+		  if (messageTimeout) {
+			clearTimeout(messageTimeout);
+		  }
+		  
+		  // Display the message
+		  businessMessage.textContent = message || 
+			(businessMessages[category] ? 
+			 businessMessages[category][Math.floor(Math.random() * businessMessages[category].length)] : 
+			 "Process status updated.");
+		  
+		  businessMessage.style.opacity = 1;
+		  
+		  // Set timeout to fade out after EXACTLY 3 seconds
+		  messageTimeout = setTimeout(() => {
+			businessMessage.style.opacity = 0;
+		  }, 3000); // Exactly 3 seconds as required
+		}
       
       // Create enhanced particles effect
       function createParticles(x, y) {
