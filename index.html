@@ -598,6 +598,7 @@
       let waveCountdown = waveCountdownMax;
       let messageTimeout = null;
       let controlsVisible = false;
+      let isGameFrozen = false; // Add game freeze state variable
       
       // Constants
       const PROCESS_LOAD_GOAL = 2000;
@@ -638,54 +639,144 @@
         }
       });
       
-      // Business messages for different controls
+      // Enhanced Business Messages - organized by slider category and value range
       const businessMessages = {
-        containerSize: [
-          "Infrastructure scaling optimized to accommodate growing business needs.",
-          "Digital workspace resized for enhanced operational visibility.",
-          "Platform capacity adjusted to align with enterprise requirements."
-        ],
-        headSize: [
-          "Precision parameter calibrated for optimal process execution.",
-          "Agent interaction radius modified to enhance engagement effectiveness.",
-          "Resource allocation granularity refined for task execution."
-        ],
-        trailLength: [
-          "Process history retention policy updated to optimize system performance.",
-          "Workflow trace depth recalibrated for comprehensive analytics.",
-          "Data persistence parameters adjusted to align with audit requirements."
-        ],
-        speed: [
-          "Operational velocity adjusted to match market conditions.",
-          "Process execution cadence optimized for current workload.",
-          "Throughput parameters recalibrated for business tempo alignment."
-        ],
-        numHeads: [
-          "Agent deployment strategy realigned with organizational priorities.",
-          "Process thread count optimized for parallel execution capability.",
-          "Resource distribution rebalanced across operational domains."
-        ],
-        waveFrequency: [
-          "Business challenge periodicity recalibrated to match adaptive capacity.",
-          "Strategic initiative deployment frequency adjusted to organizational readiness.",
-          "Market disruption simulation interval modified for resilience testing."
-        ],
-        obstacleSize: [
-          "Challenge complexity scaling factor adjusted to reflect current capability.",
-          "Business impediment significance recalibrated for realistic response training.",
-          "Problem domain boundary parameters modified for strategic assessment."
-        ],
-        obstacleSpeed: [
-          "Market volatility simulation parameters adjusted to reflect current conditions.",
-          "Business challenge velocity recalibrated for adaptive response training.",
-          "Disruption propagation rate modified to test organizational agility."
-        ],
-        obstaclesPerWave: [
-          "Challenge density modified to test organizational capacity.",
-          "Concurrent problem threshold adjusted to reflect real-world conditions.",
-          "Task multiplication factor recalibrated for resilience assessment."
-        ]
+        containerSize: {
+          low: "Infrastructure scaled down to enhance focus on core operations.",
+          medium: "Workspace capacity optimized for current operational requirements.",
+          high: "Infrastructure expanded to accommodate growing business complexity.",
+          increasing: "Digital workspace capacity increasing to support expanded operations.",
+          decreasing: "Platform footprint being streamlined for improved performance."
+        },
+        headSize: {
+          low: "Decision point granularity refined for precise process execution.",
+          medium: "Agent interaction radius balanced for optimal engagement.",
+          high: "Resource allocation points expanded for comprehensive task coverage.",
+          increasing: "Increasing decision point impact radius for broader operational influence.",
+          decreasing: "Refining execution precision with more targeted decision points."
+        },
+        trailLength: {
+          low: "Process history retention minimized for agile performance.",
+          medium: "Workflow trace depth balanced for operational analytics.",
+          high: "Extended process memory implemented for comprehensive audit capability.",
+          increasing: "Extending process memory capacity for enhanced historical analysis.",
+          decreasing: "Optimizing memory footprint for improved processing efficiency."
+        },
+        speed: {
+          low: "Process execution cadence reduced for deliberate, careful progression.",
+          medium: "Operational velocity calibrated for balanced throughput.",
+          high: "Execution rate maximized for accelerated business outcomes.",
+          increasing: "Accelerating operational tempo to meet market demands.",
+          decreasing: "Moderating execution velocity for improved quality assurance."
+        },
+        numHeads: {
+          low: "Single-threaded process execution for focused workflow management.",
+          medium: "Dual-track operations enabled for parallel process handling.",
+          high: "Multi-threaded execution deployed for maximum concurrent operations.",
+          increasing: "Scaling up parallel operations for enhanced throughput capacity.",
+          decreasing: "Consolidating operational threads for improved resource utilization."
+        },
+        waveFrequency: {
+          low: "Market cycle intervals extended for strategic adaptation planning.",
+          medium: "Business challenge frequency balanced for optimal response preparation.",
+          high: "Rapid market cycle simulation for advanced business agility training.",
+          increasing: "Accelerating disruption cycles to test organizational responsiveness.",
+          decreasing: "Extending market cycle intervals for deeper strategic planning."
+        },
+        obstacleSize: {
+          low: "Minor business challenges deployed for baseline resilience development.",
+          medium: "Standard market obstacles presented for balanced adaptation training.",
+          high: "Major disruption scenarios activated for advanced contingency planning.",
+          increasing: "Scaling up challenge complexity to stress-test organizational capabilities.",
+          decreasing: "Reducing obstacle magnitude to focus on fundamental response techniques."
+        },
+        obstacleSpeed: {
+          low: "Deliberate market evolution pace for measured response development.",
+          medium: "Standard volatility conditions for balanced adaptation training.",
+          high: "Rapid-change business environment for advanced agility development.",
+          increasing: "Accelerating disruption velocity to enhance rapid response capabilities.",
+          decreasing: "Moderating challenge propagation for strategic response refinement."
+        },
+        obstaclesPerWave: {
+          low: "Focused disruption strategy with limited concurrent challenges.",
+          medium: "Balanced challenge portfolio for holistic resilience development.",
+          high: "High-density problem environment for advanced capacity building.",
+          increasing: "Intensifying concurrent challenge density to test organizational capacity.",
+          decreasing: "Reducing simultaneous disruptions to enable focused problem-solving."
+        },
+        process: {
+          threshold1: "Process complexity is increasing - resource allocation optimization suggested.",
+          threshold2: "Process load at critical threshold - tactical intervention recommended.",
+          threshold3: "Maximum process complexity approaching - strategic intervention required."
+        }
       };
+      
+      // Helper function to get slider ranges for percentage calculation
+      function getSliderRanges(category) {
+        // Default ranges
+        const ranges = {
+          containerSize: { min: 450, max: 800 },
+          headSize: { min: 3, max: 20 },
+          trailLength: { min: 1000, max: 8000 },
+          speed: { min: 0.5, max: 8 },
+          numHeads: { min: 1, max: 3 },
+          waveFrequency: { min: 0.5, max: 2 },
+          obstacleSize: { min: 20, max: 80 },
+          obstacleSpeed: { min: 0.5, max: 3.0 },
+          obstaclesPerWave: { min: 0.5, max: 2.0 }
+        };
+        
+        return ranges[category];
+      }
+      
+      // Helper function to get slider element by category
+      function getSliderByCategory(category) {
+        const sliderMap = {
+          containerSize: document.getElementById('containerSizeSlider'),
+          headSize: document.getElementById('headSizeSlider'),
+          trailLength: document.getElementById('trailLengthSlider'),
+          speed: document.getElementById('speedSlider'),
+          numHeads: document.getElementById('numHeadsSlider'),
+          waveFrequency: document.getElementById('waveFrequencySlider'),
+          obstacleSize: document.getElementById('obstacleSizeSlider'),
+          obstacleSpeed: document.getElementById('obstacleSpeedSlider'),
+          obstaclesPerWave: document.getElementById('obstaclesPerWaveSlider')
+        };
+        
+        return sliderMap[category];
+      }
+      
+      // Function to determine message based on slider value and previous value
+      function getSmartBusinessMessage(category, value, oldValue) {
+        // Default to medium if no old value is available
+        if (oldValue === undefined) oldValue = value;
+        
+        // Get the range for the slider category
+        const ranges = getSliderRanges(category);
+        
+        // Determine message type based on value and direction of change
+        let messageType;
+        
+        // First determine the direction of change
+        if (value > oldValue) {
+          messageType = "increasing";
+        } else if (value < oldValue) {
+          messageType = "decreasing";
+        } else {
+          // If no change or first time, determine based on where in the range it falls
+          const percentage = (value - ranges.min) / (ranges.max - ranges.min);
+          
+          if (percentage < 0.33) {
+            messageType = "low";
+          } else if (percentage < 0.66) {
+            messageType = "medium";
+          } else {
+            messageType = "high";
+          }
+        }
+        
+        return businessMessages[category][messageType];
+      }
       
       // Initialize game
       function initGame() {
@@ -765,125 +856,144 @@
         threshold3: { value: PROCESS_LOAD_GOAL * 0.75, triggered: false }
       };
       
-      const processLoadMessages = [
-        "Process complexity is increasing - resource allocation optimization suggested.",
-        "Process load at critical threshold - tactical intervention recommended.",
-        "Maximum process complexity approaching - strategic intervention required."
-      ];
-
-      // Then modify the updateProcessLoad function
-      function updateProcessLoad(load) {
-        // Update the progress bar
-        const percent = Math.min((load / PROCESS_LOAD_GOAL) * 100, 100);
-        complexityProgress.style.width = percent + '%';
-        complexityValueDisplay.textContent = Math.floor(load);
-        
-        // Track color changes using data attributes instead of checking the style directly
-        if (load >= 1700 && complexityProgress.getAttribute('data-color-level') !== '3') {
-          complexityProgress.style.backgroundColor = '#FF6B35'; // Orange-red
-          complexityProgress.setAttribute('data-color-level', '3');
-          showBusinessMessage("process", processLoadMessages[2]);
-        } else if (load >= 1200 && load < 1700 && complexityProgress.getAttribute('data-color-level') !== '2') {
-          complexityProgress.style.backgroundColor = '#FF8C00'; // Dark orange
-          complexityProgress.setAttribute('data-color-level', '2');
-          showBusinessMessage("process", processLoadMessages[1]);
-        } else if (load >= 500 && load < 1200 && complexityProgress.getAttribute('data-color-level') !== '1') {
-          complexityProgress.style.backgroundColor = '#FFA500'; // Orange
-          complexityProgress.setAttribute('data-color-level', '1');
-          showBusinessMessage("process", processLoadMessages[0]);
-        } else if (load < 500 && complexityProgress.getAttribute('data-color-level') !== '0') {
-          // Reset to default color if below threshold
-          complexityProgress.style.backgroundColor = '#FFD700'; // Default gold color
-          complexityProgress.setAttribute('data-color-level', '0');
-        }
-        
-        // Check for game completion
-        if (load >= PROCESS_LOAD_GOAL && !processLoadGoalReached) {
-          processLoadGoalReached = true;
-          overlayMessage.style.display = 'flex';
-        }
-      }
-
-      // Add this new function to check thresholds and display messages
-      function checkProcessLoadThresholds(load) {
-        // Check each threshold in order
-        if (load >= processLoadThresholds.threshold3.value && !processLoadThresholds.threshold3.triggered) {
-          showProcessLoadMessage('threshold3');
-          processLoadThresholds.threshold3.triggered = true;
-          
-          // Visual indicator for high load
-          complexityProgress.style.backgroundColor = '#FF4500'; // OrangeRed for critical
-        }
-        else if (load >= processLoadThresholds.threshold2.value && !processLoadThresholds.threshold2.triggered) {
-          showProcessLoadMessage('threshold2');
-          processLoadThresholds.threshold2.triggered = true;
-          
-          // Visual indicator for medium load
-          complexityProgress.style.backgroundColor = '#FFA500'; // Orange for warning
-        }
-        else if (load >= processLoadThresholds.threshold1.value && !processLoadThresholds.threshold1.triggered) {
-          showProcessLoadMessage('threshold1');
-          processLoadThresholds.threshold1.triggered = true;
-          
-          // Visual indicator for initial load
-          complexityProgress.style.backgroundColor = '#FFD700'; // Gold for notice
-        }
-      }
-
-      // Add this function to show the process load messages
-      function showProcessLoadMessage(threshold) {
-        const messages = processLoadMessages;
-        const message = messages[parseInt(threshold.charAt(threshold.length - 1)) - 1];
-        
+      // Function to show a message about the game freeze
+      function showFreezeMessage() {
         // Clear any existing message timeout
         if (messageTimeout) {
           clearTimeout(messageTimeout);
         }
         
-        // Use the businessMessage element to display the process load message
-        businessMessage.textContent = message;
+        // Display a persistent message about the freeze
+        const freezeMsg = "Process load critical threshold reached (300 collisions). System paused to prevent browser overload.";
+        businessMessage.textContent = freezeMsg;
         businessMessage.style.opacity = 1;
         
-        // Apply special styling for process load messages
-        businessMessage.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
-        businessMessage.style.color = '#FFD700';
+        // Style the message to make it more noticeable
+        businessMessage.style.backgroundColor = 'rgba(220, 20, 20, 0.8)'; // Reddish background
+        businessMessage.style.color = 'white';
         businessMessage.style.padding = '10px 15px';
-        businessMessage.style.borderLeft = '3px solid #FFD700';
+        businessMessage.style.fontWeight = 'bold';
+        businessMessage.style.borderLeft = '3px solid #FFFFFF';
         
-        // Set timeout to fade out and restore styling
-        messageTimeout = setTimeout(() => {
-          businessMessage.style.opacity = 0;
-          setTimeout(() => {
-            // Reset styling after fade
-            businessMessage.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
-            businessMessage.style.borderLeft = 'none';
-            businessMessage.style.padding = '5px 15px';
-          }, 500);
-        }, 5000); // Show for 5 seconds
+        // Don't set a timeout - message stays until user takes action
         
-        // Also display as tooltip for additional visibility
-        showTooltip(message, 4000);
+        // Also show a tooltip that will fade away
+        showTooltip("System frozen: Press 'Clear Maze' to reset and continue.", 8000);
       }
-
-      // Show business message
-      function showBusinessMessage(category, message) {
+      
+      // Function to create a visual freeze effect
+      function createFreezeEffect() {
+        // Create a frost/freeze overlay effect
+        const freezeOverlay = document.createElement('div');
+        freezeOverlay.id = 'freezeOverlay';
+        freezeOverlay.style.position = 'absolute';
+        freezeOverlay.style.top = '0';
+        freezeOverlay.style.left = '0';
+        freezeOverlay.style.width = '100%';
+        freezeOverlay.style.height = '100%';
+        freezeOverlay.style.backgroundColor = 'rgba(100, 149, 237, 0.2)'; // Light blue tint
+        freezeOverlay.style.pointerEvents = 'none'; // Allow clicks to pass through
+        freezeOverlay.style.zIndex = '10';
+        
+        // Add a subtle frost-like pattern
+        freezeOverlay.style.backgroundImage = 'radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px)';
+        freezeOverlay.style.backgroundSize = '10px 10px';
+        
+        // Add to the maze container
+        mazeContainer.appendChild(freezeOverlay);
+      }
+      
+      // Function to freeze the game
+      function freezeGame() {
+        isGameFrozen = true;
+        
+        // Display a notification about the freeze
+        showFreezeMessage();
+        
+        // Create a visual freeze effect
+        createFreezeEffect();
+      }
+      
+      // Modified showBusinessMessage for smart message selection
+      function showBusinessMessage(category, value, oldValue, specificMessage = null) {
         // Clear any existing message timeout
         if (messageTimeout) {
           clearTimeout(messageTimeout);
+        }
+        
+        // Use the specific message if provided
+        let message = specificMessage;
+        
+        // If no specific message, generate one based on category and values
+        if (!message) {
+          if (value !== undefined && category in businessMessages) {
+            message = getSmartBusinessMessage(category, value, oldValue);
+          } else if (category in businessMessages) {
+            // If no value provided, get a message based on current slider value
+            const slider = getSliderByCategory(category);
+            if (slider) {
+              const currentValue = parseFloat(slider.value);
+              message = getSmartBusinessMessage(category, currentValue);
+            } else if (category === 'process') {
+              // Process messages have separate structure
+              message = businessMessages.process.threshold1;
+            } else {
+              // Fallback to a message from the category
+              const messageTypes = Object.keys(businessMessages[category]);
+              const randomType = messageTypes[Math.floor(Math.random() * messageTypes.length)];
+              message = businessMessages[category][randomType];
+            }
+          } else {
+            message = "Process status updated.";
+          }
         }
         
         // Display the message
-        businessMessage.textContent = message || 
-          (businessMessages[category] ? 
-           businessMessages[category][Math.floor(Math.random() * businessMessages[category].length)] : 
-           "Process status updated.");
-        
+        businessMessage.textContent = message;
         businessMessage.style.opacity = 1;
         
-        // Set timeout to fade out after EXACTLY 3 seconds
-        messageTimeout = setTimeout(() => {
-          businessMessage.style.opacity = 0;
-        }, 3000); // Exactly 3 seconds as required
+        // Set timeout to fade out after 3 seconds (unless this is a freeze message)
+        if (!isGameFrozen) {
+          messageTimeout = setTimeout(() => {
+            businessMessage.style.opacity = 0;
+          }, 3000);
+        }
+      }
+      
+      // Then modify the updateProcessLoad function
+      function updateProcessLoad(load) {
+        // Limit the load to the equivalent of 300 collisions (15000)
+        const cappedLoad = Math.min(load, 15000);
+        
+        // Update the progress bar
+        const percent = Math.min((cappedLoad / PROCESS_LOAD_GOAL) * 100, 100);
+        complexityProgress.style.width = percent + '%';
+        complexityValueDisplay.textContent = Math.floor(cappedLoad);
+        
+        // Track color changes using data attributes instead of checking the style directly
+        if (cappedLoad >= 1700 && complexityProgress.getAttribute('data-color-level') !== '3') {
+          complexityProgress.style.backgroundColor = '#FF6B35'; // Orange-red
+          complexityProgress.setAttribute('data-color-level', '3');
+          showBusinessMessage("process", null, null, businessMessages.process.threshold3);
+        } else if (cappedLoad >= 1200 && cappedLoad < 1700 && complexityProgress.getAttribute('data-color-level') !== '2') {
+          complexityProgress.style.backgroundColor = '#FF8C00'; // Dark orange
+          complexityProgress.setAttribute('data-color-level', '2');
+          showBusinessMessage("process", null, null, businessMessages.process.threshold2);
+        } else if (cappedLoad >= 500 && cappedLoad < 1200 && complexityProgress.getAttribute('data-color-level') !== '1') {
+          complexityProgress.style.backgroundColor = '#FFA500'; // Orange
+          complexityProgress.setAttribute('data-color-level', '1');
+          showBusinessMessage("process", null, null, businessMessages.process.threshold1);
+        } else if (cappedLoad < 500 && complexityProgress.getAttribute('data-color-level') !== '0') {
+          // Reset to default color if below threshold
+          complexityProgress.style.backgroundColor = '#FFD700'; // Default gold color
+          complexityProgress.removeAttribute('data-color-level');
+        }
+        
+        // Check for game completion
+        if (cappedLoad >= PROCESS_LOAD_GOAL && !processLoadGoalReached) {
+          processLoadGoalReached = true;
+          overlayMessage.style.display = 'flex';
+        }
       }
       
       // Create enhanced particles effect
@@ -904,6 +1014,9 @@
       
       // Update wave countdown
       function updateWaveCountdown(deltaTime) {
+        // Skip if game is frozen
+        if (isGameFrozen) return;
+        
         waveCountdown -= deltaTime;
         // Set the new countdown max each time the frequency changes
         waveCountdownMax = 15000 / waveFrequencyFactor;
@@ -972,6 +1085,11 @@
               collisionCount++; // Add to main collision count for process load
               createParticles((heads[i].x + heads[j].x) / 2, (heads[i].y + heads[j].y) / 2);
               showTooltip("Resource conflict detected - redirecting workflow.");
+              
+              // Check if reached 300 collisions
+              if (collisionCount >= 300 && !isGameFrozen) {
+                freezeGame();
+              }
             }
           }
         }
@@ -1058,6 +1176,11 @@
       
       // Update game state
       function update() {
+        // Skip updating if the game is frozen
+        if (isGameFrozen) {
+          return;
+        }
+        
         // Update obstacles
         updateObstacles();
         
@@ -1104,6 +1227,11 @@
                 
                 // Create particles on obstacle collision
                 createParticles(head.x, head.y);
+                
+                // Check if we've reached 300 collisions and need to freeze the game
+                if (collisionCount >= 300 && !isGameFrozen) {
+                  freezeGame();
+                }
               }
             } else {
               // If not colliding, remove any collision records for this head-obstacle pair
@@ -1155,8 +1283,14 @@
         const size = parseInt(this.value);
         containerSizeValue.textContent = size + 'px';
         
-        // Only update container size on mouseup/touchend to prevent page jumping
-        showBusinessMessage('containerSize');
+        // Store previous value for smart message
+        const previousValue = this.getAttribute('data-prev-value') || this.value;
+        
+        // Show business message
+        showBusinessMessage('containerSize', size, previousValue);
+        
+        // Update stored value
+        this.setAttribute('data-prev-value', size);
       });
       
       // Apply container size changes only when sliding is complete
@@ -1180,13 +1314,24 @@
       headSizeSlider.addEventListener('input', function() {
         DOT_RADIUS = parseFloat(this.value);
         headSizeValue.textContent = DOT_RADIUS + 'px';
-        showBusinessMessage('headSize');
+        
+        // Store previous value for smart message
+        const previousValue = this.getAttribute('data-prev-value') || this.value;
+        
+        // Show business message
+        showBusinessMessage('headSize', DOT_RADIUS, previousValue);
+        
+        // Update stored value
+        this.setAttribute('data-prev-value', DOT_RADIUS);
       });
       
       // Trail Length slider
       trailLengthSlider.addEventListener('input', function() {
         MAX_TRAIL_LENGTH = parseInt(this.value);
         trailLengthValue.textContent = MAX_TRAIL_LENGTH;
+        
+        // Store previous value for smart message
+        const previousValue = this.getAttribute('data-prev-value') || this.value;
         
         // Trim existing trails if needed
         heads.forEach(head => {
@@ -1201,13 +1346,20 @@
           }
         });
         
-        showBusinessMessage('trailLength');
+        // Show business message
+        showBusinessMessage('trailLength', MAX_TRAIL_LENGTH, previousValue);
+        
+        // Update stored value
+        this.setAttribute('data-prev-value', MAX_TRAIL_LENGTH);
       });
       
       // Speed slider
       speedSlider.addEventListener('input', function() {
         SPEED = parseFloat(this.value);
         speedValue.textContent = SPEED;
+        
+        // Store previous value for smart message
+        const previousValue = this.getAttribute('data-prev-value') || this.value;
         
         // Update head speeds
         heads.forEach(head => {
@@ -1216,13 +1368,20 @@
           head.dirY = Math.sin(angle) * SPEED;
         });
         
-        showBusinessMessage('speed');
+        // Show business message
+        showBusinessMessage('speed', SPEED, previousValue);
+        
+        // Update stored value
+        this.setAttribute('data-prev-value', SPEED);
       });
       
       // Number of heads slider
       numHeadsSlider.addEventListener('input', function() {
         const newNumHeads = parseInt(this.value);
         numHeadsValue.textContent = newNumHeads;
+        
+        // Store previous value for smart message
+        const previousValue = this.getAttribute('data-prev-value') || this.value;
         
         // Add or remove heads as needed
         while (heads.length < newNumHeads) {
@@ -1240,20 +1399,32 @@
           staticTrails.push(removed.trail);
         }
         
-        showBusinessMessage('numHeads');
+        // Show business message
+        showBusinessMessage('numHeads', newNumHeads, previousValue);
+        
+        // Update stored value
+        this.setAttribute('data-prev-value', newNumHeads);
       });
       
       // Wave frequency slider
       waveFrequencySlider.addEventListener('input', function() {
         waveFrequencyFactor = parseFloat(this.value);
         waveFrequencyValue.textContent = waveFrequencyFactor.toFixed(1);
+        
+        // Store previous value for smart message
+        const previousValue = this.getAttribute('data-prev-value') || this.value;
+        
         // Update the waveCountdownMax
         waveCountdownMax = 15000 / waveFrequencyFactor;
         // Reset the current countdown to match the new max (maintain the same percentage)
         const currentPercent = waveCountdown / (15000 / (waveFrequencyFactor - (this.value - (this.oldValue || this.value))));
         waveCountdown = currentPercent * waveCountdownMax;
         
-        showBusinessMessage('waveFrequency');
+        // Show business message
+        showBusinessMessage('waveFrequency', waveFrequencyFactor, previousValue);
+        
+        // Update stored value
+        this.setAttribute('data-prev-value', waveFrequencyFactor);
       });
       
       // Add an event listener to track the old value
@@ -1270,13 +1441,20 @@
         customObstacleSize = parseInt(this.value);
         obstacleSizeValue.textContent = customObstacleSize + 'px';
         
+        // Store previous value for smart message
+        const previousValue = this.getAttribute('data-prev-value') || this.value;
+        
         // Update existing obstacles
         obstacles.forEach(obs => {
           obs.width = customObstacleSize;
           obs.height = customObstacleSize;
         });
         
-        showBusinessMessage('obstacleSize');
+        // Show business message
+        showBusinessMessage('obstacleSize', customObstacleSize, previousValue);
+        
+        // Update stored value
+        this.setAttribute('data-prev-value', customObstacleSize);
       });
       
       // Obstacle speed slider
@@ -1284,13 +1462,20 @@
         customObstacleSpeed = parseFloat(this.value);
         obstacleSpeedValue.textContent = customObstacleSpeed.toFixed(1);
         
+        // Store previous value for smart message
+        const previousValue = this.getAttribute('data-prev-value') || this.value;
+        
         // Update existing obstacles
         obstacles.forEach(obs => {
           obs.vx = Math.sign(obs.vx) * customObstacleSpeed;
           obs.vy = Math.sign(obs.vy) * customObstacleSpeed;
         });
         
-        showBusinessMessage('obstacleSpeed');
+        // Show business message
+        showBusinessMessage('obstacleSpeed', customObstacleSpeed, previousValue);
+        
+        // Update stored value
+        this.setAttribute('data-prev-value', customObstacleSpeed);
       });
       
       // Obstacles per wave ratio slider
@@ -1298,7 +1483,14 @@
         obstaclesRatio = parseFloat(this.value);
         obstaclesPerWaveValue.textContent = obstaclesRatio.toFixed(1);
         
-        showBusinessMessage('obstaclesPerWave');
+        // Store previous value for smart message
+        const previousValue = this.getAttribute('data-prev-value') || this.value;
+        
+        // Show business message
+        showBusinessMessage('obstaclesPerWave', obstaclesRatio, previousValue);
+        
+        // Update stored value
+        this.setAttribute('data-prev-value', obstaclesRatio);
       });
       
       // Clear button
@@ -1326,7 +1518,25 @@
         complexityProgress.style.backgroundColor = '#FFD700';
         complexityProgress.removeAttribute('data-color-level');
         
-        showBusinessMessage('containerSize'); // Show a reset message
+        // Unfreeze the game if it was frozen
+        if (isGameFrozen) {
+          isGameFrozen = false;
+          
+          // Remove the freeze overlay if it exists
+          const freezeOverlay = document.getElementById('freezeOverlay');
+          if (freezeOverlay) {
+            freezeOverlay.remove();
+          }
+          
+          // Reset the business message styling
+          businessMessage.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
+          businessMessage.style.color = '#FFD700';
+          businessMessage.style.fontWeight = 'normal';
+          businessMessage.style.borderLeft = 'none';
+          businessMessage.style.padding = '5px 15px';
+        }
+        
+        showBusinessMessage('containerSize', null, null, "Process reset complete. System ready for new operational cycle.");
       });
       
       // Restart button
@@ -1336,6 +1546,9 @@
       
       // Canvas click event - only create particles when clicking on heads or obstacles
       canvas.addEventListener('click', function(event) {
+        // Skip if the game is frozen
+        if (isGameFrozen) return;
+        
         const rect = canvas.getBoundingClientRect();
         const mouseX = event.clientX - rect.left;
         const mouseY = event.clientY - rect.top;
@@ -1372,30 +1585,11 @@
         // Removed particle creation on empty space clicks
       });
       
-      // Make sure business messages show on all slider changes
+      // Initialize all sliders with data-prev-value
       const allSliders = document.querySelectorAll('.slider');
       allSliders.forEach(slider => {
-        slider.addEventListener('change', function() {
-          // Get the control group parent to determine which slider was moved
-          const controlGroup = this.closest('.control-group');
-          const controlLabel = controlGroup.querySelector('.control-label span:first-child').textContent.trim().toLowerCase();
-          
-          // Map the label to a category in the business messages object
-          let category;
-          if (controlLabel.includes('container size')) category = 'containerSize';
-          else if (controlLabel.includes('head size')) category = 'headSize';
-          else if (controlLabel.includes('trail length')) category = 'trailLength';
-          else if (controlLabel.includes('speed')) category = 'speed';
-          else if (controlLabel.includes('number of heads')) category = 'numHeads';
-          else if (controlLabel.includes('wave frequency')) category = 'waveFrequency';
-          else if (controlLabel.includes('obstacle size')) category = 'obstacleSize';
-          else if (controlLabel.includes('obstacle speed')) category = 'obstacleSpeed';
-          else if (controlLabel.includes('obstacles per wave')) category = 'obstaclesPerWave';
-          
-          if (category) {
-            showBusinessMessage(category);
-          }
-        });
+        // Store the initial value
+        slider.setAttribute('data-prev-value', slider.value);
       });
       
       // Initialize and start the game loop
@@ -1403,7 +1597,7 @@
       gameLoop();
       
       // Show initial business message
-      showBusinessMessage('containerSize');
+      showBusinessMessage('containerSize', null, null, "Process initialized. System ready for operation.");
       
       // Initialize controls state 
       const controlsContainer = document.querySelector('.controls-container');
