@@ -5,6 +5,256 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>GDS Intelligent Automation Team</title>
   <style>
+  /* Mobile Optimization Styles */
+@media (max-width: 768px) {
+  /* General layout improvements */
+  body {
+    font-size: 14px;
+  }
+  
+  .container {
+    padding: 10px;
+  }
+  
+  header {
+    flex-direction: column;
+    align-items: center;
+    padding: 10px 0;
+  }
+  
+  nav ul {
+    margin-top: 10px;
+    justify-content: center;
+  }
+  
+  nav ul li {
+    margin: 0 10px;
+  }
+  
+  /* Improve maze container sizing */
+  #mazeContainer {
+    width: 100% !important;
+    height: 350px !important;
+    max-width: none;
+  }
+  
+  /* Improve control panel layout */
+  .controls-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .standard-controls, .advanced-controls, 
+  .process-load-container, .process-metrics-container, 
+  .process-objectives-container {
+    padding: 10px;
+  }
+  
+  /* Improve KPI grid for smaller screens */
+  .kpi-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+  
+  .kpi-item {
+    padding: 8px;
+  }
+  
+  .kpi-label {
+    font-size: 12px;
+  }
+  
+  .kpi-value {
+    font-size: 14px;
+  }
+  
+  /* Improve sliders for touch */
+  .slider {
+    height: 30px;
+    margin: 15px 0;
+  }
+  
+  .slider::-webkit-slider-thumb {
+    width: 30px;
+    height: 30px;
+  }
+  
+  /* Make buttons more tappable */
+  #clearButton, #restartButton {
+    padding: 15px;
+    font-size: 16px;
+    margin: 15px 0;
+  }
+  
+  /* Improve section headers */
+  .section-header {
+    padding: 12px;
+  }
+  
+  /* Improve business message for mobile */
+  .business-message {
+    font-size: 14px;
+    padding: 8px 12px;
+  }
+  
+  /* Fix convai widget size */
+  .convai-wrapper {
+    margin-top: 30px;
+    width: 100%;
+  }
+  
+  elevenlabs-convai {
+    width: 100% !important;
+  }
+  
+  /* Tooltip enhancements for mobile */
+  #tooltip {
+    font-size: 12px;
+    padding: 8px;
+    max-width: 80%;
+  }
+}
+
+/* Landscape mode optimizations */
+@media (max-width: 900px) and (orientation: landscape) {
+  .game-control-wrapper {
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas: 
+      "maze controls"
+      "process process";
+  }
+  
+  #mazeContainer {
+    height: 250px !important;
+  }
+  
+  .kpi-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* Fix for very small screens */
+@media (max-width: 375px) {
+  .section-header h3 {
+    font-size: 14px;
+  }
+  
+  #mazeContainer {
+    height: 300px !important;
+  }
+  
+  .objective-item {
+    padding: 8px;
+  }
+  
+  .objective-text {
+    font-size: 12px;
+  }
+}
+  </style>
+  <style>
+  .qr-code-container {
+  position: fixed;
+  bottom: 200px;
+  right: 20px;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+  
+  .qr-code-inner {
+    background-color: #222;
+    border-radius: 10px;
+    padding: 15px;
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+    text-align: center;
+    border: 1px solid rgba(255, 215, 0, 0.5);
+  }
+  
+  .qr-code-inner h3 {
+    color: #FFD700;
+    margin-top: 0;
+    margin-bottom: 10px;
+    font-size: 16px;
+  }
+  
+  .qr-code-inner p {
+    color: #fff;
+    font-size: 12px;
+    margin-top: 10px;
+    margin-bottom: 0;
+    word-break: break-all;
+  }
+  
+  #qrcode {
+    padding: 10px;
+    background-color: white;
+    border-radius: 5px;
+    display: inline-block;
+  }
+  
+  /* Mobile optimization toggle button */
+  .mobile-toggle {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    background-color: #FFD700;
+    color: #000;
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 1000;
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+  .qr-code-container {
+    position: static;
+    margin: 20px auto 60px auto;
+  }
+    
+    /* Additional mobile optimizations */
+    .controls-wrapper {
+      padding: 0 10px;
+    }
+    
+    .standard-controls, .advanced-controls {
+      margin-bottom: 15px;
+    }
+    
+    /* Increase tap target sizes */
+    .slider {
+      height: 20px;
+    }
+    
+    .slider::-webkit-slider-thumb {
+      width: 25px;
+      height: 25px;
+    }
+    
+    /* Make buttons more tappable */
+    #clearButton, #restartButton {
+      padding: 15px 20px;
+      margin: 10px 0;
+      width: 100%;
+    }
+    
+    /* Improve mobile section headers */
+    .section-header h3 {
+      font-size: 16px;
+    }
+  }
+</style>
+  <style>
     /* Main site styling */
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -123,6 +373,57 @@
       transition: width 0.3s ease, height 0.3s ease; /* Smooth transition */
     }
     
+	.help-icon {
+	  background-color: #FFD700;
+	  color: #000;
+	  width: 18px;
+	  height: 18px;
+	  border-radius: 50%;
+	  display: flex;
+	  align-items: center;
+	  justify-content: center;
+	  font-weight: bold;
+	  font-size: 14px;
+	  cursor: pointer;
+	  margin-right: 10px;
+	}
+
+	.help-modal {
+	  position: absolute;
+	  background-color: rgba(0, 0, 0, 0.9);
+	  border: 1px solid #FFD700;
+	  color: #fff;
+	  padding: 15px;
+	  border-radius: 5px;
+	  z-index: 1000;
+	  max-width: 400px;
+	  box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+	}
+
+	.help-modal h4 {
+	  color: #FFD700;
+	  margin-top: 0;
+	  margin-bottom: 10px;
+	}
+
+	.help-modal p {
+	  margin-bottom: 10px;
+	}
+
+	.help-modal ul {
+	  padding-left: 20px;
+	}
+
+	.help-modal button {
+	  background-color: #FFD700;
+	  border: none;
+	  color: #000;
+	  padding: 5px 10px;
+	  border-radius: 3px;
+	  margin-top: 10px;
+	  cursor: pointer;
+	}
+	
     .controls-wrapper {
       grid-area: controls;
     }
@@ -172,6 +473,57 @@
       transition: transform 0.3s ease;
     }
     
+	.help-icon {
+  background-color: #FFD700;
+  color: #000;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 14px;
+  cursor: pointer;
+  margin: -30px 0 10px 170px;
+}
+
+.help-modal {
+  position: absolute;
+  background-color: rgba(0, 0, 0, 0.9);
+  border: 1px solid #FFD700;
+  color: #fff;
+  padding: 15px;
+  border-radius: 5px;
+  z-index: 1000;
+  max-width: 400px;
+  box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+}
+
+.help-modal h4 {
+  color: #FFD700;
+  margin-top: 0;
+  margin-bottom: 10px;
+}
+
+.help-modal p {
+  margin-bottom: 10px;
+}
+
+.help-modal ul {
+  padding-left: 20px;
+}
+
+.help-modal button {
+  background-color: #FFD700;
+  border: none;
+  color: #000;
+  padding: 5px 10px;
+  border-radius: 3px;
+  margin-top: 10px;
+  cursor: pointer;
+}
+	
     .collapse-icon.collapsed {
       transform: rotate(-90deg);
     }
@@ -314,6 +666,77 @@
       box-sizing: border-box;
     }
     
+    /* NEW: Six Sigma KPI Styles */
+    .process-metrics-container,
+    .process-objectives-container {
+      background-color: #222;
+      border: none;
+      padding: 15px;
+      border-radius: 4px;
+      box-shadow: 0 0 20px rgba(255, 215, 0, 0.2);
+      margin-top: 20px;
+      grid-column: span 2;
+    }
+    
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+    
+    .kpi-item {
+      background-color: #333;
+      padding: 10px;
+      border-radius: 4px;
+      text-align: center;
+    }
+    
+    .kpi-label {
+      color: #FFD700;
+      font-size: 0.9rem;
+      margin-bottom: 5px;
+    }
+    
+    .kpi-value {
+      color: white;
+      font-size: 1.2rem;
+      font-weight: bold;
+    }
+    
+    .objective-list {
+      display: grid;
+      gap: 10px;
+    }
+    
+    .objective-item {
+      display: flex;
+      align-items: center;
+      padding: 10px;
+      background-color: #333;
+      border-radius: 4px;
+    }
+    
+    .objective-status {
+      width: 15px;
+      height: 15px;
+      border-radius: 50%;
+      margin-right: 10px;
+    }
+    
+    .objective-status.incomplete {
+      background-color: #666;
+      border: 1px solid #999;
+    }
+    
+    .objective-status.complete {
+      background-color: #50C878;
+      border: 1px solid #fff;
+    }
+    
+    .objective-text {
+      color: white;
+    }
+    
     /* Media query for mobile screens */
     @media (max-width: 1024px) {
       .game-control-wrapper {
@@ -337,6 +760,10 @@
       
       .hero {
         grid-template-columns: 1fr;
+      }
+      
+      .kpi-grid {
+        grid-template-columns: repeat(2, 1fr);
       }
     }
     
@@ -384,111 +811,111 @@
     
     <section class="services">
       
-      <!-- Maze Game Section -->
-      <h3 class="maze-title">Intelligent Automation Pathfinder</h3>
-      <p class="maze-description">Explore how automated processes navigate through complex business challenges. Click on the moving dot(s) to change their direction, neutralize obstacles with a click, and observe how they create evolving process pathways. Adjust controls to optimize performance and manage strategic challenges through the system.</p>
+      <!-- Maze Game Section - UPDATED TITLE/DESCRIPTION -->
+     <h3 class="maze-title">Intelligent Automation Process Simulator</h3>
       
+<p class="maze-description">Visualize how well-documented and standardized processes improve automation potential using RPA and Power Platform. Control dots represent automated workflows that navigate through your business processes. Your simulation starts with all metrics in the "green" state. As you adjust documentation quality, standardization level, and resource utilization with the sliders, observe how each change impacts automation potential and try to maintain optimal business outcomes.</p>
       <!-- Game Control Wrapper -->
       <div class="game-control-wrapper">
         <div id="mazeContainer">
           <div id="tooltip"></div>
           <div class="business-message" id="businessMessage"></div>
           <div id="overlayMessage">
-            Discover how our Intelligent Automation department can guide you through the maze of technology and process complexity. Use our voice bot to contact us and start your journey to streamlined innovation!
-            <button id="restartButton">Start Your Jurney Again</button>
-          </div>
+			  Discover how our Intelligent Automation department can transform your business processes through RPA and Power Platform solutions. We help you document, standardize, and optimize your processes for maximum automation potential. Use our voice bot to contact us!
+			  <button id="restartButton">Start Your Automation Journey</button>
+			</div>
         </div>
         
         <div class="controls-wrapper">
           <div class="section-header main-controls-header">
-            <h3>Controls Panel</h3>
+            <h3>Automation Readiness Controls</h3>
             <span class="collapse-icon">▼</span>
           </div>
           <div class="controls-container">
             <!-- Standard Controls -->
             <div class="standard-controls">
               <div class="section-header">
-                <h3>Standard Controls</h3>
+                <h3>Process Documentation & Standardization</h3>
                 <span class="collapse-icon">▼</span>
               </div>
               <div class="section-content">
                 <div class="control-group">
                   <div class="control-label">
-                    <span>Workspace Capacity</span>
-                    <span class="control-value" id="containerSizeValue">570px</span>
+                    <span>Process Documentation Level</span>
+                    <span class="control-value" id="containerSizeValue">Standard (100%)</span>
                   </div>
                   <input type="range" min="450" max="800" value="570" class="slider" id="containerSizeSlider">
                 </div>
                 <div class="control-group">
                   <div class="control-label">
-                    <span>Decision Point Scale</span>
-                    <span class="control-value" id="headSizeValue">7.5px</span>
+                    <span>Process Standardization</span>
+                    <span class="control-value" id="headSizeValue">Level 5</span>
                   </div>
                   <input type="range" min="3" max="20" value="7.5" step="0.5" class="slider" id="headSizeSlider">
                 </div>
                 <div class="control-group">
                   <div class="control-label">
-                    <span>Process Memory</span>
-                    <span class="control-value" id="trailLengthValue">2000</span>
+                    <span>Knowledge Base Coverage</span>
+                    <span class="control-value" id="trailLengthValue">6M</span>
                   </div>
                   <input type="range" min="1000" max="8000" value="2000" step="100" class="slider" id="trailLengthSlider">
                 </div>
                 <div class="control-group">
                   <div class="control-label">
-                    <span>Execution Rate</span>
-                    <span class="control-value" id="speedValue">2</span>
+                    <span>Process Execution Rate</span>
+                    <span class="control-value" id="speedValue">1h</span>
                   </div>
                   <input type="range" min="0.5" max="8" value="2" step="0.5" class="slider" id="speedSlider">
                 </div>
                 <div class="control-group">
                   <div class="control-label">
-                    <span>Parallel Operations</span>
-                    <span class="control-value" id="numHeadsValue">1</span>
+                    <span>Workforce Capacity Allocation</span>
+                    <span class="control-value" id="numHeadsValue">Single Stream</span>
                   </div>
                   <input type="range" min="1" max="3" value="1" step="1" class="slider" id="numHeadsSlider">
                 </div>
-                <button id="clearButton">Clear Maze</button>
+                <button id="clearButton">Reset Simulation</button>
               </div>
             </div>
             
             <!-- Advanced Controls: Business Parameters -->
             <div class="advanced-controls">
               <div class="section-header">
-                <h3>Business Parameters</h3>
+                <h3>Operational Parameters</h3>
                 <span class="collapse-icon">▼</span>
               </div>
               <div class="section-content">
                 <div class="control-group">
                   <div class="control-label">
-                    <span>Market Cycle Rate</span>
-                    <span class="control-value" id="waveFrequencyValue">1.0</span>
+                    <span>Process Change Frequency</span>
+                    <span class="control-value" id="waveFrequencyValue">Monthly</span>
                   </div>
                   <input type="range" min="0.5" max="2" value="1" step="0.1" class="slider" id="waveFrequencySlider">
                 </div>
                 <div class="control-group">
                   <div class="control-label">
-                    <span>Challenge Magnitude</span>
-                    <span class="control-value" id="obstacleSizeValue">40px</span>
+                    <span>Process Variability</span>
+                    <span class="control-value" id="obstacleSizeValue">3σ</span>
                   </div>
                   <input type="range" min="20" max="80" value="40" class="slider" id="obstacleSizeSlider">
                 </div>
                 <div class="control-group">
                   <div class="control-label">
-                    <span>Disruption Velocity</span>
-                    <span class="control-value" id="obstacleSpeedValue">1.0</span>
+                    <span>Exception Handling Quality</span>
+                    <span class="control-value" id="obstacleSpeedValue">25%</span>
                   </div>
                   <input type="range" min="0.5" max="3.0" value="1.0" step="0.1" class="slider" id="obstacleSpeedSlider">
                 </div>
                 <div class="control-group">
                   <div class="control-label">
-                    <span>Risk Density Factor</span>
-                    <span class="control-value" id="obstaclesPerWaveValue">1.0</span>
+                    <span>Manual Intervention Rate</span>
+                    <span class="control-value" id="obstaclesPerWaveValue">6,210 DPMO</span>
                   </div>
                   <input type="range" min="0.5" max="2.0" value="1.0" step="0.1" class="slider" id="obstaclesPerWaveSlider">
                 </div>
                 <div class="wave-countdown-container">
                   <div class="control-label">
-                    <span>Innovation Pipeline Timer</span>
+                    <span>Automation Release Cycle</span>
                   </div>
                   <div class="wave-progress-bar">
                     <div class="wave-progress" id="waveCountdownProgress"></div>
@@ -499,27 +926,80 @@
           </div>
         </div>
         
-        <!-- Process Load Tracker -->
+        <!-- Process Load Tracker - UPDATED TO SIGMA LEVEL -->
         <div class="process-load-container">
           <div class="section-header">
-            <h3>Process Load</h3>
+            <h3>Automation Potential Score</h3>
             <span class="collapse-icon">▼</span>
           </div>
           <div class="section-content">
             <div class="control-label">
-              <span>Process Load</span>
+              <span>Process Optimization Index</span>
               <span class="control-value" id="complexityValueDisplay">0</span>
             </div>
             <div class="progress-bar">
               <div class="progress" id="complexityProgress"></div>
             </div>
             <div class="control-label">
-              <span>Collisions</span>
+              <span>Exception Count</span>
               <span class="control-value" id="collisionsValue">0</span>
             </div>
           </div>
         </div>
+        
+        <!-- NEW: Process KPIs -->
+        <div class="process-metrics-container">
+		  <div class="section-header">
+			<h3>Automation Performance Metrics</h3>
+			<span class="collapse-icon">▼</span>
+		  </div>
+		  <div class="section-content">
+			<div class="kpi-grid">
+			  <div class="kpi-item">
+				<div class="kpi-label">Process Cycle Time</div>
+				<div class="kpi-value" id="leadTimeValue">4.5 days</div>
+			  </div>
+			  <div class="kpi-item">
+				<div class="kpi-label">Time Savings</div>
+				<div class="kpi-value" id="valueAddedValue">23%</div>
+			  </div>
+			  <div class="kpi-item">
+				<div class="kpi-label">Automation Complexity</div>
+				<div class="kpi-value" id="sigmaLevelValue">3.2</div>
+			  </div>
+			  <div class="kpi-item">
+				<div class="kpi-label">Process Success Rate</div>
+				<div class="kpi-value" id="fttValue">82%</div>
+			  </div>
+			</div>
+		  </div>
+		</div>
+        
+       
+        <!-- NEW: Process Objectives -->
+<div class="process-objectives-container">
+  <div class="section-header">
+    <h3>Automation Objectives</h3>
+    <div class="help-icon" id="objectivesHelpIcon" title="Click for help">?</div>
+    <span class="collapse-icon">▼</span>
+  </div>
+  <div class="section-content">
+    <div class="objective-list">
+      <div class="objective-item">
+        <div class="objective-status incomplete" id="objective1Status"></div>
+        <div class="objective-text">Achieve 95% process documentation coverage</div>
       </div>
+      <div class="objective-item">
+        <div class="objective-status incomplete" id="objective2Status"></div>
+        <div class="objective-text">Reach 85% standardization level</div>
+      </div>
+      <div class="objective-item">
+        <div class="objective-status incomplete" id="objective3Status"></div>
+        <div class="objective-text">Reduce manual workload by 40%</div>
+      </div>
+    </div>
+  </div>
+</div>
       
       <!-- ElevenLabs Convai Widget Container -->
       <div class="convai-wrapper">
@@ -528,1097 +1008,1507 @@
     </section>
   </div>
   
+  <!-- ElevenLabs Convai Widget Script -->
+  <script src="https://elevenlabs.io/convai-widget/index.js" type="text/javascript"></script>
+  
+  <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      // Basic setup
-      const mazeContainer = document.getElementById('mazeContainer');
-      const canvas = document.createElement('canvas');
-      const ctx = canvas.getContext('2d');
-      
-      // Set canvas size to match container
-      canvas.width = mazeContainer.clientWidth;
-      canvas.height = mazeContainer.clientHeight;
-      mazeContainer.appendChild(canvas);
-      
-      // UI elements
-      const containerSizeSlider = document.getElementById('containerSizeSlider');
-      const headSizeSlider = document.getElementById('headSizeSlider');
-      const trailLengthSlider = document.getElementById('trailLengthSlider');
-      const speedSlider = document.getElementById('speedSlider');
-      const numHeadsSlider = document.getElementById('numHeadsSlider');
-      const waveFrequencySlider = document.getElementById('waveFrequencySlider');
-      const obstacleSizeSlider = document.getElementById('obstacleSizeSlider');
-      const obstacleSpeedSlider = document.getElementById('obstacleSpeedSlider');
-      const obstaclesPerWaveSlider = document.getElementById('obstaclesPerWaveSlider');
-      const waveCountdownProgress = document.getElementById('waveCountdownProgress');
-      const clearButton = document.getElementById('clearButton');
-      const restartButton = document.getElementById('restartButton');
-      const tooltip = document.getElementById('tooltip');
-      const businessMessage = document.getElementById('businessMessage');
-      const overlayMessage = document.getElementById('overlayMessage');
-      const sectionHeaders = document.querySelectorAll('.section-header');
-      
-      // Display elements
-      const containerSizeValue = document.getElementById('containerSizeValue');
-      const headSizeValue = document.getElementById('headSizeValue');
-      const trailLengthValue = document.getElementById('trailLengthValue');
-      const speedValue = document.getElementById('speedValue');
-      const numHeadsValue = document.getElementById('numHeadsValue');
-      const waveFrequencyValue = document.getElementById('waveFrequencyValue');
-      const obstacleSizeValue = document.getElementById('obstacleSizeValue');
-      const obstacleSpeedValue = document.getElementById('obstacleSpeedValue');
-      const obstaclesPerWaveValue = document.getElementById('obstaclesPerWaveValue');
-      const complexityProgress = document.getElementById('complexityProgress');
-      const complexityValueDisplay = document.getElementById('complexityValueDisplay');
-      const collisionsValue = document.getElementById('collisionsValue');
-      
-      // Game parameters
-      let DOT_RADIUS = parseFloat(headSizeSlider.value);
-      let MAX_TRAIL_LENGTH = parseInt(trailLengthSlider.value);
-      let SPEED = parseFloat(speedSlider.value);
-      let numHeads = parseInt(numHeadsSlider.value);
-      let waveFrequencyFactor = parseFloat(waveFrequencySlider.value);
-      let customObstacleSize = parseInt(obstacleSizeSlider.value);
-      let customObstacleSpeed = parseFloat(obstacleSpeedSlider.value);
-      let obstaclesRatio = parseFloat(obstaclesPerWaveSlider.value);
-      const LINE_WIDTH = 2;
-      
-      // Game state
-      let heads = [];
-      let obstacles = [];
-      let staticTrails = [];
-      let particles = [];
-      let isEffectActive = false;
-      let collisionCount = 0;
-      let headCollisionCount = 0; // Separate counter for head collisions
-      let wallCollisionCount = 0; // Track wall collisions separately
-      let headObstacleCollisions = new Set(); // To track which heads have collided with which obstacles
-      let lastFrameTime = performance.now();
-      let waveCountdownMax = 15000 / waveFrequencyFactor;
-      let waveCountdown = waveCountdownMax;
-      let messageTimeout = null;
-      let controlsVisible = false;
-      let isGameFrozen = false; // Add game freeze state variable
-      
-      // Constants
-      const PROCESS_LOAD_GOAL = 2000;
-      let processLoadGoalReached = false;
-      
-      // Set up collapsible sections
-      sectionHeaders.forEach(header => {
-        if (header.classList.contains('main-controls-header')) {
-          // Special handling for main controls header
-          header.addEventListener('click', function() {
-            const controlsContainer = document.querySelector('.controls-container');
-            const icon = this.querySelector('.collapse-icon');
-            
-            if (controlsContainer.style.display === 'none' || controlsContainer.style.display === '') {
-              controlsContainer.style.display = 'grid';
-              icon.classList.remove('collapsed');
-              controlsVisible = true;
-            } else {
-              controlsContainer.style.display = 'none';
-              icon.classList.add('collapsed');
-              controlsVisible = false;
-            }
-          });
-        } else {
-          // Regular section headers
-          header.addEventListener('click', function() {
-            const content = this.nextElementSibling;
-            const icon = this.querySelector('.collapse-icon');
-            
-            if (content.classList.contains('collapsed')) {
-              content.classList.remove('collapsed');
-              icon.classList.remove('collapsed');
-            } else {
-              content.classList.add('collapsed');
-              icon.classList.add('collapsed');
-            }
-          });
-        }
-      });
-      
-      // Enhanced Business Messages - organized by slider category and value range
-      const businessMessages = {
-        containerSize: {
-          low: "Infrastructure scaled down to enhance focus on core operations.",
-          medium: "Workspace capacity optimized for current operational requirements.",
-          high: "Infrastructure expanded to accommodate growing business complexity.",
-          increasing: "Digital workspace capacity increasing to support expanded operations.",
-          decreasing: "Platform footprint being streamlined for improved performance."
-        },
-        headSize: {
-          low: "Decision point granularity refined for precise process execution.",
-          medium: "Agent interaction radius balanced for optimal engagement.",
-          high: "Resource allocation points expanded for comprehensive task coverage.",
-          increasing: "Increasing decision point impact radius for broader operational influence.",
-          decreasing: "Refining execution precision with more targeted decision points."
-        },
-        trailLength: {
-          low: "Process history retention minimized for agile performance.",
-          medium: "Workflow trace depth balanced for operational analytics.",
-          high: "Extended process memory implemented for comprehensive audit capability.",
-          increasing: "Extending process memory capacity for enhanced historical analysis.",
-          decreasing: "Optimizing memory footprint for improved processing efficiency."
-        },
-        speed: {
-          low: "Process execution cadence reduced for deliberate, careful progression.",
-          medium: "Operational velocity calibrated for balanced throughput.",
-          high: "Execution rate maximized for accelerated business outcomes.",
-          increasing: "Accelerating operational tempo to meet market demands.",
-          decreasing: "Moderating execution velocity for improved quality assurance."
-        },
-        numHeads: {
-          low: "Single-threaded process execution for focused workflow management.",
-          medium: "Dual-track operations enabled for parallel process handling.",
-          high: "Multi-threaded execution deployed for maximum concurrent operations.",
-          increasing: "Scaling up parallel operations for enhanced throughput capacity.",
-          decreasing: "Consolidating operational threads for improved resource utilization."
-        },
-        waveFrequency: {
-          low: "Market cycle intervals extended for strategic adaptation planning.",
-          medium: "Business challenge frequency balanced for optimal response preparation.",
-          high: "Rapid market cycle simulation for advanced business agility training.",
-          increasing: "Accelerating disruption cycles to test organizational responsiveness.",
-          decreasing: "Extending market cycle intervals for deeper strategic planning."
-        },
-        obstacleSize: {
-          low: "Minor business challenges deployed for baseline resilience development.",
-          medium: "Standard market obstacles presented for balanced adaptation training.",
-          high: "Major disruption scenarios activated for advanced contingency planning.",
-          increasing: "Scaling up challenge complexity to stress-test organizational capabilities.",
-          decreasing: "Reducing obstacle magnitude to focus on fundamental response techniques."
-        },
-        obstacleSpeed: {
-          low: "Deliberate market evolution pace for measured response development.",
-          medium: "Standard volatility conditions for balanced adaptation training.",
-          high: "Rapid-change business environment for advanced agility development.",
-          increasing: "Accelerating disruption velocity to enhance rapid response capabilities.",
-          decreasing: "Moderating challenge propagation for strategic response refinement."
-        },
-        obstaclesPerWave: {
-          low: "Focused disruption strategy with limited concurrent challenges.",
-          medium: "Balanced challenge portfolio for holistic resilience development.",
-          high: "High-density problem environment for advanced capacity building.",
-          increasing: "Intensifying concurrent challenge density to test organizational capacity.",
-          decreasing: "Reducing simultaneous disruptions to enable focused problem-solving."
-        },
-        process: {
-          threshold1: "Process complexity is increasing - resource allocation optimization suggested.",
-          threshold2: "Process load at critical threshold - tactical intervention recommended.",
-          threshold3: "Maximum process complexity approaching - strategic intervention required."
-        }
-      };
-      
-      // Helper function to get slider ranges for percentage calculation
-      function getSliderRanges(category) {
-        // Default ranges
-        const ranges = {
-          containerSize: { min: 450, max: 800 },
-          headSize: { min: 3, max: 20 },
-          trailLength: { min: 1000, max: 8000 },
-          speed: { min: 0.5, max: 8 },
-          numHeads: { min: 1, max: 3 },
-          waveFrequency: { min: 0.5, max: 2 },
-          obstacleSize: { min: 20, max: 80 },
-          obstacleSpeed: { min: 0.5, max: 3.0 },
-          obstaclesPerWave: { min: 0.5, max: 2.0 }
-        };
-        
-        return ranges[category];
-      }
-      
-      // Helper function to get slider element by category
-      function getSliderByCategory(category) {
-        const sliderMap = {
-          containerSize: document.getElementById('containerSizeSlider'),
-          headSize: document.getElementById('headSizeSlider'),
-          trailLength: document.getElementById('trailLengthSlider'),
-          speed: document.getElementById('speedSlider'),
-          numHeads: document.getElementById('numHeadsSlider'),
-          waveFrequency: document.getElementById('waveFrequencySlider'),
-          obstacleSize: document.getElementById('obstacleSizeSlider'),
-          obstacleSpeed: document.getElementById('obstacleSpeedSlider'),
-          obstaclesPerWave: document.getElementById('obstaclesPerWaveSlider')
-        };
-        
-        return sliderMap[category];
-      }
-      
-      // Function to determine message based on slider value and previous value
-      function getSmartBusinessMessage(category, value, oldValue) {
-        // Default to medium if no old value is available
-        if (oldValue === undefined) oldValue = value;
-        
-        // Get the range for the slider category
-        const ranges = getSliderRanges(category);
-        
-        // Determine message type based on value and direction of change
-        let messageType;
-        
-        // First determine the direction of change
-        if (value > oldValue) {
-          messageType = "increasing";
-        } else if (value < oldValue) {
-          messageType = "decreasing";
-        } else {
-          // If no change or first time, determine based on where in the range it falls
-          const percentage = (value - ranges.min) / (ranges.max - ranges.min);
-          
-          if (percentage < 0.33) {
-            messageType = "low";
-          } else if (percentage < 0.66) {
-            messageType = "medium";
-          } else {
-            messageType = "high";
-          }
-        }
-        
-        return businessMessages[category][messageType];
-      }
-      
-      // Initialize game
-      function initGame() {
-        // Initialize heads
-        heads = [];
-        for (let i = 0; i < numHeads; i++) {
-          heads.push({
-            x: canvas.width / 2,
-            y: canvas.height / 2,
-            dirX: (Math.random() * 2 - 1) * SPEED,
-            dirY: (Math.random() * 2 - 1) * SPEED,
-            trail: [{ x: canvas.width / 2, y: canvas.height / 2 }]
-          });
-        }
-      }
-      
-      // Enhanced Particle class with more visual appeal
-      class Particle {
-        constructor(x, y) {
-          this.x = x;
-          this.y = y;
-          this.size = Math.random() * 5 + 2; // Larger particles
-          this.speedX = (Math.random() * 2 - 1) * 3; // Faster movement
-          this.speedY = (Math.random() * 2 - 1) * 3;
-          // Colors as requested
-          const colors = ['#FFE600', '#FFFFFF', '#808080'];
-          this.color = colors[Math.floor(Math.random() * colors.length)];
-          this.life = 60; // Longer life
-          this.opacity = 1;
-          this.initialSize = this.size;
-        }
-        
-        update() {
-          this.x += this.speedX;
-          this.y += this.speedY;
-          this.speedX *= 0.98; // Gradual slowdown
-          this.speedY *= 0.98;
-          this.life--;
-          this.opacity = this.life / 60; // Fade out
-          this.size = this.initialSize * (this.life / 60); // Shrink
-        }
-        
-        draw() {
-          ctx.globalAlpha = this.opacity;
-          ctx.fillStyle = this.color;
-          ctx.beginPath();
-          ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-          ctx.fill();
-          
-          // Add glow effect
-          ctx.shadowBlur = 10;
-          ctx.shadowColor = this.color;
-          ctx.fill();
-          ctx.shadowBlur = 0;
-          ctx.globalAlpha = 1;
-        }
-      }
-      
-      // Show tooltip
-      function showTooltip(message, duration = 3000) {
-        tooltip.textContent = message;
-        tooltip.style.display = 'block';
-        
-        setTimeout(() => {
-          tooltip.style.opacity = 0;
-          setTimeout(() => {
-            tooltip.style.display = 'none';
-            tooltip.style.opacity = 1;
-          }, 1000);
-        }, duration);
-      }
-      
-      // Add these variables for threshold tracking
-      let processLoadThresholds = {
-        threshold1: { value: PROCESS_LOAD_GOAL * 0.25, triggered: false },
-        threshold2: { value: PROCESS_LOAD_GOAL * 0.5, triggered: false },
-        threshold3: { value: PROCESS_LOAD_GOAL * 0.75, triggered: false }
-      };
-      
-      // Function to show a message about the game freeze
-      function showFreezeMessage() {
-        // Clear any existing message timeout
-        if (messageTimeout) {
-          clearTimeout(messageTimeout);
-        }
-        
-        // Display a persistent message about the freeze
-        const freezeMsg = "Process load critical threshold reached (300 collisions). System paused to prevent browser overload.";
-        businessMessage.textContent = freezeMsg;
-        businessMessage.style.opacity = 1;
-        
-        // Style the message to make it more noticeable
-        businessMessage.style.backgroundColor = 'rgba(220, 20, 20, 0.8)'; // Reddish background
-        businessMessage.style.color = 'white';
-        businessMessage.style.padding = '10px 15px';
-        businessMessage.style.fontWeight = 'bold';
-        businessMessage.style.borderLeft = '3px solid #FFFFFF';
-        
-        // Don't set a timeout - message stays until user takes action
-        
-        // Also show a tooltip that will fade away
-        showTooltip("System frozen: Press 'Clear Maze' to reset and continue.", 8000);
-      }
-      
-      // Function to create a visual freeze effect
-      function createFreezeEffect() {
-        // Create a frost/freeze overlay effect
-        const freezeOverlay = document.createElement('div');
-        freezeOverlay.id = 'freezeOverlay';
-        freezeOverlay.style.position = 'absolute';
-        freezeOverlay.style.top = '0';
-        freezeOverlay.style.left = '0';
-        freezeOverlay.style.width = '100%';
-        freezeOverlay.style.height = '100%';
-        freezeOverlay.style.backgroundColor = 'rgba(100, 149, 237, 0.2)'; // Light blue tint
-        freezeOverlay.style.pointerEvents = 'none'; // Allow clicks to pass through
-        freezeOverlay.style.zIndex = '10';
-        
-        // Add a subtle frost-like pattern
-        freezeOverlay.style.backgroundImage = 'radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px)';
-        freezeOverlay.style.backgroundSize = '10px 10px';
-        
-        // Add to the maze container
-        mazeContainer.appendChild(freezeOverlay);
-      }
-      
-      // Function to freeze the game
-      function freezeGame() {
-        isGameFrozen = true;
-        
-        // Display a notification about the freeze
-        showFreezeMessage();
-        
-        // Create a visual freeze effect
-        createFreezeEffect();
-      }
-      
-      // Modified showBusinessMessage for smart message selection
-      function showBusinessMessage(category, value, oldValue, specificMessage = null) {
-        // Clear any existing message timeout
-        if (messageTimeout) {
-          clearTimeout(messageTimeout);
-        }
-        
-        // Use the specific message if provided
-        let message = specificMessage;
-        
-        // If no specific message, generate one based on category and values
-        if (!message) {
-          if (value !== undefined && category in businessMessages) {
-            message = getSmartBusinessMessage(category, value, oldValue);
-          } else if (category in businessMessages) {
-            // If no value provided, get a message based on current slider value
-            const slider = getSliderByCategory(category);
-            if (slider) {
-              const currentValue = parseFloat(slider.value);
-              message = getSmartBusinessMessage(category, currentValue);
-            } else if (category === 'process') {
-              // Process messages have separate structure
-              message = businessMessages.process.threshold1;
-            } else {
-              // Fallback to a message from the category
-              const messageTypes = Object.keys(businessMessages[category]);
-              const randomType = messageTypes[Math.floor(Math.random() * messageTypes.length)];
-              message = businessMessages[category][randomType];
-            }
-          } else {
-            message = "Process status updated.";
-          }
-        }
-        
-        // Display the message
-        businessMessage.textContent = message;
-        businessMessage.style.opacity = 1;
-        
-        // Set timeout to fade out after 3 seconds (unless this is a freeze message)
-        if (!isGameFrozen) {
-          messageTimeout = setTimeout(() => {
-            businessMessage.style.opacity = 0;
-          }, 3000);
-        }
-      }
-      
-      // Then modify the updateProcessLoad function
-      function updateProcessLoad(load) {
-        // Limit the load to the equivalent of 300 collisions (15000)
-        const cappedLoad = Math.min(load, 15000);
-        
-        // Update the progress bar
-        const percent = Math.min((cappedLoad / PROCESS_LOAD_GOAL) * 100, 100);
-        complexityProgress.style.width = percent + '%';
-        complexityValueDisplay.textContent = Math.floor(cappedLoad);
-        
-        // Track color changes using data attributes instead of checking the style directly
-        if (cappedLoad >= 1700 && complexityProgress.getAttribute('data-color-level') !== '3') {
-          complexityProgress.style.backgroundColor = '#FF6B35'; // Orange-red
-          complexityProgress.setAttribute('data-color-level', '3');
-          showBusinessMessage("process", null, null, businessMessages.process.threshold3);
-        } else if (cappedLoad >= 1200 && cappedLoad < 1700 && complexityProgress.getAttribute('data-color-level') !== '2') {
-          complexityProgress.style.backgroundColor = '#FF8C00'; // Dark orange
-          complexityProgress.setAttribute('data-color-level', '2');
-          showBusinessMessage("process", null, null, businessMessages.process.threshold2);
-        } else if (cappedLoad >= 500 && cappedLoad < 1200 && complexityProgress.getAttribute('data-color-level') !== '1') {
-          complexityProgress.style.backgroundColor = '#FFA500'; // Orange
-          complexityProgress.setAttribute('data-color-level', '1');
-          showBusinessMessage("process", null, null, businessMessages.process.threshold1);
-        } else if (cappedLoad < 500 && complexityProgress.getAttribute('data-color-level') !== '0') {
-          // Reset to default color if below threshold
-          complexityProgress.style.backgroundColor = '#FFD700'; // Default gold color
-          complexityProgress.removeAttribute('data-color-level');
-        }
-        
-        // Check for game completion
-        if (cappedLoad >= PROCESS_LOAD_GOAL && !processLoadGoalReached) {
-          processLoadGoalReached = true;
-          overlayMessage.style.display = 'flex';
-        }
-      }
-      
-      // Create enhanced particles effect
-      function createParticles(x, y) {
-        for (let i = 0; i < 40; i++) { // More particles
-          particles.push(new Particle(x, y));
-        }
-        isEffectActive = true;
-      }
-      
-      // Change head direction
-      function changeDirection(headIndex) {
-        const head = heads[headIndex];
-        const randomAngle = Math.random() * Math.PI * 2;
-        head.dirX = Math.cos(randomAngle) * SPEED;
-        head.dirY = Math.sin(randomAngle) * SPEED;
-      }
-      
-      // Update wave countdown
-      function updateWaveCountdown(deltaTime) {
-        // Skip if game is frozen
-        if (isGameFrozen) return;
-        
-        waveCountdown -= deltaTime;
-        // Set the new countdown max each time the frequency changes
-        waveCountdownMax = 15000 / waveFrequencyFactor;
-        const percent = Math.max((waveCountdown / waveCountdownMax) * 100, 0);
-        waveCountdownProgress.style.width = percent + '%';
-        
-        if (waveCountdown <= 0) {
-          triggerWave();
-          waveCountdown = waveCountdownMax; // Reset countdown with new max value
-        }
-      }
-      
-      // Trigger a new wave of obstacles
-      function triggerWave() {
-        // Always create at least a few obstacles, even on first wave
-        const baseObstacles = Math.floor(5 * obstaclesRatio);
-        const additionalObstacles = collisionCount < 4 ? 0 : Math.floor(collisionCount / 20);
-        const numObstacles = baseObstacles + additionalObstacles;
-        
-        for (let i = 0; i < numObstacles; i++) {
-          const size = customObstacleSize;
-          const obstacle = {
-            x: Math.random() * (canvas.width - size),
-            y: Math.random() * (canvas.height - size),
-            width: size,
-            height: size,
-            vx: (Math.random() * 2 - 1) * customObstacleSpeed,
-            vy: (Math.random() * 2 - 1) * customObstacleSpeed
-          };
-          obstacles.push(obstacle);
-        }
-        showTooltip("New wave of strategic challenges emerging!");
-      }
-      
-      // Update obstacles
-      function updateObstacles() {
-        obstacles.forEach(obs => {
-          obs.x += obs.vx;
-          obs.y += obs.vy;
-          
-          // Bounce off walls
-          if (obs.x < 0 || obs.x + obs.width > canvas.width) {
-            obs.vx = -obs.vx;
-            obs.x = Math.max(0, Math.min(canvas.width - obs.width, obs.x));
-          }
-          if (obs.y < 0 || obs.y + obs.height > canvas.height) {
-            obs.vy = -obs.vy;
-            obs.y = Math.max(0, Math.min(canvas.height - obs.height, obs.y));
-          }
-        });
-      }
-      
-      // Check head collisions
-      function checkHeadCollisions() {
-        for (let i = 0; i < heads.length - 1; i++) {
-          for (let j = i + 1; j < heads.length; j++) {
-            const dx = heads[i].x - heads[j].x;
-            const dy = heads[i].y - heads[j].y;
-            const distance = Math.sqrt(dx * dx + dy * dy);
-            
-            if (distance < DOT_RADIUS * 2) {
-              // Collision detected, change direction of both heads
-              changeDirection(i);
-              changeDirection(j);
-              headCollisionCount++; // Count head collisions
-              collisionCount++; // Add to main collision count for process load
-              createParticles((heads[i].x + heads[j].x) / 2, (heads[i].y + heads[j].y) / 2);
-              showTooltip("Resource conflict detected - redirecting workflow.");
-              
-              // Check if reached 300 collisions
-              if (collisionCount >= 300 && !isGameFrozen) {
-                freezeGame();
-              }
-            }
-          }
-        }
-      }
-      
-      // Draw game state
-      function draw() {
-        // Clear the canvas
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        
-        // Draw static trails with gradient effect
-        staticTrails.forEach(trail => {
-          if (trail.length < 2) return;
-          
-          for (let i = 1; i < trail.length; i++) {
-            // Calculate opacity based on position in trail - brighter at the end
-            const opacity = i / trail.length;
-            
-            ctx.beginPath();
-            ctx.moveTo(trail[i-1].x, trail[i-1].y);
-            ctx.lineTo(trail[i].x, trail[i].y);
-            ctx.strokeStyle = `rgba(255, 255, 255, ${opacity})`;
-            ctx.lineWidth = LINE_WIDTH;
-            ctx.stroke();
-          }
-        });
-        
-        // Draw head trails with gradient effect - white at head, darker at the end
-        heads.forEach(head => {
-          if (head.trail.length < 2) return;
-          
-          for (let i = 1; i < head.trail.length; i++) {
-            // Calculate opacity based on position in trail - brighter near head
-            const opacity = (i / head.trail.length);
-            
-            ctx.beginPath();
-            ctx.moveTo(head.trail[i-1].x, head.trail[i-1].y);
-            ctx.lineTo(head.trail[i].x, head.trail[i].y);
-            ctx.strokeStyle = `rgba(255, 255, 255, ${opacity})`;
-            ctx.lineWidth = LINE_WIDTH;
-            ctx.stroke();
-          }
-        });
-        
-        // Draw obstacles as diamonds - original color
-        obstacles.forEach(obstacle => {
-          ctx.save();
-          const centerX = obstacle.x + obstacle.width / 2;
-          const centerY = obstacle.y + obstacle.height / 2;
-          ctx.translate(centerX, centerY);
-          ctx.rotate(Math.PI / 4);
-          // Original gold color
-          ctx.fillStyle = "#FF8C00";
-          ctx.shadowBlur = 15;
-          ctx.shadowColor = "#FF8C00";
-          ctx.fillRect(-obstacle.width / 2, -obstacle.height / 2, obstacle.width, obstacle.height);
-          ctx.shadowBlur = 0;
-          ctx.restore();
-        });
-        
-        // Draw particles
-        if (isEffectActive) {
-          particles.forEach(particle => particle.draw());
-        }
-        
-        // Draw heads
-        heads.forEach(head => {
-          ctx.beginPath();
-          ctx.arc(head.x, head.y, DOT_RADIUS, 0, Math.PI * 2);
-          ctx.fillStyle = '#ecd404';
-          ctx.shadowBlur = 15;
-          ctx.shadowColor = '#ecd404';
-          ctx.fill();
-          ctx.shadowBlur = 0;
-        });
-      }
-      
-      // Game loop
-      function gameLoop() {
-        update();
-        draw();
-        requestAnimationFrame(gameLoop);
-      }
-      
-      // Update game state
-      function update() {
-        // Skip updating if the game is frozen
-        if (isGameFrozen) {
-          return;
-        }
-        
-        // Update obstacles
-        updateObstacles();
-        
-        // Update heads
-        heads.forEach((head, i) => {
-          // Move the head
-          head.x += head.dirX;
-          head.y += head.dirY;
-          
-          // Bounce off walls - no longer increment collisionCount
-          if (head.x - DOT_RADIUS <= 0 || head.x + DOT_RADIUS >= canvas.width) {
-            head.dirX = -head.dirX;
-            head.x = Math.max(DOT_RADIUS, Math.min(canvas.width - DOT_RADIUS, head.x));
-            wallCollisionCount++; // Wall collisions tracked separately
-          }
-          if (head.y - DOT_RADIUS <= 0 || head.y + DOT_RADIUS >= canvas.height) {
-            head.dirY = -head.dirY;
-            head.y = Math.max(DOT_RADIUS, Math.min(canvas.height - DOT_RADIUS, head.y));
-            wallCollisionCount++; // Wall collisions tracked separately
-          }
-          
-          // Check collisions with obstacles
-          obstacles.forEach((obstacle, obsIndex) => {
-            if (head.x + DOT_RADIUS > obstacle.x && 
-                head.x - DOT_RADIUS < obstacle.x + obstacle.width &&
-                head.y + DOT_RADIUS > obstacle.y && 
-                head.y - DOT_RADIUS < obstacle.y + obstacle.height) {
-              
-              // Create a unique collision ID
-              const collisionId = `${i}-${obsIndex}`;
-              
-              // Only count the collision if it hasn't been recorded yet
-              if (!headObstacleCollisions.has(collisionId)) {
-                headObstacleCollisions.add(collisionId);
-                
-                // Collision detected
-                const angle = Math.atan2(
-                  head.y - (obstacle.y + obstacle.height/2), 
-                  head.x - (obstacle.x + obstacle.width/2)
-                );
-                head.dirX = Math.cos(angle) * SPEED;
-                head.dirY = Math.sin(angle) * SPEED;
-                collisionCount++; // Obstacle collisions still count
-                
-                // Create particles on obstacle collision
-                createParticles(head.x, head.y);
-                
-                // Check if we've reached 300 collisions and need to freeze the game
-                if (collisionCount >= 300 && !isGameFrozen) {
-                  freezeGame();
-                }
-              }
-            } else {
-              // If not colliding, remove any collision records for this head-obstacle pair
-              headObstacleCollisions.delete(`${i}-${obsIndex}`);
-            }
-          });
-          
-          // Update trail
-          head.trail.push({x: head.x, y: head.y});
-          if (head.trail.length > MAX_TRAIL_LENGTH) {
-            head.trail.shift();
-          }
-        });
-        
-        // Check head collisions
-        checkHeadCollisions();
-        
-        // Update particles
-        if (isEffectActive) {
-          for (let i = particles.length - 1; i >= 0; i--) {
-            particles[i].update();
-            if (particles[i].life <= 0) {
-              particles.splice(i, 1);
-            }
-          }
-          if (particles.length === 0) {
-            isEffectActive = false;
-          }
-        }
-        
-        // Update process load (based only on obstacle collisions and head collisions)
-        const processLoad = collisionCount * 50;
-        updateProcessLoad(processLoad);
-        
-        // Update collisions display
-        collisionsValue.textContent = collisionCount;
-        
-        // Update wave countdown
-        const now = performance.now();
-        const deltaTime = now - lastFrameTime;
-        lastFrameTime = now;
-        updateWaveCountdown(deltaTime);
-      }
-      
-      // Event listeners
-      
-      // Container size slider
-      containerSizeSlider.addEventListener('input', function() {
-        const size = parseInt(this.value);
-        containerSizeValue.textContent = size + 'px';
-        
-        // Store previous value for smart message
-        const previousValue = this.getAttribute('data-prev-value') || this.value;
-        
-        // Show business message
-        showBusinessMessage('containerSize', size, previousValue);
-        
-        // Update stored value
-        this.setAttribute('data-prev-value', size);
-      });
-      
-      // Apply container size changes only when sliding is complete
-      containerSizeSlider.addEventListener('change', function() {
-        const size = parseInt(this.value);
-        mazeContainer.style.width = size + 'px';
-        mazeContainer.style.height = size + 'px';
-        
-        // Update canvas size
-        canvas.width = size;
-        canvas.height = size;
-        
-        // Ensure heads stay within bounds
-        heads.forEach(head => {
-          head.x = Math.min(head.x, canvas.width - DOT_RADIUS);
-          head.y = Math.min(head.y, canvas.height - DOT_RADIUS);
-        });
-      });
-      
-      // Head size slider
-      headSizeSlider.addEventListener('input', function() {
-        DOT_RADIUS = parseFloat(this.value);
-        headSizeValue.textContent = DOT_RADIUS + 'px';
-        
-        // Store previous value for smart message
-        const previousValue = this.getAttribute('data-prev-value') || this.value;
-        
-        // Show business message
-        showBusinessMessage('headSize', DOT_RADIUS, previousValue);
-        
-        // Update stored value
-        this.setAttribute('data-prev-value', DOT_RADIUS);
-      });
-      
-      // Trail Length slider
-      trailLengthSlider.addEventListener('input', function() {
-        MAX_TRAIL_LENGTH = parseInt(this.value);
-        trailLengthValue.textContent = MAX_TRAIL_LENGTH;
-        
-        // Store previous value for smart message
-        const previousValue = this.getAttribute('data-prev-value') || this.value;
-        
-        // Trim existing trails if needed
-        heads.forEach(head => {
-          if (head.trail.length > MAX_TRAIL_LENGTH) {
-            head.trail = head.trail.slice(head.trail.length - MAX_TRAIL_LENGTH);
-          }
-        });
-        
-        staticTrails.forEach((trail, index) => {
-          if (trail.length > MAX_TRAIL_LENGTH) {
-            staticTrails[index] = trail.slice(trail.length - MAX_TRAIL_LENGTH);
-          }
-        });
-        
-        // Show business message
-        showBusinessMessage('trailLength', MAX_TRAIL_LENGTH, previousValue);
-        
-        // Update stored value
-        this.setAttribute('data-prev-value', MAX_TRAIL_LENGTH);
-      });
-      
-      // Speed slider
-      speedSlider.addEventListener('input', function() {
-        SPEED = parseFloat(this.value);
-        speedValue.textContent = SPEED;
-        
-        // Store previous value for smart message
-        const previousValue = this.getAttribute('data-prev-value') || this.value;
-        
-        // Update head speeds
-        heads.forEach(head => {
-          const angle = Math.atan2(head.dirY, head.dirX);
-          head.dirX = Math.cos(angle) * SPEED;
-          head.dirY = Math.sin(angle) * SPEED;
-        });
-        
-        // Show business message
-        showBusinessMessage('speed', SPEED, previousValue);
-        
-        // Update stored value
-        this.setAttribute('data-prev-value', SPEED);
-      });
-      
-      // Number of heads slider
-      numHeadsSlider.addEventListener('input', function() {
-        const newNumHeads = parseInt(this.value);
-        numHeadsValue.textContent = newNumHeads;
-        
-        // Store previous value for smart message
-        const previousValue = this.getAttribute('data-prev-value') || this.value;
-        
-        // Add or remove heads as needed
-        while (heads.length < newNumHeads) {
-          heads.push({
-            x: canvas.width / 2,
-            y: canvas.height / 2,
-            dirX: (Math.random() * 2 - 1) * SPEED,
-            dirY: (Math.random() * 2 - 1) * SPEED,
-            trail: [{ x: canvas.width / 2, y: canvas.height / 2 }]
-          });
-        }
-        
-        while (heads.length > newNumHeads) {
-          const removed = heads.pop();
-          staticTrails.push(removed.trail);
-        }
-        
-        // Show business message
-        showBusinessMessage('numHeads', newNumHeads, previousValue);
-        
-        // Update stored value
-        this.setAttribute('data-prev-value', newNumHeads);
-      });
-      
-      // Wave frequency slider
-      waveFrequencySlider.addEventListener('input', function() {
-        waveFrequencyFactor = parseFloat(this.value);
-        waveFrequencyValue.textContent = waveFrequencyFactor.toFixed(1);
-        
-        // Store previous value for smart message
-        const previousValue = this.getAttribute('data-prev-value') || this.value;
-        
-        // Update the waveCountdownMax
-        waveCountdownMax = 15000 / waveFrequencyFactor;
-        // Reset the current countdown to match the new max (maintain the same percentage)
-        const currentPercent = waveCountdown / (15000 / (waveFrequencyFactor - (this.value - (this.oldValue || this.value))));
-        waveCountdown = currentPercent * waveCountdownMax;
-        
-        // Show business message
-        showBusinessMessage('waveFrequency', waveFrequencyFactor, previousValue);
-        
-        // Update stored value
-        this.setAttribute('data-prev-value', waveFrequencyFactor);
-      });
-      
-      // Add an event listener to track the old value
-      waveFrequencySlider.addEventListener('mousedown', function() {
-        this.oldValue = parseFloat(this.value);
-      });
-      
-      waveFrequencySlider.addEventListener('touchstart', function() {
-        this.oldValue = parseFloat(this.value);
-      });
-      
-      // Obstacle size slider
-      obstacleSizeSlider.addEventListener('input', function() {
-        customObstacleSize = parseInt(this.value);
-        obstacleSizeValue.textContent = customObstacleSize + 'px';
-        
-        // Store previous value for smart message
-        const previousValue = this.getAttribute('data-prev-value') || this.value;
-        
-        // Update existing obstacles
-        obstacles.forEach(obs => {
-          obs.width = customObstacleSize;
-          obs.height = customObstacleSize;
-        });
-        
-        // Show business message
-        showBusinessMessage('obstacleSize', customObstacleSize, previousValue);
-        
-        // Update stored value
-        this.setAttribute('data-prev-value', customObstacleSize);
-      });
-      
-      // Obstacle speed slider
-      obstacleSpeedSlider.addEventListener('input', function() {
-        customObstacleSpeed = parseFloat(this.value);
-        obstacleSpeedValue.textContent = customObstacleSpeed.toFixed(1);
-        
-        // Store previous value for smart message
-        const previousValue = this.getAttribute('data-prev-value') || this.value;
-        
-        // Update existing obstacles
-        obstacles.forEach(obs => {
-          obs.vx = Math.sign(obs.vx) * customObstacleSpeed;
-          obs.vy = Math.sign(obs.vy) * customObstacleSpeed;
-        });
-        
-        // Show business message
-        showBusinessMessage('obstacleSpeed', customObstacleSpeed, previousValue);
-        
-        // Update stored value
-        this.setAttribute('data-prev-value', customObstacleSpeed);
-      });
-      
-      // Obstacles per wave ratio slider
-      obstaclesPerWaveSlider.addEventListener('input', function() {
-        obstaclesRatio = parseFloat(this.value);
-        obstaclesPerWaveValue.textContent = obstaclesRatio.toFixed(1);
-        
-        // Store previous value for smart message
-        const previousValue = this.getAttribute('data-prev-value') || this.value;
-        
-        // Show business message
-        showBusinessMessage('obstaclesPerWave', obstaclesRatio, previousValue);
-        
-        // Update stored value
-        this.setAttribute('data-prev-value', obstaclesRatio);
-      });
-      
-      // Clear button
-      clearButton.addEventListener('click', function() {
-        heads.forEach(head => {
-          head.trail = [{ x: head.x, y: head.y }];
-        });
-        staticTrails = [];
-        obstacles = [];
-        collisionCount = 0;
-        headCollisionCount = 0;
-        wallCollisionCount = 0;
-        headObstacleCollisions.clear(); // Clear the collision tracking
-        waveCountdown = waveCountdownMax;
-        updateProcessLoad(0);
-        processLoadGoalReached = false;
-        overlayMessage.style.display = 'none';
-        
-        // Reset threshold triggers
-        processLoadThresholds.threshold1.triggered = false;
-        processLoadThresholds.threshold2.triggered = false;
-        processLoadThresholds.threshold3.triggered = false;
-        
-        // Reset progress bar color
-        complexityProgress.style.backgroundColor = '#FFD700';
-        complexityProgress.removeAttribute('data-color-level');
-        
-        // Unfreeze the game if it was frozen
-        if (isGameFrozen) {
-          isGameFrozen = false;
-          
-          // Remove the freeze overlay if it exists
-          const freezeOverlay = document.getElementById('freezeOverlay');
-          if (freezeOverlay) {
-            freezeOverlay.remove();
-          }
-          
-          // Reset the business message styling
-          businessMessage.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
-          businessMessage.style.color = '#FFD700';
-          businessMessage.style.fontWeight = 'normal';
-          businessMessage.style.borderLeft = 'none';
-          businessMessage.style.padding = '5px 15px';
-        }
-        
-        showBusinessMessage('containerSize', null, null, "Process reset complete. System ready for new operational cycle.");
-      });
-      
-      // Restart button
-      restartButton.addEventListener('click', function() {
-        clearButton.click();
-      });
-      
-      // Canvas click event - only create particles when clicking on heads or obstacles
-      canvas.addEventListener('click', function(event) {
-        // Skip if the game is frozen
-        if (isGameFrozen) return;
-        
-        const rect = canvas.getBoundingClientRect();
-        const mouseX = event.clientX - rect.left;
-        const mouseY = event.clientY - rect.top;
-        
-        // Check if clicked on a head or near it (improved hit detection)
-        for (let i = 0; i < heads.length; i++) {
-          const head = heads[i];
-          const distance = Math.sqrt(Math.pow(mouseX - head.x, 2) + Math.pow(mouseY - head.y, 2));
-          // Increased detection radius for better usability
-          if (distance <= DOT_RADIUS * 1.5) {
-            changeDirection(i);
-            createParticles(head.x, head.y);
-            showTooltip("Direction changed - strategic pivot initiated.");
-            return;
-          }
-        }
-        
-        // Check if clicked on an obstacle - more lenient detection
-        for (let i = obstacles.length - 1; i >= 0; i--) {
-          const obs = obstacles[i];
-          const centerX = obs.x + obs.width / 2;
-          const centerY = obs.y + obs.height / 2;
-          
-          // More generous hit detection for obstacles (square-based)
-          if (mouseX >= obs.x - 10 && mouseX <= obs.x + obs.width + 10 &&
-              mouseY >= obs.y - 10 && mouseY <= obs.y + obs.height + 10) {
-            createParticles(centerX, centerY);
-            obstacles.splice(i, 1);
-            showTooltip("Obstacle neutralized - path cleared.");
-            return;
-          }
-        }
-        
-        // Removed particle creation on empty space clicks
-      });
-      
-      // Initialize all sliders with data-prev-value
-      const allSliders = document.querySelectorAll('.slider');
-      allSliders.forEach(slider => {
-        // Store the initial value
-        slider.setAttribute('data-prev-value', slider.value);
-      });
-      
-      // Initialize and start the game loop
-      initGame();
-      gameLoop();
-      
-      // Show initial business message
-      showBusinessMessage('containerSize', null, null, "Process initialized. System ready for operation.");
-      
-      // Initialize controls state 
+  document.addEventListener('DOMContentLoaded', function() {
+    // Add QR code generator
+    new QRCode(document.getElementById("qrcode"), {
+      text: "https://carmon1985.github.io/intelligent-automation/",
+      width: 128,
+      height: 128,
+      colorDark: "#000000",
+      colorLight: "#ffffff",
+      correctLevel: QRCode.CorrectLevel.H
+    });
+    
+    // Add mobile toggle button
+    const toggleButton = document.createElement('button');
+    toggleButton.className = 'mobile-toggle';
+    toggleButton.innerHTML = '<i style="font-size: 24px;">≡</i>';
+    toggleButton.title = 'Toggle Controls';
+    document.body.appendChild(toggleButton);
+    
+    // Toggle controls visibility on mobile
+    toggleButton.addEventListener('click', function() {
       const controlsContainer = document.querySelector('.controls-container');
-      controlsContainer.style.display = 'none'; // Start with controls hidden
-      
-      // Make subsections expanded by default
-      sectionHeaders.forEach(header => {
-        if (!header.classList.contains('main-controls-header')) {
-          const content = header.nextElementSibling;
-          const icon = header.querySelector('.collapse-icon');
+      if (controlsContainer.style.display === 'none' || controlsContainer.style.display === '') {
+        controlsContainer.style.display = 'grid';
+      } else {
+        controlsContainer.style.display = 'none';
+      }
+    });
+    
+    // Add additional mobile optimizations
+    const viewportMeta = document.querySelector('meta[name="viewport"]');
+    if (viewportMeta) {
+      viewportMeta.content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no';
+    }
+    
+    // Improve touch experience for sliders
+    const sliders = document.querySelectorAll('.slider');
+    sliders.forEach(slider => {
+      slider.addEventListener('touchstart', function(e) {
+        e.stopPropagation();
+      });
+    });
+  });
+</script>
+  
+  <script>/**
+ * LEAN SIX SIGMA PROCESS SIMULATOR
+ * Main Game Script
+ */
+
+document.addEventListener('DOMContentLoaded', function() {
+  // Basic setup
+  const mazeContainer = document.getElementById('mazeContainer');
+  const canvas = document.createElement('canvas');
+  const ctx = canvas.getContext('2d');
+  
+  // Set canvas size to match container
+  canvas.width = mazeContainer.clientWidth;
+  canvas.height = mazeContainer.clientHeight;
+  mazeContainer.appendChild(canvas);
+  
+  // UI elements
+  const containerSizeSlider = document.getElementById('containerSizeSlider');
+  const headSizeSlider = document.getElementById('headSizeSlider');
+  const trailLengthSlider = document.getElementById('trailLengthSlider');
+  const speedSlider = document.getElementById('speedSlider');
+  const numHeadsSlider = document.getElementById('numHeadsSlider');
+  const waveFrequencySlider = document.getElementById('waveFrequencySlider');
+  const obstacleSizeSlider = document.getElementById('obstacleSizeSlider');
+  const obstacleSpeedSlider = document.getElementById('obstacleSpeedSlider');
+  const obstaclesPerWaveSlider = document.getElementById('obstaclesPerWaveSlider');
+  const waveCountdownProgress = document.getElementById('waveCountdownProgress');
+  const clearButton = document.getElementById('clearButton');
+  const restartButton = document.getElementById('restartButton');
+  const tooltip = document.getElementById('tooltip');
+  const businessMessage = document.getElementById('businessMessage');
+  const overlayMessage = document.getElementById('overlayMessage');
+  const sectionHeaders = document.querySelectorAll('.section-header');
+  
+  // Display elements
+  const containerSizeValue = document.getElementById('containerSizeValue');
+  const headSizeValue = document.getElementById('headSizeValue');
+  const trailLengthValue = document.getElementById('trailLengthValue');
+  const speedValue = document.getElementById('speedValue');
+  const numHeadsValue = document.getElementById('numHeadsValue');
+  const waveFrequencyValue = document.getElementById('waveFrequencyValue');
+  const obstacleSizeValue = document.getElementById('obstacleSizeValue');
+  const obstacleSpeedValue = document.getElementById('obstacleSpeedValue');
+  const obstaclesPerWaveValue = document.getElementById('obstaclesPerWaveValue');
+  const complexityProgress = document.getElementById('complexityProgress');
+  const complexityValueDisplay = document.getElementById('complexityValueDisplay');
+  const collisionsValue = document.getElementById('collisionsValue');
+  const leadTimeValue = document.getElementById('leadTimeValue');
+  const valueAddedValue = document.getElementById('valueAddedValue');
+  const sigmaLevelValue = document.getElementById('sigmaLevelValue');
+  const fttValue = document.getElementById('fttValue');
+  
+  // Game parameters
+  let DOT_RADIUS = parseFloat(headSizeSlider.value);
+  let MAX_TRAIL_LENGTH = parseInt(trailLengthSlider.value);
+  let SPEED = parseFloat(speedSlider.value);
+  let numHeads = parseInt(numHeadsSlider.value);
+  let waveFrequencyFactor = parseFloat(waveFrequencySlider.value);
+  let customObstacleSize = parseInt(obstacleSizeSlider.value);
+  let customObstacleSpeed = parseFloat(obstacleSpeedSlider.value);
+  let obstaclesRatio = parseFloat(obstaclesPerWaveSlider.value);
+  const LINE_WIDTH = 2;
+  
+  // Game state
+let heads = [];
+let obstacles = [];
+let staticTrails = [];
+let particles = [];
+let isEffectActive = false;
+let collisionCount = 2; // Low initial collision count
+let headCollisionCount = 0; // Separate counter for head collisions
+let wallCollisionCount = 0; // Track wall collisions separately
+  let headObstacleCollisions = new Set(); // To track which heads have collided with which obstacles
+  let lastFrameTime = performance.now();
+  let waveCountdownMax = 15000 / waveFrequencyFactor;
+  let waveCountdown = waveCountdownMax;
+  let messageTimeout = null;
+  let controlsVisible = false;
+  let isGameFrozen = false; // Add game freeze state variable
+  
+	  // Process KPI tracking variables with optimal starting values
+	let startTime = performance.now() - 70000; // Start at 7 days for lead time
+	let totalProcessed = 0;
+	let valueAddedTime = 8500; // Start with high value-added time
+	let totalProcessTime = 10000; // To give 85% value-added percentage
+	let firstPassYield = 96; // Above 95% target
+	let lastCollisionCount = 0;
+  
+  // Constants
+  const PROCESS_LOAD_GOAL = 2000;
+  let processLoadGoalReached = false;
+  
+  /**
+   * Converts technical slider values to business-relevant terminology
+   * @param {string} category - The slider category
+   * @param {number} value - The raw slider value
+   * @returns {string} - Business-friendly display value
+   */
+  function getBusinessValue(category, value) {
+	const businessScales = {
+	  containerSize: {
+		scale: ['Minimal Documentation (20%)', 'Partial Documentation (40%)', 'Standard Documentation (60%)', 'Detailed Documentation (80%)', 'Comprehensive Documentation (100%)'],
+		min: 450,
+		max: 800
+	  },
+	  headSize: {
+		scale: ['Ad-hoc Process (10%)', 'Partially Standardized (30%)', 'Standardized (50%)', 'Optimized (70%)', 'Fully Standardized (90%)'],
+		min: 3,
+		max: 20
+	  },
+	  trailLength: {
+		scale: ['Basic KB (30%)', 'Standard KB (50%)', 'Comprehensive KB (70%)', 'Extensive KB (90%)', 'Complete KB (100%)'],
+		min: 1000,
+		max: 8000
+	  },
+	  speed: {
+		scale: ['Low Velocity (20%)', 'Moderate Velocity (40%)', 'Standard Velocity (60%)', 'High Velocity (80%)', 'Optimized Velocity (100%)'],
+		min: 0.5,
+		max: 8
+	  },
+	  numHeads: {
+		values: ['Available Capacity (30%)', 'Balanced Workload (60%)', 'Near Capacity (90%)']
+	  },
+	  waveFrequency: {
+		scale: ['Quarterly', 'Bi-Monthly', 'Monthly', 'Bi-Weekly', 'Weekly', 'Daily'],
+		min: 0.5,
+		max: 2
+	  },
+	  obstacleSize: {
+		scale: ['Minor Variability (10%)', 'Low Variability (25%)', 'Medium Variability (50%)', 'High Variability (75%)', 'Complex Variability (90%)'],
+		min: 20,
+		max: 80
+	  },
+	  obstacleSpeed: {
+		scale: ['Rare (5%)', 'Occasional (15%)', 'Regular (25%)', 'Frequent (50%)', 'Constant (75%)'],
+		min: 0.5,
+		max: 3.0
+	  },
+	  obstaclesPerWave: {
+		scale: ['Minimal Intervention (5%)', 'Low Intervention (15%)', 'Medium Intervention (30%)', 'High Intervention (50%)', 'Mostly Manual (75%)'],
+		min: 0.5,
+		max: 2.0
+	  }
+	};
+    
+    // Handle special case for numHeads which has discrete values
+    if (category === 'numHeads') {
+      return businessScales[category].values[Math.round(value) - 1];
+    }
+    
+    // For scaled values
+    const scaleInfo = businessScales[category];
+    const percentage = (value - scaleInfo.min) / (scaleInfo.max - scaleInfo.min);
+    const index = Math.min(Math.floor(percentage * scaleInfo.scale.length), scaleInfo.scale.length - 1);
+    return scaleInfo.scale[index];
+  }
+  
+  // Set up collapsible sections
+  sectionHeaders.forEach(header => {
+    if (header.classList.contains('main-controls-header')) {
+      // Special handling for main controls header
+      header.addEventListener('click', function() {
+        const controlsContainer = document.querySelector('.controls-container');
+        const icon = this.querySelector('.collapse-icon');
+        
+        if (controlsContainer.style.display === 'none' || controlsContainer.style.display === '') {
+          controlsContainer.style.display = 'grid';
+          icon.classList.remove('collapsed');
+          controlsVisible = true;
+        } else {
+          controlsContainer.style.display = 'none';
+          icon.classList.add('collapsed');
+          controlsVisible = false;
+        }
+      });
+    } else {
+      // Regular section headers
+      header.addEventListener('click', function() {
+        const content = this.nextElementSibling;
+        const icon = this.querySelector('.collapse-icon');
+        
+        if (content.classList.contains('collapsed')) {
           content.classList.remove('collapsed');
           icon.classList.remove('collapsed');
         } else {
-          const icon = header.querySelector('.collapse-icon');
+          content.classList.add('collapsed');
           icon.classList.add('collapsed');
         }
       });
+    }
+  });
+  
+  // Enhanced Business Messages aligned with Lean Six Sigma concepts
+  const businessMessages = {
+  containerSize: {
+    low: "Limited process documentation makes automation challenging. Consider documenting key process steps.",
+    medium: "Process documentation at standard level, supporting basic automation initiatives.",
+    high: "Comprehensive process documentation enables advanced automation opportunities.",
+    increasing: "Enhancing process documentation to support more complex automation scenarios.",
+    decreasing: "Focusing documentation on core process elements for targeted automation."
+  },
+  headSize: {
+    low: "Low process standardization requires frequent human judgment for decisions.",
+    medium: "Standard level of process consistency enables reliable automation development.",
+    high: "High standardization level makes this process an ideal automation candidate.",
+    increasing: "Improving process standardization to reduce exceptions and manual handling.",
+    decreasing: "Adjusting standardization level to accommodate necessary process variations."
+  },
+  trailLength: {
+    low: "Limited knowledge base coverage means automation will require frequent updates.",
+    medium: "Adequate knowledge management supports sustainable automation solutions.",
+    high: "Comprehensive knowledge base ensures automation longevity and adaptability.",
+    increasing: "Expanding knowledge coverage to support broader automation capabilities.",
+    decreasing: "Focusing knowledge base on most critical process elements."
+  },
+  speed: {
+    low: "Slower execution rate allows for detailed validation but limits transaction volume.",
+    medium: "Balanced execution speed supports efficient operations with adequate controls.",
+    high: "Accelerated execution maximizes throughput for optimized business outcomes.",
+    increasing: "Accelerating process execution to improve overall business throughput.",
+    decreasing: "Moderating execution rate to ensure quality and compliance requirements."
+  },
+  numHeads: {
+    low: "Available workforce capacity can be directed toward automation initiatives.",
+    medium: "Balanced workload distribution enables stable operations with automation support.",
+    high: "Workforce operating near capacity - automation can help relieve pressure.",
+    increasing: "Increasing workflow demands - prioritizing automation to prevent burnout.",
+    decreasing: "Redistributing workloads to focus on high-value activities."
+  },
+  waveFrequency: {
+    low: "Extended release cycles allow for thorough testing and comprehensive feature sets.",
+    medium: "Standard release frequency balances stability with innovation needs.",
+    high: "Rapid deployment cycles enable quick adaptation to changing business needs.",
+    increasing: "Accelerating release frequency to deliver automation improvements faster.",
+    decreasing: "Extending release cycles for more comprehensive solution development."
+  },
+  obstacleSize: {
+    low: "Minor process variability enables straightforward automation scenarios.",
+    medium: "Moderate variability requires balanced exception handling capabilities.",
+    high: "High variability challenges automation - consider process standardization first.",
+    increasing: "Growing process complexity requires more sophisticated automation solutions.",
+    decreasing: "Reducing process variability to enhance automation reliability."
+  },
+  obstacleSpeed: {
+    low: "Infrequent exceptions allow for simpler automation design patterns.",
+    medium: "Regular exceptions require standardized error handling procedures.",
+    high: "Frequent exceptions demand robust exception management frameworks.",
+    increasing: "Growing exception frequency may require process redesign for automation.",
+    decreasing: "Reducing exception frequency through process standardization."
+  },
+  obstaclesPerWave: {
+    low: "Minimal manual intervention enables high automation coverage.",
+    medium: "Balanced human-bot collaboration required for optimal process execution.",
+    high: "High manual intervention rate limits automation potential - consider process redesign.",
+    increasing: "Growing manual intervention needs indicate automation design challenges.",
+    decreasing: "Reducing manual touchpoints to maximize automation benefits."
+  },
+  process: {
+    threshold1: "Automation potential approaching upper threshold - identify additional processes for automation.",
+    threshold2: "Process complexity increasing - consider implementing more robust exception handling.",
+    threshold3: "Process stability at risk - review documentation and standardization efforts."
+  }
+};
+  
+  // Helper function to get slider ranges for percentage calculation
+  function getSliderRanges(category) {
+    // Default ranges
+    const ranges = {
+      containerSize: { min: 450, max: 800 },
+      headSize: { min: 3, max: 20 },
+      trailLength: { min: 1000, max: 8000 },
+      speed: { min: 0.5, max: 8 },
+      numHeads: { min: 1, max: 3 },
+      waveFrequency: { min: 0.5, max: 2 },
+      obstacleSize: { min: 20, max: 80 },
+      obstacleSpeed: { min: 0.5, max: 3.0 },
+      obstaclesPerWave: { min: 0.5, max: 2.0 }
+    };
+    
+    return ranges[category];
+  }
+  
+  // Helper function to get slider element by category
+  function getSliderByCategory(category) {
+    const sliderMap = {
+      containerSize: document.getElementById('containerSizeSlider'),
+      headSize: document.getElementById('headSizeSlider'),
+      trailLength: document.getElementById('trailLengthSlider'),
+      speed: document.getElementById('speedSlider'),
+      numHeads: document.getElementById('numHeadsSlider'),
+      waveFrequency: document.getElementById('waveFrequencySlider'),
+      obstacleSize: document.getElementById('obstacleSizeSlider'),
+      obstacleSpeed: document.getElementById('obstacleSpeedSlider'),
+      obstaclesPerWave: document.getElementById('obstaclesPerWaveSlider')
+    };
+    
+    return sliderMap[category];
+  }
+  
+  // Function to determine message based on slider value and previous value
+  function getSmartBusinessMessage(category, value, oldValue) {
+    // Default to medium if no old value is available
+    if (oldValue === undefined) oldValue = value;
+    
+    // Get the range for the slider category
+    const ranges = getSliderRanges(category);
+    
+    // Determine message type based on value and direction of change
+    let messageType;
+    
+    // First determine the direction of change
+    if (value > oldValue) {
+      messageType = "increasing";
+    } else if (value < oldValue) {
+      messageType = "decreasing";
+    } else {
+      // If no change or first time, determine based on where in the range it falls
+      const percentage = (value - ranges.min) / (ranges.max - ranges.min);
+      
+      if (percentage < 0.33) {
+        messageType = "low";
+      } else if (percentage < 0.66) {
+        messageType = "medium";
+      } else {
+        messageType = "high";
+      }
+    }
+    
+    return businessMessages[category][messageType];
+  }
+  
+  // Initialize game
+  function initGame() {
+    // Initialize heads
+    heads = [];
+    for (let i = 0; i < numHeads; i++) {
+      heads.push({
+        x: canvas.width / 2,
+        y: canvas.height / 2,
+        dirX: (Math.random() * 2 - 1) * SPEED,
+        dirY: (Math.random() * 2 - 1) * SPEED,
+        trail: [{ x: canvas.width / 2, y: canvas.height / 2 }]
+      });
+    }
+  }
+  
+  // Enhanced Particle class with more visual appeal
+  class Particle {
+    constructor(x, y) {
+      this.x = x;
+      this.y = y;
+      this.size = Math.random() * 5 + 2; // Larger particles
+      this.speedX = (Math.random() * 2 - 1) * 3; // Faster movement
+      this.speedY = (Math.random() * 2 - 1) * 3;
+      // Colors as requested
+      const colors = ['#FFE600', '#FFFFFF', '#808080'];
+      this.color = colors[Math.floor(Math.random() * colors.length)];
+      this.life = 60; // Longer life
+      this.opacity = 1;
+      this.initialSize = this.size;
+    }
+    
+    update() {
+      this.x += this.speedX;
+      this.y += this.speedY;
+      this.speedX *= 0.98; // Gradual slowdown
+      this.speedY *= 0.98;
+      this.life--;
+      this.opacity = this.life / 60; // Fade out
+      this.size = this.initialSize * (this.life / 60); // Shrink
+    }
+    
+    draw() {
+      ctx.globalAlpha = this.opacity;
+      ctx.fillStyle = this.color;
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+      ctx.fill();
+      
+      // Add glow effect
+      ctx.shadowBlur = 10;
+      ctx.shadowColor = this.color;
+      ctx.fill();
+      ctx.shadowBlur = 0;
+      ctx.globalAlpha = 1;
+    }
+  }
+  
+  // Show tooltip with Lean Six Sigma terminology
+  function showTooltip(message, duration = 3000) {
+    tooltip.textContent = message;
+    tooltip.style.display = 'block';
+    
+    setTimeout(() => {
+      tooltip.style.opacity = 0;
+      setTimeout(() => {
+        tooltip.style.display = 'none';
+        tooltip.style.opacity = 1;
+      }, 1000);
+    }, duration);
+  }
+  
+  // Add these variables for threshold tracking
+  let processLoadThresholds = {
+    threshold1: { value: PROCESS_LOAD_GOAL * 0.25, triggered: false },
+    threshold2: { value: PROCESS_LOAD_GOAL * 0.5, triggered: false },
+    threshold3: { value: PROCESS_LOAD_GOAL * 0.75, triggered: false }
+  };
+  
+  // Function to show a message about the game freeze
+  function showFreezeMessage() {
+    // Clear any existing message timeout
+    if (messageTimeout) {
+      clearTimeout(messageTimeout);
+    }
+    
+    // Display a persistent message about the freeze
+    const freezeMsg = "Process load critical threshold reached (300 collisions). System paused to prevent browser overload.";
+    businessMessage.textContent = freezeMsg;
+    businessMessage.style.opacity = 1;
+    
+    // Style the message to make it more noticeable
+    businessMessage.style.backgroundColor = 'rgba(220, 20, 20, 0.8)'; // Reddish background
+    businessMessage.style.color = 'white';
+    businessMessage.style.padding = '10px 15px';
+    businessMessage.style.fontWeight = 'bold';
+    businessMessage.style.borderLeft = '3px solid #FFFFFF';
+    
+    // Don't set a timeout - message stays until user takes action
+    
+    // Also show a tooltip that will fade away
+    showTooltip("System frozen: Press 'Reset Simulation' to reset and continue.", 8000);
+  }
+  
+  // Function to create a visual freeze effect
+  function createFreezeEffect() {
+    // Create a frost/freeze overlay effect
+    const freezeOverlay = document.createElement('div');
+    freezeOverlay.id = 'freezeOverlay';
+    freezeOverlay.style.position = 'absolute';
+    freezeOverlay.style.top = '0';
+    freezeOverlay.style.left = '0';
+    freezeOverlay.style.width = '100%';
+    freezeOverlay.style.height = '100%';
+    freezeOverlay.style.backgroundColor = 'rgba(100, 149, 237, 0.2)'; // Light blue tint
+    freezeOverlay.style.pointerEvents = 'none'; // Allow clicks to pass through
+    freezeOverlay.style.zIndex = '10';
+    
+    // Add a subtle frost-like pattern
+    freezeOverlay.style.backgroundImage = 'radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px)';
+    freezeOverlay.style.backgroundSize = '10px 10px';
+    
+    // Add to the maze container
+    mazeContainer.appendChild(freezeOverlay);
+  }
+  
+  // Function to freeze the game
+  function freezeGame() {
+    isGameFrozen = true;
+    
+    // Display a notification about the freeze
+    showFreezeMessage();
+    
+    // Create a visual freeze effect
+    createFreezeEffect();
+  }
+  
+  // Modified showBusinessMessage for smart message selection
+  function showBusinessMessage(category, value, oldValue, specificMessage = null) {
+    // Clear any existing message timeout
+    if (messageTimeout) {
+      clearTimeout(messageTimeout);
+    }
+    
+    // Use the specific message if provided
+    let message = specificMessage;
+    
+    // If no specific message, generate one based on category and values
+    if (!message) {
+      if (value !== undefined && category in businessMessages) {
+        message = getSmartBusinessMessage(category, value, oldValue);
+      } else if (category in businessMessages) {
+        // If no value provided, get a message based on current slider value
+        const slider = getSliderByCategory(category);
+        if (slider) {
+          const currentValue = parseFloat(slider.value);
+          message = getSmartBusinessMessage(category, currentValue);
+        } else if (category === 'process') {
+          // Process messages have separate structure
+          message = businessMessages.process.threshold1;
+        } else {
+          // Fallback to a message from the category
+          const messageTypes = Object.keys(businessMessages[category]);
+          const randomType = messageTypes[Math.floor(Math.random() * messageTypes.length)];
+          message = businessMessages[category][randomType];
+        }
+      } else {
+        message = "Process status updated.";
+      }
+    }
+    
+    // Display the message
+    businessMessage.textContent = message;
+    businessMessage.style.opacity = 1;
+    
+    // Set timeout to fade out after 3 seconds (unless this is a freeze message)
+    if (!isGameFrozen) {
+      messageTimeout = setTimeout(() => {
+        businessMessage.style.opacity = 0;
+      }, 3000);
+    }
+  }
+  
+  /**
+   * Updates the process KPIs based on game state
+   */
+  function updateProcessKPIs() {
+    // Only update if the game is not frozen
+    if (isGameFrozen) return;
+    
+    // Current time for calculations
+    const currentTime = performance.now();
+    
+    // Process Cycle Time calculation (in simulated days)
+	const elapsedMilliseconds = currentTime - startTime;
+	const processCycleTime = (elapsedMilliseconds / 1000 / 10).toFixed(1); // 1 second = 0.1 simulated days
+	leadTimeValue.textContent = processCycleTime + " days";
+
+	// Time Savings Percentage (formerly Value Added)
+	// Estimate time savings based on movement without collisions
+	totalProcessTime += 16.67; // approx ms per frame
+	if (collisionCount === 0 || collisionCount === lastCollisionCount) {
+	  valueAddedTime += 16.67;
+	}
+	const timeSavingsPercent = Math.round((valueAddedTime / totalProcessTime) * 100);
+	valueAddedValue.textContent = timeSavingsPercent + "%";
+
+	// Automation Complexity based on exceptions
+	// Scale from 1-5 where 1 is simple and 5 is complex
+	let automationComplexity;
+	if (collisionCount === 0) {
+	  automationComplexity = 1.0; // Simple automation
+	} else {
+	  // Basic formula to convert exception count to complexity level (simplified)
+	  automationComplexity = Math.min(5, 1 + (collisionCount / 20));
+	}
+	sigmaLevelValue.textContent = automationComplexity.toFixed(1);
+
+	// Process Success Rate (formerly First Pass Yield)
+	// Decreases with each exception, but can't go below 0
+	firstPassYield = Math.max(0, 100 - (collisionCount * 2));
+	fttValue.textContent = firstPassYield.toFixed(0) + "%";
+    
+    // Track last collision count for value-added calculation
+    lastCollisionCount = collisionCount;
+    
+    // Update objectives based on KPIs
+    updateObjectives();
+  }
+  
+  /**
+   * Updates the status of improvement objectives
+   * @param {number} timeSavingsPercent - Current value-added percentage
+   * @param {number} firstPassYield - Current first pass yield
+   * @param {number} leadTimeDays - Current lead time in days
+   */
+function updateObjectives() {
+  // Calculate normalized values (0-100%) for all relevant sliders
+  const documentationLevel = (parseInt(containerSizeSlider.value) - 450) / (800 - 450) * 100;
+  const standardizationLevel = (parseFloat(headSizeSlider.value) - 3) / (20 - 3) * 100;
+  const knowledgeBaseLevel = (parseInt(trailLengthSlider.value) - 1000) / (8000 - 1000) * 100;
+  const processVariability = 100 - ((parseInt(obstacleSizeSlider.value) - 20) / (80 - 20) * 100);
+  const manualInterventionRate = 100 - ((parseFloat(obstaclesPerWaveSlider.value) - 0.5) / (2.0 - 0.5) * 100);
+  const exceptionHandlingQuality = (parseFloat(obstacleSpeedSlider.value) - 0.5) / (3.0 - 0.5) * 100;
+  
+  // Objective 1: Achieve 95% process documentation coverage
+  // This is influenced by documentation level and knowledge base coverage
+  const documentationScore = (documentationLevel * 0.6) + (knowledgeBaseLevel * 0.4);
+  const objective1Status = document.getElementById('objective1Status');
+  if (documentationScore >= 95) {
+    objective1Status.classList.remove('incomplete');
+    objective1Status.classList.add('complete');
+  } else {
+    objective1Status.classList.remove('complete');
+    objective1Status.classList.add('incomplete');
+  }
+  
+  // Objective 2: Reach 85% standardization level
+  // This is influenced by standardization level and process variability
+  const standardizationScore = (standardizationLevel * 0.7) + (processVariability * 0.3);
+  const objective2Status = document.getElementById('objective2Status');
+  if (standardizationScore >= 85) {
+    objective2Status.classList.remove('incomplete');
+    objective2Status.classList.add('complete');
+  } else {
+    objective2Status.classList.remove('complete');
+    objective2Status.classList.add('incomplete');
+  }
+  
+  // Objective 3: Reduce manual workload by 40%
+  // This is influenced by manual intervention rate and exception handling quality
+  const workloadReductionScore = (manualInterventionRate * 0.6) + (exceptionHandlingQuality * 0.4);
+  const objective3Status = document.getElementById('objective3Status');
+  if (workloadReductionScore >= 40) {
+    objective3Status.classList.remove('incomplete');
+    objective3Status.classList.add('complete');
+  } else {
+    objective3Status.classList.remove('complete');
+    objective3Status.classList.add('incomplete');
+  }
+}
+  
+  // Update process load with Six Sigma thresholds
+  function updateProcessLoad(load) {
+    // Limit the load to the equivalent of 300 collisions (15000)
+    const cappedLoad = Math.min(load, 15000);
+    
+    // Update the progress bar
+    const percent = Math.min((cappedLoad / PROCESS_LOAD_GOAL) * 100, 100);
+    complexityProgress.style.width = percent + '%';
+    complexityValueDisplay.textContent = Math.floor(cappedLoad);
+    
+    // Track color changes using data attributes instead of checking the style directly
+    if (cappedLoad >= 1700 && complexityProgress.getAttribute('data-color-level') !== '3') {
+      complexityProgress.style.backgroundColor = '#FF6B35'; // Orange-red
+      complexityProgress.setAttribute('data-color-level', '3');
+      showBusinessMessage("process", null, null, businessMessages.process.threshold3);
+    } else if (cappedLoad >= 1200 && cappedLoad < 1700 && complexityProgress.getAttribute('data-color-level') !== '2') {
+      complexityProgress.style.backgroundColor = '#FF8C00'; // Dark orange
+      complexityProgress.setAttribute('data-color-level', '2');
+      showBusinessMessage("process", null, null, businessMessages.process.threshold2);
+    } else if (cappedLoad >= 500 && cappedLoad < 1200 && complexityProgress.getAttribute('data-color-level') !== '1') {
+      complexityProgress.style.backgroundColor = '#FFA500'; // Orange
+      complexityProgress.setAttribute('data-color-level', '1');
+      showBusinessMessage("process", null, null, businessMessages.process.threshold1);
+    } else if (cappedLoad < 500 && complexityProgress.getAttribute('data-color-level') !== '0') {
+      // Reset to default color if below threshold
+      complexityProgress.style.backgroundColor = '#FFD700'; // Default gold color
+      complexityProgress.removeAttribute('data-color-level');
+    }
+    
+    // Check for game completion
+    if (cappedLoad >= PROCESS_LOAD_GOAL && !processLoadGoalReached) {
+      processLoadGoalReached = true;
+      overlayMessage.style.display = 'flex';
+    }
+  }
+  
+  // Create enhanced particles effect
+  function createParticles(x, y) {
+    for (let i = 0; i < 40; i++) { // More particles
+      particles.push(new Particle(x, y));
+    }
+    isEffectActive = true;
+  }
+  
+  // Change head direction
+  function changeDirection(headIndex) {
+    const head = heads[headIndex];
+    const randomAngle = Math.random() * Math.PI * 2;
+    head.dirX = Math.cos(randomAngle) * SPEED;
+    head.dirY = Math.sin(randomAngle) * SPEED;
+  }
+  
+  // Update wave countdown with DMAIC phase indication
+  function updateWaveCountdown(deltaTime) {
+    // Skip if game is frozen
+    if (isGameFrozen) return;
+    
+    waveCountdown -= deltaTime;
+    // Set the new countdown max each time the frequency changes
+    waveCountdownMax = 15000 / waveFrequencyFactor;
+    const percent = Math.max((waveCountdown / waveCountdownMax) * 100, 0);
+    waveCountdownProgress.style.width = percent + '%';
+    
+    // Determine DMAIC phase based on countdown progress
+    const phasePercent = (waveCountdownMax - waveCountdown) / waveCountdownMax;
+    let phaseMessage = "";
+    
+	if (phasePercent < 0.2) {
+	  waveCountdownProgress.style.backgroundColor = "#3498db";
+	  phaseMessage = "Planning: Identifying automation opportunities";
+	} else if (phasePercent < 0.4) {
+	  waveCountdownProgress.style.backgroundColor = "#2ecc71";
+	  phaseMessage = "Design: Creating automation solution blueprint";
+	} else if (phasePercent < 0.6) {
+	  waveCountdownProgress.style.backgroundColor = "#f1c40f";
+	  phaseMessage = "Development: Building automation workflows";
+	} else if (phasePercent < 0.8) {
+	  waveCountdownProgress.style.backgroundColor = "#e67e22";
+	  phaseMessage = "Testing: Validating automation solution";
+	} else {
+	  waveCountdownProgress.style.backgroundColor = "#9b59b6";
+	  phaseMessage = "Deployment: Implementing automation in production";
+	}
+    
+    
+    // Update tooltip with DMAIC phase information when hovering over the wave progress bar
+    const waveProgressElement = document.getElementById('waveCountdownProgress');
+    waveProgressElement.setAttribute('title', phaseMessage);
+    
+    if (waveCountdown <= 0) {
+      triggerWave();
+      waveCountdown = waveCountdownMax; // Reset countdown with new max value
+    }
+  }
+  
+  // Trigger a new wave of obstacles
+  function triggerWave() {
+    // Always create at least a few obstacles, even on first wave
+    const baseObstacles = Math.floor(5 * obstaclesRatio);
+    const additionalObstacles = collisionCount < 4 ? 0 : Math.floor(collisionCount / 20);
+    const numObstacles = baseObstacles + additionalObstacles;
+    
+    for (let i = 0; i < numObstacles; i++) {
+      const size = customObstacleSize;
+      const obstacle = {
+        x: Math.random() * (canvas.width - size),
+        y: Math.random() * (canvas.height - size),
+        width: size,
+        height: size,
+        vx: (Math.random() * 2 - 1) * customObstacleSpeed,
+        vy: (Math.random() * 2 - 1) * customObstacleSpeed
+      };
+      obstacles.push(obstacle);
+    }
+    showTooltip("New automation release cycle initiated - updating process documentation!");
+  }
+  
+  // Update obstacles
+  function updateObstacles() {
+    obstacles.forEach(obs => {
+      obs.x += obs.vx;
+      obs.y += obs.vy;
+      
+      // Bounce off walls
+      if (obs.x < 0 || obs.x + obs.width > canvas.width) {
+        obs.vx = -obs.vx;
+        obs.x = Math.max(0, Math.min(canvas.width - obs.width, obs.x));
+      }
+      if (obs.y < 0 || obs.y + obs.height > canvas.height) {
+        obs.vy = -obs.vy;
+        obs.y = Math.max(0, Math.min(canvas.height - obs.height, obs.y));
+      }
     });
+  }
+  
+  // Check head collisions
+  function checkHeadCollisions() {
+    for (let i = 0; i < heads.length - 1; i++) {
+      for (let j = i + 1; j < heads.length; j++) {
+        const dx = heads[i].x - heads[j].x;
+        const dy = heads[i].y - heads[j].y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        
+        if (distance < DOT_RADIUS * 2) {
+          // Collision detected, change direction of both heads
+          changeDirection(i);
+          changeDirection(j);
+          headCollisionCount++; // Count head collisions
+          collisionCount++; // Add to main collision count for process load
+          createParticles((heads[i].x + heads[j].x) / 2, (heads[i].y + heads[j].y) / 2);
+          showTooltip("Resource constraint detected - implementing workflow optimization!");
+          
+          // Check if reached 300 collisions
+          if (collisionCount >= 300 && !isGameFrozen) {
+            freezeGame();
+          }
+        }
+      }
+    }
+  }
+  
+  // Draw game state
+  function draw() {
+    // Clear the canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    // Draw static trails with gradient effect
+    staticTrails.forEach(trail => {
+      if (trail.length < 2) return;
+      
+      for (let i = 1; i < trail.length; i++) {
+        // Calculate opacity based on position in trail - brighter at the end
+        const opacity = i / trail.length;
+        
+        ctx.beginPath();
+        ctx.moveTo(trail[i-1].x, trail[i-1].y);
+        ctx.lineTo(trail[i].x, trail[i].y);
+        ctx.strokeStyle = `rgba(255, 255, 255, ${opacity})`;
+        ctx.lineWidth = LINE_WIDTH;
+        ctx.stroke();
+      }
+    });
+    
+    // Draw head trails with gradient effect - white at head, darker at the end
+    heads.forEach(head => {
+      if (head.trail.length < 2) return;
+      
+      for (let i = 1; i < head.trail.length; i++) {
+        // Calculate opacity based on position in trail - brighter near head
+        const opacity = (i / head.trail.length);
+        
+        ctx.beginPath();
+        ctx.moveTo(head.trail[i-1].x, head.trail[i-1].y);
+        ctx.lineTo(head.trail[i].x, head.trail[i].y);
+        ctx.strokeStyle = `rgba(255, 255, 255, ${opacity})`;
+        ctx.lineWidth = LINE_WIDTH;
+        ctx.stroke();
+      }
+    });
+    
+    // Draw obstacles as different types of business challenges
+    obstacles.forEach((obstacle, index) => {
+      ctx.save();
+      const centerX = obstacle.x + obstacle.width / 2;
+      const centerY = obstacle.y + obstacle.height / 2;
+      ctx.translate(centerX, centerY);
+      
+      // Assign obstacle type based on index (evenly distribute types)
+      const obstacleType = index % 4;
+      
+      switch(obstacleType) {
+        case 0: // Quality issues (red diamonds)
+          ctx.rotate(Math.PI / 4);
+          ctx.fillStyle = "#FF5555";
+          ctx.shadowColor = "#FF5555";
+          ctx.fillRect(-obstacle.width / 2, -obstacle.height / 2, obstacle.width, obstacle.height);
+          break;
+          
+        case 1: // Resource constraints (orange squares)
+          ctx.fillStyle = "#FF8C00";
+          ctx.shadowColor = "#FF8C00";
+          ctx.fillRect(-obstacle.width / 2, -obstacle.height / 2, obstacle.width, obstacle.height);
+          break;
+          
+        case 2: // Compliance risks (purple hexagons)
+          ctx.beginPath();
+          for (let i = 0; i < 6; i++) {
+            const angle = (Math.PI / 3) * i;
+            const x = Math.cos(angle) * (obstacle.width / 2);
+            const y = Math.sin(angle) * (obstacle.height / 2);
+            if (i === 0) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+          }
+          ctx.closePath();
+          ctx.fillStyle = "#9370DB";
+          ctx.shadowColor = "#9370DB";
+          ctx.fill();
+          break;
+          
+        case 3: // Technical debt (gray circles)
+          ctx.beginPath();
+          ctx.arc(0, 0, obstacle.width / 2, 0, Math.PI * 2);
+          ctx.fillStyle = "#A9A9A9";
+          ctx.shadowColor = "#A9A9A9";
+          ctx.fill();
+          break;
+      }
+      
+      ctx.shadowBlur = 15;
+      ctx.restore();
+    });
+    
+    // Draw particles
+    if (isEffectActive) {
+      particles.forEach(particle => particle.draw());
+    }
+    
+    // Draw heads
+    heads.forEach(head => {
+      ctx.beginPath();
+      ctx.arc(head.x, head.y, DOT_RADIUS, 0, Math.PI * 2);
+      ctx.fillStyle = '#ecd404';
+      ctx.shadowBlur = 15;
+      ctx.shadowColor = '#ecd404';
+      ctx.fill();
+      ctx.shadowBlur = 0;
+    });
+  }
+  
+  // Game loop
+  function gameLoop() {
+    update();
+    draw();
+    requestAnimationFrame(gameLoop);
+  }
+  
+  // Update game state
+  function update() {
+    // Skip updating if the game is frozen
+    if (isGameFrozen) {
+      return;
+    }
+    
+    // Update obstacles
+    updateObstacles();
+    
+    // Update heads
+    heads.forEach((head, i) => {
+      // Move the head
+      head.x += head.dirX;
+      head.y += head.dirY;
+      
+      // Bounce off walls - no longer increment collisionCount
+      if (head.x - DOT_RADIUS <= 0 || head.x + DOT_RADIUS >= canvas.width) {
+        head.dirX = -head.dirX;
+        head.x = Math.max(DOT_RADIUS, Math.min(canvas.width - DOT_RADIUS, head.x));
+        wallCollisionCount++; // Wall collisions tracked separately
+      }
+      if (head.y - DOT_RADIUS <= 0 || head.y + DOT_RADIUS >= canvas.height) {
+        head.dirY = -head.dirY;
+        head.y = Math.max(DOT_RADIUS, Math.min(canvas.height - DOT_RADIUS, head.y));
+        wallCollisionCount++; // Wall collisions tracked separately
+      }
+      
+      // Check collisions with obstacles
+      obstacles.forEach((obstacle, obsIndex) => {
+        if (head.x + DOT_RADIUS > obstacle.x && 
+            head.x - DOT_RADIUS < obstacle.x + obstacle.width &&
+            head.y + DOT_RADIUS > obstacle.y && 
+            head.y - DOT_RADIUS < obstacle.y + obstacle.height) {
+          
+          // Create a unique collision ID
+          const collisionId = `${i}-${obsIndex}`;
+          
+          // Only count the collision if it hasn't been recorded yet
+          if (!headObstacleCollisions.has(collisionId)) {
+            headObstacleCollisions.add(collisionId);
+            
+            // Collision detected
+            const angle = Math.atan2(
+              head.y - (obstacle.y + obstacle.height/2), 
+              head.x - (obstacle.x + obstacle.width/2)
+            );
+            head.dirX = Math.cos(angle) * SPEED;
+            head.dirY = Math.sin(angle) * SPEED;
+            collisionCount++; // Obstacle collisions still count
+            
+            // Create particles on obstacle collision
+            createParticles(head.x, head.y);
+            
+            // Check if we've reached 300 collisions and need to freeze the game
+            if (collisionCount >= 300 && !isGameFrozen) {
+              freezeGame();
+            }
+          }
+        } else {
+          // If not colliding, remove any collision records for this head-obstacle pair
+          headObstacleCollisions.delete(`${i}-${obsIndex}`);
+        }
+      });
+      
+      // Update trail
+      head.trail.push({x: head.x, y: head.y});
+      if (head.trail.length > MAX_TRAIL_LENGTH) {
+        head.trail.shift();
+      }
+    });
+    
+    // Check head collisions
+    checkHeadCollisions();
+    
+    // Update particles
+    if (isEffectActive) {
+      for (let i = particles.length - 1; i >= 0; i--) {
+        particles[i].update();
+        if (particles[i].life <= 0) {
+          particles.splice(i, 1);
+        }
+      }
+      if (particles.length === 0) {
+        isEffectActive = false;
+      }
+    }
+    
+    // Update process load (based only on obstacle collisions and head collisions)
+    const processLoad = collisionCount * 50;
+    updateProcessLoad(processLoad);
+    
+    // Update collisions display
+    collisionsValue.textContent = collisionCount;
+    
+    // Update KPIs
+    updateProcessKPIs();
+    
+    // Update wave countdown
+    const now = performance.now();
+    const deltaTime = now - lastFrameTime;
+    lastFrameTime = now;
+    updateWaveCountdown(deltaTime);
+  }
+  
+  // Event listeners for sliders
+  // Container size slider
+  containerSizeSlider.addEventListener('input', function() {
+    const size = parseInt(this.value);
+    const businessValue = getBusinessValue('containerSize', size);
+    containerSizeValue.textContent = businessValue;
+    
+    // Store previous value for smart message
+    const previousValue = this.getAttribute('data-prev-value') || this.value;
+    
+    // Show business message
+    showBusinessMessage('containerSize', size, previousValue);
+    
+    // Update stored value
+    this.setAttribute('data-prev-value', size);
+  });
+  
+  // Apply container size changes only when sliding is complete
+  containerSizeSlider.addEventListener('change', function() {
+    const size = parseInt(this.value);
+    mazeContainer.style.width = size + 'px';
+    mazeContainer.style.height = size + 'px';
+    
+    // Update canvas size
+    canvas.width = size;
+    canvas.height = size;
+    
+    // Ensure heads stay within bounds
+    heads.forEach(head => {
+      head.x = Math.min(head.x, canvas.width - DOT_RADIUS);
+      head.y = Math.min(head.y, canvas.height - DOT_RADIUS);
+    });
+  });
+  
+  // Head size slider
+  headSizeSlider.addEventListener('input', function() {
+    DOT_RADIUS = parseFloat(this.value);
+    const businessValue = getBusinessValue('headSize', DOT_RADIUS);
+    headSizeValue.textContent = businessValue;
+    
+    // Store previous value for smart message
+    const previousValue = this.getAttribute('data-prev-value') || this.value;
+    
+    // Show business message
+    showBusinessMessage('headSize', DOT_RADIUS, previousValue);
+    
+    // Update stored value
+    this.setAttribute('data-prev-value', DOT_RADIUS);
+  });
+  
+  // Trail Length slider
+  trailLengthSlider.addEventListener('input', function() {
+    MAX_TRAIL_LENGTH = parseInt(this.value);
+    const businessValue = getBusinessValue('trailLength', MAX_TRAIL_LENGTH);
+    trailLengthValue.textContent = businessValue;
+    
+    // Store previous value for smart message
+    const previousValue = this.getAttribute('data-prev-value') || this.value;
+    
+    // Trim existing trails if needed
+    heads.forEach(head => {
+      if (head.trail.length > MAX_TRAIL_LENGTH) {
+        head.trail = head.trail.slice(head.trail.length - MAX_TRAIL_LENGTH);
+      }
+    });
+    
+    staticTrails.forEach((trail, index) => {
+      if (trail.length > MAX_TRAIL_LENGTH) {
+        staticTrails[index] = trail.slice(trail.length - MAX_TRAIL_LENGTH);
+      }
+    });
+    
+    // Show business message
+    showBusinessMessage('trailLength', MAX_TRAIL_LENGTH, previousValue);
+    
+    // Update stored value
+    this.setAttribute('data-prev-value', MAX_TRAIL_LENGTH);
+  });
+  
+  // Speed slider
+  speedSlider.addEventListener('input', function() {
+    SPEED = parseFloat(this.value);
+    const businessValue = getBusinessValue('speed', SPEED);
+    speedValue.textContent = businessValue;
+    
+    // Store previous value for smart message
+    const previousValue = this.getAttribute('data-prev-value') || this.value;
+    
+    // Update head speeds
+    heads.forEach(head => {
+      const angle = Math.atan2(head.dirY, head.dirX);
+      head.dirX = Math.cos(angle) * SPEED;
+      head.dirY = Math.sin(angle) * SPEED;
+    });
+    
+    // Show business message
+    showBusinessMessage('speed', SPEED, previousValue);
+    
+    // Update stored value
+    this.setAttribute('data-prev-value', SPEED);
+  });
+  
+  // Number of heads slider
+  numHeadsSlider.addEventListener('input', function() {
+    const newNumHeads = parseInt(this.value);
+    const businessValue = getBusinessValue('numHeads', newNumHeads);
+    numHeadsValue.textContent = businessValue;
+    
+    // Store previous value for smart message
+    const previousValue = this.getAttribute('data-prev-value') || this.value;
+    
+    // Add or remove heads as needed
+    while (heads.length < newNumHeads) {
+      heads.push({
+        x: canvas.width / 2,
+        y: canvas.height / 2,
+        dirX: (Math.random() * 2 - 1) * SPEED,
+        dirY: (Math.random() * 2 - 1) * SPEED,
+        trail: [{ x: canvas.width / 2, y: canvas.height / 2 }]
+      });
+    }
+    
+    while (heads.length > newNumHeads) {
+      const removed = heads.pop();
+      staticTrails.push(removed.trail);
+    }
+    
+    // Show business message
+    showBusinessMessage('numHeads', newNumHeads, previousValue);
+    
+    // Update stored value
+    this.setAttribute('data-prev-value', newNumHeads);
+  });
+  
+  // Wave frequency slider
+  waveFrequencySlider.addEventListener('input', function() {
+    waveFrequencyFactor = parseFloat(this.value);
+    const businessValue = getBusinessValue('waveFrequency', waveFrequencyFactor);
+    waveFrequencyValue.textContent = businessValue;
+    
+    // Store previous value for smart message
+    const previousValue = this.getAttribute('data-prev-value') || this.value;
+    
+    // Update the waveCountdownMax
+    waveCountdownMax = 15000 / waveFrequencyFactor;
+    // Reset the current countdown to match the new max (maintain the same percentage)
+    const currentPercent = waveCountdown / (15000 / (waveFrequencyFactor - (this.value - (this.oldValue || this.value))));
+    waveCountdown = currentPercent * waveCountdownMax;
+    
+    // Show business message
+    showBusinessMessage('waveFrequency', waveFrequencyFactor, previousValue);
+    
+    // Update stored value
+    this.setAttribute('data-prev-value', waveFrequencyFactor);
+  });
+  
+  // Add an event listener to track the old value
+  waveFrequencySlider.addEventListener('mousedown', function() {
+    this.oldValue = parseFloat(this.value);
+  });
+  
+  waveFrequencySlider.addEventListener('touchstart', function() {
+    this.oldValue = parseFloat(this.value);
+  });
+  
+  // Obstacle size slider
+  obstacleSizeSlider.addEventListener('input', function() {
+    customObstacleSize = parseInt(this.value);
+    const businessValue = getBusinessValue('obstacleSize', customObstacleSize);
+    obstacleSizeValue.textContent = businessValue;
+    
+    // Store previous value for smart message
+    const previousValue = this.getAttribute('data-prev-value') || this.value;
+    
+    // Update existing obstacles
+    obstacles.forEach(obs => {
+      obs.width = customObstacleSize;
+      obs.height = customObstacleSize;
+    });
+    
+    // Show business message
+    showBusinessMessage('obstacleSize', customObstacleSize, previousValue);
+    
+    // Update stored value
+    this.setAttribute('data-prev-value', customObstacleSize);
+  });
+  
+  // Obstacle speed slider
+  obstacleSpeedSlider.addEventListener('input', function() {
+    customObstacleSpeed = parseFloat(this.value);
+    const businessValue = getBusinessValue('obstacleSpeed', customObstacleSpeed);
+    obstacleSpeedValue.textContent = businessValue;
+    
+    // Store previous value for smart message
+    const previousValue = this.getAttribute('data-prev-value') || this.value;
+    
+    // Update existing obstacles
+    obstacles.forEach(obs => {
+      obs.vx = Math.sign(obs.vx) * customObstacleSpeed;
+      obs.vy = Math.sign(obs.vy) * customObstacleSpeed;
+    });
+    
+    // Show business message
+    showBusinessMessage('obstacleSpeed', customObstacleSpeed, previousValue);
+    
+    // Update stored value
+    this.setAttribute('data-prev-value', customObstacleSpeed);
+  });
+  
+  // Obstacles per wave ratio slider
+  obstaclesPerWaveSlider.addEventListener('input', function() {
+    obstaclesRatio = parseFloat(this.value);
+    const businessValue = getBusinessValue('obstaclesPerWave', obstaclesRatio);
+    obstaclesPerWaveValue.textContent = businessValue;
+    
+    // Store previous value for smart message
+    const previousValue = this.getAttribute('data-prev-value') || this.value;
+    
+    // Show business message
+    showBusinessMessage('obstaclesPerWave', obstaclesRatio, previousValue);
+    
+    // Update stored value
+    this.setAttribute('data-prev-value', obstaclesRatio);
+  });
+  
+  // Clear button
+  clearButton.addEventListener('click', function() {
+    heads.forEach(head => {
+      head.trail = [{ x: head.x, y: head.y }];
+    });
+    staticTrails = [];
+    obstacles = [];
+    collisionCount = 0;
+    headCollisionCount = 0;
+    wallCollisionCount = 0;
+    headObstacleCollisions.clear(); // Clear the collision tracking
+    waveCountdown = waveCountdownMax;
+    updateProcessLoad(0);
+    processLoadGoalReached = false;
+    overlayMessage.style.display = 'none';
+    
+    // Reset KPI tracking variables
+    startTime = performance.now();
+    valueAddedTime = 0;
+    totalProcessTime = 0;
+    firstPassYield = 100;
+    lastCollisionCount = 0;
+    
+    // Reset threshold triggers
+    processLoadThresholds.threshold1.triggered = false;
+    processLoadThresholds.threshold2.triggered = false;
+    processLoadThresholds.threshold3.triggered = false;
+    
+    // Reset progress bar color
+    complexityProgress.style.backgroundColor = '#FFD700';
+    complexityProgress.removeAttribute('data-color-level');
+    
+    // Unfreeze the game if it was frozen
+    if (isGameFrozen) {
+      isGameFrozen = false;
+      
+      // Remove the freeze overlay if it exists
+      const freezeOverlay = document.getElementById('freezeOverlay');
+      if (freezeOverlay) {
+        freezeOverlay.remove();
+      }
+      
+      // Reset the business message styling
+      businessMessage.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
+      businessMessage.style.color = '#FFD700';
+      businessMessage.style.fontWeight = 'normal';
+      businessMessage.style.borderLeft = 'none';
+      businessMessage.style.padding = '5px 15px';
+    }
+    
+    showBusinessMessage('containerSize', null, null, "Process reset complete. System ready for new operational cycle.");
+  });
+  
+  // Restart button
+  restartButton.addEventListener('click', function() {
+    clearButton.click();
+  });
+  
+  // Canvas click event - only create particles when clicking on heads or obstacles
+  canvas.addEventListener('click', function(event) {
+    // Skip if the game is frozen
+    if (isGameFrozen) return;
+    
+    const rect = canvas.getBoundingClientRect();
+    const mouseX = event.clientX - rect.left;
+    const mouseY = event.clientY - rect.top;
+    
+    // Check if clicked on a head or near it (improved hit detection)
+    for (let i = 0; i < heads.length; i++) {
+      const head = heads[i];
+      const distance = Math.sqrt(Math.pow(mouseX - head.x, 2) + Math.pow(mouseY - head.y, 2));
+      // Increased detection radius for better usability
+      if (distance <= DOT_RADIUS * 1.5) {
+        changeDirection(i);
+        createParticles(head.x, head.y);
+        showTooltip("Workflow redirected - applying automation to maximize efficiency!");
+        return;
+      }
+    }
+    
+    // Check if clicked on an obstacle - more lenient detection
+    for (let i = obstacles.length - 1; i >= 0; i--) {
+      const obs = obstacles[i];
+      const centerX = obs.x + obs.width / 2;
+      const centerY = obs.y + obs.height / 2;
+      
+      // More generous hit detection for obstacles (square-based)
+      if (mouseX >= obs.x - 10 && mouseX <= obs.x + obs.width + 10 &&
+          mouseY >= obs.y - 10 && mouseY <= obs.y + obs.height + 10) {
+        createParticles(centerX, centerY);
+        obstacles.splice(i, 1);
+        showTooltip("Exception handled - process knowledge base updated!");
+        return;
+      }
+    }
+    
+    // Removed particle creation on empty space clicks
+  });
+  
+// Initialize all sliders to minimum values
+const allSliders = document.querySelectorAll('.slider');
+allSliders.forEach(slider => {
+  // Set slider to minimum value (except containerSize)
+  if (slider.id !== 'containerSizeSlider') { // Keep container size as is
+    slider.value = slider.min;
+  }
+  
+  // Store the initial value
+  slider.setAttribute('data-prev-value', slider.value);
+  
+  // Set initial business values
+  if (slider.id === 'containerSizeSlider') {
+    containerSizeValue.textContent = getBusinessValue('containerSize', parseInt(slider.value));
+  } else if (slider.id === 'headSizeSlider') {
+    DOT_RADIUS = parseFloat(slider.min);
+    headSizeValue.textContent = getBusinessValue('headSize', parseFloat(slider.value));
+  } else if (slider.id === 'trailLengthSlider') {
+    MAX_TRAIL_LENGTH = parseInt(slider.min);
+    trailLengthValue.textContent = getBusinessValue('trailLength', parseInt(slider.value));
+  } else if (slider.id === 'speedSlider') {
+    SPEED = parseFloat(slider.min);
+    speedValue.textContent = getBusinessValue('speed', parseFloat(slider.value));
+  } else if (slider.id === 'numHeadsSlider') {
+    numHeads = parseInt(slider.min);
+    numHeadsValue.textContent = getBusinessValue('numHeads', parseInt(slider.value));
+  } else if (slider.id === 'waveFrequencySlider') {
+    waveFrequencyFactor = parseFloat(slider.min);
+    waveFrequencyValue.textContent = getBusinessValue('waveFrequency', parseFloat(slider.value));
+  } else if (slider.id === 'obstacleSizeSlider') {
+    customObstacleSize = parseInt(slider.min);
+    obstacleSizeValue.textContent = getBusinessValue('obstacleSize', parseInt(slider.value));
+  } else if (slider.id === 'obstacleSpeedSlider') {
+    customObstacleSpeed = parseFloat(slider.min);
+    obstacleSpeedValue.textContent = getBusinessValue('obstacleSpeed', parseFloat(slider.value));
+  } else if (slider.id === 'obstaclesPerWaveSlider') {
+    obstaclesRatio = parseFloat(slider.min);
+    obstaclesPerWaveValue.textContent = getBusinessValue('obstaclesPerWave', parseFloat(slider.value));
+  }
+});
+  
+  // Initialize and start the game loop
+  initGame();
+  gameLoop();
+  
+  // Show initial business message
+  showBusinessMessage('containerSize', null, null, "Process initialized. System ready for operation.");
+  
+  // Initialize controls state 
+  const controlsContainer = document.querySelector('.controls-container');
+  controlsContainer.style.display = 'none'; // Start with controls hidden
+  
+
+  
+   // Make subsections expanded by default
+  sectionHeaders.forEach(header => {
+    if (!header.classList.contains('main-controls-header')) {
+      const content = header.nextElementSibling;
+      const icon = header.querySelector('.collapse-icon');
+      content.classList.remove('collapsed');
+      icon.classList.remove('collapsed');
+    } else {
+      const icon = header.querySelector('.collapse-icon');
+      icon.classList.add('collapsed');
+    }
+  });
+  
+  // Add help functionality for objectives
+const objectivesHelpIcon = document.getElementById('objectivesHelpIcon');
+objectivesHelpIcon.addEventListener('click', function(event) {
+  // Stop the event propagation
+  event.stopPropagation();
+  
+  // Create help modal if it doesn't exist
+  let helpModal = document.getElementById('objectivesHelpModal');
+  if (!helpModal) {
+    helpModal = document.createElement('div');
+    helpModal.id = 'objectivesHelpModal';
+    helpModal.className = 'help-modal';
+helpModal.innerHTML = `
+  <h4>Automation Objectives</h4>
+  <p>Achieve these objectives by adjusting multiple parameters:</p>
+  <ul>
+    <li><strong>Documentation Coverage (95%+)</strong>: Increase both Process Documentation Level and Knowledge Base Coverage sliders</li>
+    <li><strong>Process Standardization (85%+)</strong>: Increase Process Standardization and decrease Process Variability sliders</li>
+    <li><strong>Reduce Manual Workload (40%+)</strong>: Decrease Manual Intervention Rate and increase Exception Handling Quality sliders</li>
+  </ul>
+  <p>Each objective depends on multiple factors - just like in real automation projects! Finding the right balance is key to success.</p>
+  <button id="closeHelpButton">Got it</button>
+`;
+    document.body.appendChild(helpModal);
+    
+
+	// More reliable positioning that works across screen sizes
+	const rect = objectivesHelpIcon.getBoundingClientRect();
+	helpModal.style.top = (rect.top + window.scrollY - helpModal.offsetHeight - 10) + 'px';
+	helpModal.style.left = (rect.left + window.scrollX - (helpModal.offsetWidth/2) + 10) + 'px';
+    
+	document.addEventListener('click', function closeOutside(event) {
+  if (!helpModal.contains(event.target) && event.target !== objectivesHelpIcon) {
+    helpModal.remove();
+    document.removeEventListener('click', closeOutside);
+  }
+}, { once: false });
+	
+	// Add common callback for all sliders to update objectives
+[containerSizeSlider, headSizeSlider, trailLengthSlider, obstacleSizeSlider, obstacleSpeedSlider, obstaclesPerWaveSlider].forEach(slider => {
+  slider.addEventListener('input', function() {
+    // Update objectives based on current slider settings
+    updateObjectives();
+  });
+});
+	
+    // Add close button functionality
+    document.getElementById('closeHelpButton').addEventListener('click', function() {
+      helpModal.remove();
+    });
+  } else {
+    helpModal.remove();
+  }
+});
+  });
+
+  
+  <!-- Main Game Script - Include the script.js file -->
   </script>
   
-  <!-- ElevenLabs Convai Widget Script -->
-  <script src="https://elevenlabs.io/convai-widget/index.js" type="text/javascript"></script>
+  <!-- QR Code Container -->
+<div class="qr-code-container">
+  <div class="qr-code-inner">
+    <h3>Scan to try on your device</h3>
+    <div id="qrcode"></div>
+    <p>https://carmon1985.github.io/intelligent-automation/</p>
+  </div>
+</div>
+  
 </body>
 </html>
