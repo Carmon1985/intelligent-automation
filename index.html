@@ -812,6 +812,35 @@ h3 {
 }
 	
   </style>
+  <style id="compact-sliders">
+  /* Compact text styles for sliders */
+  .control-label span {
+    font-size: 0.8rem !important;
+  }
+  
+  .control-value {
+    font-size: 0.8rem !important;
+  }
+  
+  /* Make slider controls take less vertical space */
+  .control-group {
+    margin-bottom: 10px !important;
+  }
+  
+  .slider {
+    margin: 4px 0 !important;
+  }
+  
+  /* Slightly reduce section header size */
+  .section-header h3 {
+    font-size: 1rem !important;
+  }
+  
+  .section-header {
+    margin-bottom: 10px !important;
+  }
+</style>
+  
 </head>
 <body>
   <div class="container">
@@ -1152,6 +1181,8 @@ document.addEventListener('DOMContentLoaded', function() {
   let obstaclesRatio = parseFloat(obstaclesPerWaveSlider.value);
   const LINE_WIDTH = 2;
   
+  let isResizing = false; // Add this with your other state variables like isGameFrozen
+  
   // Game state
 let heads = [];
 let obstacles = [];
@@ -1187,6 +1218,47 @@ let wallCollisionCount = 0; // Track wall collisions separately
    * @param {number} value - The raw slider value
    * @returns {string} - Business-friendly display value
    */
+   
+// Complete the resize operation with improved bounds handling
+function completeResize(newWidth, newHeight) {
+  // Update canvas dimensions
+  canvas.width = newWidth;
+  canvas.height = newHeight;
+  
+  // Reset head positions with extra care for boundaries
+  heads.forEach(head => {
+    // Use a larger buffer for safety
+    const buffer = Math.max(5, DOT_RADIUS + 2);
+    
+    // Ensure position is within bounds
+    head.x = Math.max(buffer, Math.min(head.x, canvas.width - buffer));
+    head.y = Math.max(buffer, Math.min(head.y, canvas.height - buffer));
+    
+    // Reset trail to avoid visual artifacts
+    head.trail = [{ x: head.x, y: head.y }];
+    
+    // Ensure direction vectors are reasonable
+    const maxSpeed = SPEED * 1.5;
+    head.dirX = Math.max(-maxSpeed, Math.min(head.dirX, maxSpeed));
+    head.dirY = Math.max(-maxSpeed, Math.min(head.dirY, maxSpeed));
+  });
+  
+  // Reset obstacles to be within bounds
+  obstacles.forEach(obs => {
+    obs.x = Math.max(0, Math.min(obs.x, canvas.width - obs.width));
+    obs.y = Math.max(0, Math.min(obs.y, canvas.height - obs.height));
+  });
+  
+  // Clear collision tracking to prevent false positives
+  headObstacleCollisions.clear();
+  
+  // Force immediate redraw
+  draw();
+  
+  // Clear resize state
+  isResizing = false;
+}
+   
   function getBusinessValue(category, value) {
 	const businessScales = {
 	  containerSize: {
@@ -2014,35 +2086,140 @@ function draw() {
     requestAnimationFrame(gameLoop);
   }
   
-  // Update game state
-  function update() {
-    // Skip updating if the game is frozen
-    if (isGameFrozen) {
-      return;
+function fixLayoutAfterResize() {
+  // Fix for right-hand slider visibility issue
+  const gameControlWrapper = document.querySelector('.game-control-wrapper');
+  const mazeWidth = mazeContainer.clientWidth;
+  const windowWidth = window.innerWidth;
+  const containerWidth = document.querySelector('.container').clientWidth;
+  
+  // Check if maze size is pushing content outside the viewport
+  const isOverflowing = (mazeWidth > windowWidth * 0.6);
+  
+  // Apply responsive layout
+  setTimeout(() => {
+    // Auto-switch to a mobile-friendly layout when needed
+    if (windowWidth <= 768 || isOverflowing) {
+      // Stack layout (controls below maze)
+      gameControlWrapper.style.gridTemplateColumns = "1fr";
+      gameControlWrapper.style.gridTemplateAreas = 
+        '"maze" "controls" "process"';
+      
+      // Center the maze
+      mazeContainer.style.margin = "0 auto";
+      mazeContainer.style.maxWidth = Math.min(containerWidth, windowWidth - 40) + "px";
+    } else {
+      // Desktop side-by-side layout
+      gameControlWrapper.style.gridTemplateColumns = "auto 1fr";
+      gameControlWrapper.style.gridTemplateAreas = 
+        '"maze controls" "process process"';
     }
     
-    // Update obstacles
-    updateObstacles();
+    // Ensure the maze doesn't exceed container boundaries
+    if (parseInt(containerSizeSlider.value) > containerWidth * 0.7) {
+      const maxSize = Math.min(containerWidth * 0.7, windowWidth - 40);
+      mazeContainer.style.width = maxSize + "px";
+      mazeContainer.style.height = maxSize + "px";
+      
+      // Update canvas size to match constrained container
+      canvas.width = mazeContainer.clientWidth;
+      canvas.height = mazeContainer.clientHeight;
+    }
     
-    // Update heads
-    heads.forEach((head, i) => {
-      // Move the head
-      head.x += head.dirX;
-      head.y += head.dirY;
+    // Force browser to recalculate layout
+    gameControlWrapper.offsetHeight;
+    
+    // Always make sure controls are visible
+    const controlsContainer = document.querySelector('.controls-container');
+    if (controlsVisible) {
+      controlsContainer.style.display = 'grid';
+    }
+  }, 50);
+}
+  
+ // Update game state
+// Replace your entire update function with this version
+function update() {
+  // Skip updating if the game is frozen or currently resizing
+  if (isGameFrozen || isResizing) {
+    return;
+  }
+  
+  // CRITICAL: Double-check canvas dimensions match container
+  if (canvas.width !== mazeContainer.clientWidth || canvas.height !== mazeContainer.clientHeight) {
+    canvas.width = mazeContainer.clientWidth;
+    canvas.height = mazeContainer.clientHeight;
+  }
+  
+  // Update obstacles first
+  updateObstacles();
+  
+  // Update heads with bulletproof bounds checking
+  heads.forEach((head, i) => {
+    // Store previous position
+    const prevX = head.x;
+    const prevY = head.y;
+    
+    // Calculate new position but don't apply yet
+    const newX = head.x + head.dirX;
+    const newY = head.y + head.dirY;
+    
+    // Check bounds using current canvas dimensions
+    let boundaryCollision = false;
+    
+    // X-axis boundary checks
+    if (newX - DOT_RADIUS <= 0) {
+      // Would hit left wall
+      head.x = DOT_RADIUS + 1; // Push inside boundary
+      head.dirX = Math.abs(head.dirX); // Force positive X direction
+      boundaryCollision = true;
+      wallCollisionCount++;
+    } else if (newX + DOT_RADIUS >= canvas.width) {
+      // Would hit right wall
+      head.x = canvas.width - DOT_RADIUS - 1; // Push inside boundary
+      head.dirX = -Math.abs(head.dirX); // Force negative X direction
+      boundaryCollision = true;
+      wallCollisionCount++;
+    } else {
+      // Safe to move in X direction
+      head.x = newX;
+    }
+    
+    // Y-axis boundary checks
+    if (newY - DOT_RADIUS <= 0) {
+      // Would hit top wall
+      head.y = DOT_RADIUS + 1; // Push inside boundary
+      head.dirY = Math.abs(head.dirY); // Force positive Y direction
+      boundaryCollision = true;
+      wallCollisionCount++;
+    } else if (newY + DOT_RADIUS >= canvas.height) {
+      // Would hit bottom wall
+      head.y = canvas.height - DOT_RADIUS - 1; // Push inside boundary
+      head.dirY = -Math.abs(head.dirY); // Force negative Y direction
+      boundaryCollision = true;
+      wallCollisionCount++;
+    } else {
+      // Safe to move in Y direction
+      head.y = newY;
+    }
+    
+    // Emergency safety check
+    if (isNaN(head.x) || isNaN(head.y) || 
+        head.x < 0 || head.x > canvas.width || 
+        head.y < 0 || head.y > canvas.height) {
+      // Reset to center if position is invalid
+      head.x = canvas.width / 2;
+      head.y = canvas.height / 2;
+      head.trail = [{ x: head.x, y: head.y }];
       
-      // Bounce off walls - no longer increment collisionCount
-      if (head.x - DOT_RADIUS <= 0 || head.x + DOT_RADIUS >= canvas.width) {
-        head.dirX = -head.dirX;
-        head.x = Math.max(DOT_RADIUS, Math.min(canvas.width - DOT_RADIUS, head.x));
-        wallCollisionCount++; // Wall collisions tracked separately
-      }
-      if (head.y - DOT_RADIUS <= 0 || head.y + DOT_RADIUS >= canvas.height) {
-        head.dirY = -head.dirY;
-        head.y = Math.max(DOT_RADIUS, Math.min(canvas.height - DOT_RADIUS, head.y));
-        wallCollisionCount++; // Wall collisions tracked separately
-      }
-      
-      // Check collisions with obstacles
+      // Give it a new random direction
+      const randomAngle = Math.random() * Math.PI * 2;
+      head.dirX = Math.cos(randomAngle) * SPEED;
+      head.dirY = Math.sin(randomAngle) * SPEED;
+    }
+    
+    // Only check for obstacle collisions if we haven't already hit a boundary
+    if (!boundaryCollision) {
       obstacles.forEach((obstacle, obsIndex) => {
         if (head.x + DOT_RADIUS > obstacle.x && 
             head.x - DOT_RADIUS < obstacle.x + obstacle.width &&
@@ -2056,137 +2233,225 @@ function draw() {
           if (!headObstacleCollisions.has(collisionId)) {
             headObstacleCollisions.add(collisionId);
             
-            // Collision detected
+            // Collision detected - calculate bounce angle
+            const obsCenterX = obstacle.x + obstacle.width/2;
+            const obsCenterY = obstacle.y + obstacle.height/2;
             const angle = Math.atan2(
-              head.y - (obstacle.y + obstacle.height/2), 
-              head.x - (obstacle.x + obstacle.width/2)
+              head.y - obsCenterY, 
+              head.x - obsCenterX
             );
-            head.dirX = Math.cos(angle) * SPEED;
-            head.dirY = Math.sin(angle) * SPEED;
-            collisionCount++; // Obstacle collisions still count
             
-            // Create particles on obstacle collision
+            // Set new direction with a slight randomization for more natural movement
+            const randomFactor = 0.2; // Small random factor
+            head.dirX = (Math.cos(angle) + (Math.random() * randomFactor - randomFactor/2)) * SPEED;
+            head.dirY = (Math.sin(angle) + (Math.random() * randomFactor - randomFactor/2)) * SPEED;
+            
+            // Count collision
+            collisionCount++; 
+            
+            // Create particles
             createParticles(head.x, head.y);
             
-            // Check if we've reached 300 collisions and need to freeze the game
+            // Check if we've reached collision limit
             if (collisionCount >= 300 && !isGameFrozen) {
               freezeGame();
             }
           }
         } else {
-          // If not colliding, remove any collision records for this head-obstacle pair
+          // Clear collision record if no longer colliding
           headObstacleCollisions.delete(`${i}-${obsIndex}`);
         }
       });
-      
-      // Update trail
-      head.trail.push({x: head.x, y: head.y});
-      if (head.trail.length > MAX_TRAIL_LENGTH) {
-        head.trail.shift();
-      }
-    });
-    
-    // Check head collisions
-    checkHeadCollisions();
-    
-    // Update particles
-    if (isEffectActive) {
-      for (let i = particles.length - 1; i >= 0; i--) {
-        particles[i].update();
-        if (particles[i].life <= 0) {
-          particles.splice(i, 1);
-        }
-      }
-      if (particles.length === 0) {
-        isEffectActive = false;
-      }
     }
     
-    // Update process load (based only on obstacle collisions and head collisions)
-    const processLoad = collisionCount * 50;
-    updateProcessLoad(processLoad);
-    
-    // Update collisions display
-    collisionsValue.textContent = collisionCount;
-    
-    // Update KPIs
-    updateProcessKPIs();
-    
-    // Update wave countdown
-    const now = performance.now();
-    const deltaTime = now - lastFrameTime;
-    lastFrameTime = now;
-    updateWaveCountdown(deltaTime);
-  }
-  
-  // Event listeners for sliders
-  // Container size slider
-  containerSizeSlider.addEventListener('input', function() {
-    const size = parseInt(this.value);
-    const businessValue = getBusinessValue('containerSize', size);
-    containerSizeValue.textContent = businessValue;
-    
-    // Store previous value for smart message
-    const previousValue = this.getAttribute('data-prev-value') || this.value;
-    
-    // Show business message
-    showBusinessMessage('containerSize', size, previousValue);
-    
-    // Update stored value
-    this.setAttribute('data-prev-value', size);
+    // Update trail (after position is finalized and boundaries enforced)
+    head.trail.push({x: head.x, y: head.y});
+    if (head.trail.length > MAX_TRAIL_LENGTH) {
+      head.trail.shift();
+    }
   });
   
- // Apply container size changes only when sliding is complete
-containerSizeSlider.addEventListener('change', function() {
-  const size = parseInt(this.value);
+  // Check head collisions
+  checkHeadCollisions();
   
-  // Remove any previous inline styles
-  mazeContainer.removeAttribute('style');
-  
-  // For desktop, set both width and height
-  if (window.innerWidth > 768) {
-    // Set dimensions for desktop
-    mazeContainer.style.cssText = `
-      width: ${size}px;
-      height: ${size}px;
-      max-width: none;
-      max-height: none;
-    `;
-  } else {
-    // For mobile, adjust height while maintaining responsive width
-    mazeContainer.style.cssText = `
-      width: 100% !important;
-      height: ${size}px !important;
-      max-width: none !important;
-      max-height: none !important;
-    `;
+  // Update particles
+  if (isEffectActive) {
+    for (let i = particles.length - 1; i >= 0; i--) {
+      particles[i].update();
+      if (particles[i].life <= 0) {
+        particles.splice(i, 1);
+      }
+    }
+    if (particles.length === 0) {
+      isEffectActive = false;
+    }
   }
   
-  // Allow CSS to apply
-  setTimeout(() => {
-    // Update canvas size
+  // Update process load
+  const processLoad = collisionCount * 50;
+  updateProcessLoad(processLoad);
+  
+  // Update collisions display
+  collisionsValue.textContent = collisionCount;
+  
+  // Update KPIs
+  updateProcessKPIs();
+  
+  // Update wave countdown
+  const now = performance.now();
+  const deltaTime = now - lastFrameTime;
+  lastFrameTime = now;
+  updateWaveCountdown(deltaTime);
+}
+  
+// Replace both of your existing containerSizeSlider event listeners
+containerSizeSlider.addEventListener('input', function() {
+  const size = parseInt(this.value);
+  const businessValue = getBusinessValue('containerSize', size);
+  containerSizeValue.textContent = businessValue;
+  
+  // Store previous value for smart message
+  const previousValue = this.getAttribute('data-prev-value') || this.value;
+  
+  // Show business message
+  showBusinessMessage('containerSize', size, previousValue);
+  
+  // Update stored value
+  this.setAttribute('data-prev-value', size);
+});
+
+containerSizeSlider.addEventListener('change', function() {
+  isResizing = true;
+  
+  const sliderValue = parseInt(this.value);
+  const windowWidth = window.innerWidth;
+  const containerWidth = document.querySelector('.container').clientWidth;
+  
+  // Calculate the raw value that corresponds to 80 on the slider scale
+  const rawValueFor80 = 450 + ((80 - 20) / (100 - 20)) * (800 - 450); // approx 670
+  
+  // Set the threshold one tick lower than 80
+  // Assuming each step is about 5-10 units on the raw scale
+  const threshold = rawValueFor80 - 10; // One tick earlier than 80
+  
+  // Remove any existing layout fix first
+  const existingFix = document.getElementById('layout-fix');
+  if (existingFix) existingFix.remove();
+  
+  // Check if we're at or exceeding the threshold (slightly before value 80)
+  const isAtThresholdOrAbove = sliderValue >= threshold;
+  
+  // At or above threshold, we need to ensure all sliders are visible
+  if (isAtThresholdOrAbove) {
+    // Use vertical layout with sliders below game
+    document.head.insertAdjacentHTML('beforeend', `
+      <style id="layout-fix">
+        /* Main layout grid */
+        .game-control-wrapper {
+          display: grid !important;
+          grid-template-columns: 1fr !important;
+          grid-template-areas: "maze" "controls" "process" !important;
+          gap: 20px !important;
+        }
+        
+        /* Center maze */
+        #mazeContainer {
+          margin: 0 auto !important;
+          width: ${sliderValue}px !important;
+          height: ${sliderValue}px !important;
+        }
+        
+        /* Make controls container display properly */
+        .controls-container {
+          display: grid !important;
+          grid-template-columns: 1fr 1fr !important;
+          gap: 20px !important;
+        }
+        
+        /* Force both control panels to be completely visible */
+        .standard-controls, .advanced-controls {
+          width: 100% !important;
+          max-width: 100% !important;
+          min-width: 0 !important;
+        }
+        
+        /* Force controls wrapper to take full width */
+        .controls-wrapper {
+          width: 100% !important;
+        }
+      </style>
+    `);
+  } else {
+    // For values below the threshold, use normal side-by-side layout
+    document.head.insertAdjacentHTML('beforeend', `
+      <style id="layout-fix">
+        @media (min-width: 769px) {
+          .game-control-wrapper {
+            display: grid !important;
+            grid-template-columns: auto 1fr !important;
+            grid-template-areas: "maze controls" "process process" !important;
+            gap: 20px !important;
+          }
+          
+          .controls-container {
+            display: grid !important;
+            grid-template-columns: 1fr 1fr !important;
+            gap: 20px !important;
+          }
+          
+          #mazeContainer {
+            width: ${sliderValue}px !important;
+            height: ${sliderValue}px !important;
+          }
+        }
+      </style>
+    `);
+  }
+  
+  // Force layout update
+  document.body.offsetHeight;
+  
+  // Always ensure controls are visible if they should be
+  const controlsContainer = document.querySelector('.controls-container');
+  if (controlsVisible) {
+    controlsContainer.style.display = 'grid';
+    
+    // Fix for controls container layout
+    if (isAtThresholdOrAbove) {
+      // Ensure controls container has the right display properties
+      controlsContainer.style.cssText = `
+        display: grid !important;
+        grid-template-columns: 1fr 1fr !important;
+        gap: 20px !important;
+      `;
+    }
+  } else {
+    controlsContainer.style.display = 'none';
+  }
+  
+  // Update canvas immediately
+  requestAnimationFrame(() => {
     canvas.width = mazeContainer.clientWidth;
     canvas.height = mazeContainer.clientHeight;
     
-    // Ensure heads stay within bounds
+    // Complete the resize operation
     heads.forEach(head => {
-      head.x = Math.max(DOT_RADIUS, Math.min(head.x, canvas.width - DOT_RADIUS));
-      head.y = Math.max(DOT_RADIUS, Math.min(head.y, canvas.height - DOT_RADIUS));
-      
-      // Also update trails to stay within bounds
-      head.trail = head.trail.map(point => ({
-        x: Math.max(0, Math.min(point.x, canvas.width)),
-        y: Math.max(0, Math.min(point.y, canvas.height))
-      }));
+      const buffer = 2;
+      head.x = Math.max(DOT_RADIUS + buffer, Math.min(head.x, canvas.width - DOT_RADIUS - buffer));
+      head.y = Math.max(DOT_RADIUS + buffer, Math.min(head.y, canvas.height - DOT_RADIUS - buffer));
+      head.trail = [{ x: head.x, y: head.y }];
     });
     
-    // Keep obstacles within bounds
     obstacles.forEach(obs => {
       obs.x = Math.max(0, Math.min(obs.x, canvas.width - obs.width));
       obs.y = Math.max(0, Math.min(obs.y, canvas.height - obs.height));
     });
-  }, 10);
+    
+    draw();
+    isResizing = false;
+  });
 });
+
   
   // Head size slider
   headSizeSlider.addEventListener('input', function() {
@@ -2438,6 +2703,7 @@ containerSizeSlider.addEventListener('change', function() {
   });
   
   // Canvas click event - only create particles when clicking on heads or obstacles
+// Canvas click event - only create particles when clicking on heads or obstacles
 canvas.addEventListener('click', function(event) {
   // Skip if the game is frozen
   if (isGameFrozen) return;
@@ -2468,8 +2734,26 @@ canvas.addEventListener('click', function(event) {
     // More generous hit detection for obstacles (square-based)
     if (mouseX >= obs.x - 10 && mouseX <= obs.x + obs.width + 10 &&
         mouseY >= obs.y - 10 && mouseY <= obs.y + obs.height + 10) {
+      // Create particles at the center of the obstacle
       createParticles(centerX, centerY);
-      obstacles.splice(i, 1);
+      
+      // Instead of removing the obstacle, shrink it
+      const newWidth = Math.max(10, obs.width * 0.7);
+      const newHeight = Math.max(10, obs.height * 0.7);
+      
+      // Keep obstacle centered while shrinking
+      obs.x = centerX - (newWidth / 2);
+      obs.y = centerY - (newHeight / 2);
+      
+      // Apply new dimensions
+      obs.width = newWidth;
+      obs.height = newHeight;
+      
+      // Only remove if it's been shrunk significantly
+      if (newWidth <= 12) {
+        obstacles.splice(i, 1);
+      }
+      
       showTooltip("Exception handled - process knowledge base updated!");
       return;
     }
@@ -2485,10 +2769,48 @@ let touchStartY = 0;
 let touchStartTime = 0;
 
 canvas.addEventListener('touchstart', function(e) {
+  // Only process if game is not frozen
+  if (isGameFrozen) return;
+  
   touchStartX = e.touches[0].clientX;
   touchStartY = e.touches[0].clientY;
   touchStartTime = new Date().getTime();
-  e.preventDefault(); // Prevent scrolling while touching game
+  
+  // Prevent scrolling only if touch is on a game element (head or obstacle)
+  const rect = canvas.getBoundingClientRect();
+  const touchX = touchStartX - rect.left;
+  const touchY = touchStartY - rect.top;
+  
+  // Check if touch is on a head
+  let onGameElement = false;
+  
+  // Check heads with a larger touch area for mobile
+  for (let i = 0; i < heads.length; i++) {
+    const head = heads[i];
+    const distance = Math.sqrt(Math.pow(touchX - head.x, 2) + Math.pow(touchY - head.y, 2));
+    if (distance <= DOT_RADIUS * 3) { // Extra large touch area
+      onGameElement = true;
+      break;
+    }
+  }
+  
+  // Check obstacles with a larger touch area
+  if (!onGameElement) {
+    for (let i = 0; i < obstacles.length; i++) {
+      const obs = obstacles[i];
+      // Larger hit area
+      if (touchX >= obs.x - 30 && touchX <= obs.x + obs.width + 30 &&
+          touchY >= obs.y - 30 && touchY <= obs.y + obs.height + 30) {
+        onGameElement = true;
+        break;
+      }
+    }
+  }
+  
+  // Only prevent default if touching a game element
+  if (onGameElement) {
+    e.preventDefault();
+  }
 });
 
 canvas.addEventListener('touchend', function(e) {
@@ -2695,111 +3017,240 @@ helpModal.innerHTML = `
 });
   });
 
-  // Add window resize handler to keep game objects within bounds when screen size changes
-// Improved window resize handler
-window.addEventListener('resize', function() {
-  // Store the previous dimensions to calculate ratio
-  const prevWidth = canvas.width;
-  const prevHeight = canvas.height;
+// Improved resetGameElementBounds function
+function resetGameElementBounds() {
+  // Add a safety check for canvas dimensions
+  if (canvas.width === 0 || canvas.height === 0) {
+    console.log('Canvas has zero dimensions, skipping bounds check');
+    return;
+  }
+  
+  // Adjust heads and their trails
+  heads.forEach(head => {
+    // First check if the head position is valid (not NaN)
+    if (isNaN(head.x) || isNaN(head.y)) {
+      head.x = canvas.width / 2;
+      head.y = canvas.height / 2;
+    }
+    
+    // Make sure heads stay within bounds with a small buffer for mobile
+    const buffer = window.innerWidth <= 768 ? 2 : 0; // Extra buffer for mobile
+    head.x = Math.max(DOT_RADIUS + buffer, Math.min(head.x, canvas.width - DOT_RADIUS - buffer));
+    head.y = Math.max(DOT_RADIUS + buffer, Math.min(head.y, canvas.height - DOT_RADIUS - buffer));
+    
+    // Validate and reset trail if needed
+    if (!Array.isArray(head.trail) || head.trail.length === 0) {
+      head.trail = [{ x: head.x, y: head.y }];
+    }
+    
+    // Ensure trail points stay within bounds too
+    head.trail = head.trail.map(point => {
+      // Check for invalid points
+      if (!point || isNaN(point.x) || isNaN(point.y)) {
+        return { x: head.x, y: head.y };
+      }
+      return {
+        x: Math.min(Math.max(point.x, 0), canvas.width),
+        y: Math.min(Math.max(point.y, 0), canvas.height)
+      };
+    });
+  });
+  
+  // Keep static trails in bounds
+  staticTrails = staticTrails.map(trail => {
+    if (!Array.isArray(trail) || trail.length === 0) {
+      return [];
+    }
+    return trail.map(point => {
+      if (!point || isNaN(point.x) || isNaN(point.y)) {
+        return { x: canvas.width/2, y: canvas.height/2 };
+      }
+      return {
+        x: Math.min(Math.max(point.x, 0), canvas.width),
+        y: Math.min(Math.max(point.y, 0), canvas.height)
+      };
+    });
+  });
+  
+  // Keep obstacles in bounds
+  obstacles.forEach(obs => {
+    // Fix invalid values
+    if (isNaN(obs.x)) obs.x = 0;
+    if (isNaN(obs.y)) obs.y = 0;
+    if (isNaN(obs.width) || obs.width <= 0) obs.width = customObstacleSize || 40;
+    if (isNaN(obs.height) || obs.height <= 0) obs.height = customObstacleSize || 40;
+    
+    // Ensure obstacle size is reasonable for the canvas size
+    // Use smaller obstacles on mobile for better performance
+    const maxDimension = Math.min(canvas.width, canvas.height) / (window.innerWidth <= 768 ? 5 : 4);
+    obs.width = Math.min(obs.width, maxDimension);
+    obs.height = Math.min(obs.height, maxDimension);
+    
+    // Keep within bounds
+    obs.x = Math.max(0, Math.min(obs.x, canvas.width - obs.width));
+    obs.y = Math.max(0, Math.min(obs.y, canvas.height - obs.height));
+  });
+  
+  // Force redraw
+  draw();
+}
+
+// Function to handle mobile-specific sizing
+function handleMobileResize() {
+  const isMobile = window.innerWidth <= 768;
+  const isLandscape = window.innerWidth > window.innerHeight;
+  const isVerySmall = window.innerWidth <= 375;
+  
+  // Apply mobile-specific container sizing based on current media state
+  if (isMobile) {
+    if (isLandscape) {
+      // Landscape mobile mode
+      mazeContainer.style.height = '250px';
+      mazeContainer.style.width = '100%';
+    } else if (isVerySmall) {
+      // Very small devices
+      mazeContainer.style.height = '300px';
+      mazeContainer.style.width = '100%';
+    } else {
+      // Standard mobile portrait
+      const size = parseInt(containerSizeSlider.value);
+      mazeContainer.style.height = `${size}px`;
+      mazeContainer.style.width = '100%';
+    }
+  } else {
+    // Reset to desktop sizing if needed
+    const size = parseInt(containerSizeSlider.value);
+    mazeContainer.style.width = `${size}px`;
+    mazeContainer.style.height = `${size}px`;
+  }
   
   // Update canvas size to match container
   canvas.width = mazeContainer.clientWidth;
   canvas.height = mazeContainer.clientHeight;
   
-  // Calculate the scaling factors
-  const scaleX = canvas.width / prevWidth;
-  const scaleY = canvas.height / prevHeight;
+  // Ensure all game elements stay within bounds
+  resetGameElementBounds();
+}
+
+window.addEventListener('resize', function() {
+  // Set resize state
+  isResizing = true;
   
-  // Adjust heads and their trails to new scale
-  heads.forEach(head => {
-    // Scale position
-    head.x *= scaleX;
-    head.y *= scaleY;
-    
-    // Make sure heads stay within bounds
-    head.x = Math.max(DOT_RADIUS, Math.min(head.x, canvas.width - DOT_RADIUS));
-    head.y = Math.max(DOT_RADIUS, Math.min(head.y, canvas.height - DOT_RADIUS));
-    
-    // Scale all trail points
-    head.trail = head.trail.map(point => ({
-      x: Math.min(Math.max(point.x * scaleX, 0), canvas.width),
-      y: Math.min(Math.max(point.y * scaleY, 0), canvas.height)
-    }));
-  });
+  // Store position ratios
+  const headPositions = heads.map(head => ({
+    xRatio: head.x / canvas.width,
+    yRatio: head.y / canvas.height,
+    head: head
+  }));
   
-  // Scale static trails as well
-  staticTrails = staticTrails.map(trail => 
-    trail.map(point => ({
-      x: Math.min(Math.max(point.x * scaleX, 0), canvas.width),
-      y: Math.min(Math.max(point.y * scaleY, 0), canvas.height)
-    }))
-  );
+  // Fix layout to ensure controls stay visible
+  fixLayoutAfterResize();
   
-  // Adjust obstacles to new scale
-  obstacles.forEach(obs => {
-    // Scale position
-    obs.x *= scaleX;
-    obs.y *= scaleY;
+  // Use requestAnimationFrame to ensure we get dimensions after layout is complete
+  requestAnimationFrame(() => {
+    // Update canvas size to match container
+    const newWidth = mazeContainer.clientWidth;
+    const newHeight = mazeContainer.clientHeight;
     
-    // Keep obstacles within bounds
-    obs.x = Math.max(0, Math.min(obs.x, canvas.width - obs.width));
-    obs.y = Math.max(0, Math.min(obs.y, canvas.height - obs.height));
+    if (newWidth > 0 && newHeight > 0) {
+      canvas.width = newWidth;
+      canvas.height = newHeight;
+      
+      // Reposition heads based on ratios
+      headPositions.forEach(posData => {
+        posData.head.x = posData.xRatio * canvas.width;
+        posData.head.y = posData.yRatio * canvas.height;
+        
+        // Enforce boundaries
+        posData.head.x = Math.max(DOT_RADIUS + 1, Math.min(posData.head.x, canvas.width - DOT_RADIUS - 1));
+        posData.head.y = Math.max(DOT_RADIUS + 1, Math.min(posData.head.y, canvas.height - DOT_RADIUS - 1));
+      });
+      
+      // Reset obstacle positions
+      obstacles.forEach(obs => {
+        obs.x = Math.max(0, Math.min(obs.x, canvas.width - obs.width));
+        obs.y = Math.max(0, Math.min(obs.y, canvas.height - obs.height));
+      });
+      
+      // Force an immediate redraw
+      draw();
+      
+      // Clear resize state
+      isResizing = false;
+    } else {
+      // Fallback if dimensions are not available
+      setTimeout(() => {
+        const fallbackWidth = mazeContainer.clientWidth;
+        const fallbackHeight = mazeContainer.clientHeight;
+        canvas.width = fallbackWidth;
+        canvas.height = fallbackHeight;
+        
+        // Force redraw and clear resize state
+        draw();
+        isResizing = false;
+      }, 50);
+    }
   });
 });
 
-// Similarly improve the orientation change handler
 window.addEventListener('orientationchange', function() {
-  // Wait for browser to update dimensions after orientation change
+  // Store positions as percentages before resizing
+  const headPositions = heads.map(head => ({
+    xPercent: head.x / canvas.width,
+    yPercent: head.y / canvas.height,
+    head: head
+  }));
+  
+  // Wait longer for browser to update dimensions after orientation change
   setTimeout(() => {
-    // Store the previous dimensions to calculate ratio
-    const prevWidth = canvas.width;
-    const prevHeight = canvas.height;
+    // Handle mobile-specific sizing for orientation
+    const isMobile = window.innerWidth <= 768;
+    const isLandscape = window.innerWidth > window.innerHeight;
+    const isVerySmall = window.innerWidth <= 375;
     
-    // Update canvas size
+    if (isMobile) {
+      if (isLandscape) {
+        // Landscape mobile mode
+        mazeContainer.style.height = '250px';
+        mazeContainer.style.width = '100%';
+      } else if (isVerySmall) {
+        // Very small devices in portrait
+        mazeContainer.style.height = '300px';
+        mazeContainer.style.width = '100%';
+      } else {
+        // Standard mobile portrait
+        mazeContainer.style.height = '400px';
+        mazeContainer.style.width = '100%';
+      }
+    }
+    
+    // Update canvas dimensions
     canvas.width = mazeContainer.clientWidth;
     canvas.height = mazeContainer.clientHeight;
     
-    // Calculate the scaling factors
-    const scaleX = canvas.width / prevWidth;
-    const scaleY = canvas.height / prevHeight;
-    
-    // Adjust heads and their trails to new scale
-    heads.forEach(head => {
-      // Scale position
-      head.x *= scaleX;
-      head.y *= scaleY;
-      
-      // Make sure heads stay within bounds
-      head.x = Math.max(DOT_RADIUS, Math.min(head.x, canvas.width - DOT_RADIUS));
-      head.y = Math.max(DOT_RADIUS, Math.min(head.y, canvas.height - DOT_RADIUS));
-      
-      // Scale all trail points
-      head.trail = head.trail.map(point => ({
-        x: Math.min(Math.max(point.x * scaleX, 0), canvas.width),
-        y: Math.min(Math.max(point.y * scaleY, 0), canvas.height)
-      }));
+    // Reposition heads based on stored percentages
+    headPositions.forEach(posData => {
+      posData.head.x = posData.xPercent * canvas.width;
+      posData.head.y = posData.yPercent * canvas.height;
     });
     
-    // Scale static trails as well
-    staticTrails = staticTrails.map(trail => 
-      trail.map(point => ({
-        x: Math.min(Math.max(point.x * scaleX, 0), canvas.width),
-        y: Math.min(Math.max(point.y * scaleY, 0), canvas.height)
-      }))
-    );
+    // Apply strict boundary enforcement
+    enforceGameBoundaries();
     
-    // Adjust obstacles to new scale
-    obstacles.forEach(obs => {
-      // Scale position
-      obs.x *= scaleX;
-      obs.y *= scaleY;
-      
-      // Keep obstacles within bounds
-      obs.x = Math.max(0, Math.min(obs.x, canvas.width - obs.width));
-      obs.y = Math.max(0, Math.min(obs.y, canvas.height - obs.height));
-    });
-  }, 300);
+    // Apply another check after a longer delay to catch any late updates
+    setTimeout(enforceGameBoundaries, 500);
+  }, 300); // Longer delay for orientation changes
 });
+
+function enforceGameBoundaries() {
+  // Only run if boundaries check is needed
+  obstacles.forEach(obs => {
+    // Keep obstacles in bounds
+    obs.x = Math.max(0, Math.min(obs.x, canvas.width - obs.width));
+    obs.y = Math.max(0, Math.min(obs.y, canvas.height - obs.height));
+  });
+}
+
   <!-- Main Game Script - Include the script.js file -->
   </script>
   
@@ -2808,6 +3259,7 @@ window.addEventListener('orientationchange', function() {
   <div class="qr-code-inner">
     <h3>Scan to try on your device</h3>
     <div id="qrcode"></div>
+    <p>https://carmon1985.github.io/intelligent-automation/</p>
   </div>
 </div>
   
