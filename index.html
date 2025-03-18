@@ -3263,62 +3263,81 @@ function enforceGameBoundaries() {
 </div>
 
 <script>
-// Mobile size limiter script - Add this after your existing script
 document.addEventListener('DOMContentLoaded', function() {
   const containerSizeSlider = document.getElementById('containerSizeSlider');
   const mazeContainer = document.getElementById('mazeContainer');
   
+  // Original slider range
+  const MIN_VALUE = 450;
+  const MAX_VALUE = 800;
+  const MOBILE_MAX_PERCENTAGE = 0.8; // 80% of max
+  
   // Function to enforce mobile size limits
   function enforceMobileSizeLimits() {
     const isMobile = window.innerWidth <= 768;
-    const isVerySmall = window.innerWidth <= 375;
     
     if (isMobile) {
-      // Calculate safe max value based on screen width
-      let safeMaxValue;
-      if (isVerySmall) {
-        safeMaxValue = 350; // Very small screens
-      } else if (window.innerWidth <= 480) {
-        safeMaxValue = 400; // Small mobile screens
-      } else {
-        safeMaxValue = 450; // Regular mobile screens
-      }
+      // Calculate mobile max value (80% of original max)
+      const mobileMaxValue = MIN_VALUE + (MAX_VALUE - MIN_VALUE) * MOBILE_MAX_PERCENTAGE;
       
       // Get current slider value
       const currentValue = parseInt(containerSizeSlider.value);
       
-      // Only adjust if current value exceeds safe max
-      if (currentValue > safeMaxValue) {
-        // Set slider value
-        containerSizeSlider.value = safeMaxValue;
-        // Set container size
-        mazeContainer.style.width = safeMaxValue + 'px';
-        mazeContainer.style.height = safeMaxValue + 'px';
+      // Only adjust if current value exceeds mobile max
+      if (currentValue > mobileMaxValue) {
+        // Set slider value to mobile max
+        containerSizeSlider.value = Math.round(mobileMaxValue);
         
-        // Update display text
-        const businessValue = getBusinessValue('containerSize', safeMaxValue);
-        document.getElementById('containerSizeValue').textContent = businessValue;
-        
-        // Force canvas resize
-        const canvas = mazeContainer.querySelector('canvas');
-        if (canvas) {
-          canvas.width = safeMaxValue;
-          canvas.height = safeMaxValue;
-        }
-        
-        // Reset head positions to be safe
-        if (typeof heads !== 'undefined' && Array.isArray(heads)) {
-          heads.forEach(head => {
-            // Ensure within bounds
-            head.x = Math.max(DOT_RADIUS + 2, Math.min(head.x, safeMaxValue - DOT_RADIUS - 2));
-            head.y = Math.max(DOT_RADIUS + 2, Math.min(head.y, safeMaxValue - DOT_RADIUS - 2));
-            // Reset trail
-            head.trail = [{ x: head.x, y: head.y }];
-          });
-        }
+        // Trigger input event to update display and game logic
+        const event = new Event('input');
+        containerSizeSlider.dispatchEvent(event);
       }
     }
   }
+  
+  // Function to update slider constraints
+  function updateSliderConstraints() {
+    const isMobile = window.innerWidth <= 768;
+    
+    if (isMobile) {
+      // Calculate mobile max value (80% of original max)
+      const mobileMaxValue = MIN_VALUE + (MAX_VALUE - MIN_VALUE) * MOBILE_MAX_PERCENTAGE;
+      
+      // Set max to the calculated mobile max
+      containerSizeSlider.setAttribute('max', Math.round(mobileMaxValue));
+      
+      // Ensure current value is within new bounds
+      if (parseInt(containerSizeSlider.value) > parseInt(containerSizeSlider.max)) {
+        containerSizeSlider.value = containerSizeSlider.max;
+        
+        // Trigger input event to update display
+        const event = new Event('input');
+        containerSizeSlider.dispatchEvent(event);
+      }
+    } else {
+      // Reset to original max on desktop
+      containerSizeSlider.setAttribute('max', MAX_VALUE);
+    }
+  }
+  
+  // Add listeners to detect window resizing and orientation changes
+  window.addEventListener('resize', function() {
+    updateSliderConstraints();
+    enforceMobileSizeLimits();
+  });
+  
+  window.addEventListener('orientationchange', function() {
+    // Wait for the resize to finish
+    setTimeout(function() {
+      updateSliderConstraints();
+      enforceMobileSizeLimits();
+    }, 300);
+  });
+  
+  // Initial setup
+  updateSliderConstraints();
+  enforceMobileSizeLimits();
+});
   
   // Set mobile constraints to containerSizeSlider
   function updateSliderConstraints() {
