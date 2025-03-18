@@ -3261,6 +3261,289 @@ function enforceGameBoundaries() {
     <div id="qrcode"></div>
   </div>
 </div>
+
+<script>
+// Mobile size limiter script - Add this after your existing script
+document.addEventListener('DOMContentLoaded', function() {
+  const containerSizeSlider = document.getElementById('containerSizeSlider');
+  const mazeContainer = document.getElementById('mazeContainer');
   
+  // Function to enforce mobile size limits
+  function enforceMobileSizeLimits() {
+    const isMobile = window.innerWidth <= 768;
+    const isVerySmall = window.innerWidth <= 375;
+    
+    if (isMobile) {
+      // Calculate safe max value based on screen width
+      let safeMaxValue;
+      if (isVerySmall) {
+        safeMaxValue = 350; // Very small screens
+      } else if (window.innerWidth <= 480) {
+        safeMaxValue = 400; // Small mobile screens
+      } else {
+        safeMaxValue = 450; // Regular mobile screens
+      }
+      
+      // Get current slider value
+      const currentValue = parseInt(containerSizeSlider.value);
+      
+      // Only adjust if current value exceeds safe max
+      if (currentValue > safeMaxValue) {
+        // Set slider value
+        containerSizeSlider.value = safeMaxValue;
+        // Set container size
+        mazeContainer.style.width = safeMaxValue + 'px';
+        mazeContainer.style.height = safeMaxValue + 'px';
+        
+        // Update display text
+        const businessValue = getBusinessValue('containerSize', safeMaxValue);
+        document.getElementById('containerSizeValue').textContent = businessValue;
+        
+        // Force canvas resize
+        const canvas = mazeContainer.querySelector('canvas');
+        if (canvas) {
+          canvas.width = safeMaxValue;
+          canvas.height = safeMaxValue;
+        }
+        
+        // Reset head positions to be safe
+        if (typeof heads !== 'undefined' && Array.isArray(heads)) {
+          heads.forEach(head => {
+            // Ensure within bounds
+            head.x = Math.max(DOT_RADIUS + 2, Math.min(head.x, safeMaxValue - DOT_RADIUS - 2));
+            head.y = Math.max(DOT_RADIUS + 2, Math.min(head.y, safeMaxValue - DOT_RADIUS - 2));
+            // Reset trail
+            head.trail = [{ x: head.x, y: head.y }];
+          });
+        }
+      }
+    }
+  }
+  
+  // Set mobile constraints to containerSizeSlider
+  function updateSliderConstraints() {
+    const isMobile = window.innerWidth <= 768;
+    
+    if (isMobile) {
+      // Limit max value on mobile
+      if (window.innerWidth <= 375) {
+        containerSizeSlider.setAttribute('max', '350'); // Very small screens
+      } else if (window.innerWidth <= 480) {
+        containerSizeSlider.setAttribute('max', '400'); // Small mobile
+      } else {
+        containerSizeSlider.setAttribute('max', '450'); // Regular mobile
+      }
+      
+      // Force the value to be within new bounds
+      if (parseInt(containerSizeSlider.value) > parseInt(containerSizeSlider.max)) {
+        containerSizeSlider.value = containerSizeSlider.max;
+        // Trigger the change event to update the display
+        const event = new Event('input');
+        containerSizeSlider.dispatchEvent(event);
+      }
+    } else {
+      // Reset to original max on desktop
+      containerSizeSlider.setAttribute('max', '800');
+    }
+  }
+  
+  // Add listeners to detect window resizing and orientation changes
+  window.addEventListener('resize', function() {
+    updateSliderConstraints();
+    enforceMobileSizeLimits();
+  });
+  
+  window.addEventListener('orientationchange', function() {
+    // Wait for the resize to finish
+    setTimeout(function() {
+      updateSliderConstraints();
+      enforceMobileSizeLimits();
+    }, 300);
+  });
+  
+  // Initial setup
+  updateSliderConstraints();
+  enforceMobileSizeLimits();
+  
+  // Patch the containerSizeSlider change handler to respect mobile limits
+  const originalChangeListener = containerSizeSlider.onchange;
+  containerSizeSlider.addEventListener('change', function(event) {
+    // Call the original handler first
+    if (originalChangeListener) {
+      originalChangeListener.call(this, event);
+    }
+    
+    // Then enforce our mobile limits
+    enforceMobileSizeLimits();
+  });
+});
+// Improved mobile touch handling and head disappearance fix
+document.addEventListener('DOMContentLoaded', function() {
+  // Find the canvas element (it's created dynamically, so we'll look for it once the game initializes)
+  function getCanvas() {
+    return document.querySelector('#mazeContainer canvas');
+  }
+  
+  // Observer to watch for canvas being added to the DOM
+  const observer = new MutationObserver(function(mutations) {
+    mutations.forEach(function(mutation) {
+      if (mutation.addedNodes.length) {
+        const canvas = getCanvas();
+        if (canvas) {
+          setupImprovedTouchHandling(canvas);
+          observer.disconnect(); // Stop observing once we've found it
+        }
+      }
+    });
+  });
+  
+  // Start observing the maze container
+  observer.observe(document.getElementById('mazeContainer'), { 
+    childList: true 
+  });
+  
+  // Function to set up improved touch handling
+  function setupImprovedTouchHandling(canvas) {
+    // Emergency reset function if heads disappear
+    function emergencyHeadReset() {
+      if (typeof heads !== 'undefined' && Array.isArray(heads)) {
+        // Check if any heads are outside the visible area or have NaN positions
+        let needsReset = false;
+        heads.forEach(head => {
+          if (isNaN(head.x) || isNaN(head.y) || 
+              head.x < 0 || head.x > canvas.width || 
+              head.y < 0 || head.y > canvas.height) {
+            needsReset = true;
+          }
+        });
+        
+        if (needsReset || heads.length === 0) {
+          console.log("Emergency head reset triggered");
+          
+          // Reset all heads to center
+          heads.forEach(head => {
+            head.x = canvas.width / 2;
+            head.y = canvas.height / 2;
+            head.dirX = (Math.random() * 2 - 1) * SPEED;
+            head.dirY = (Math.random() * 2 - 1) * SPEED;
+            head.trail = [{ x: head.x, y: head.y }];
+          });
+          
+          // If we somehow lost all heads, recreate one
+          if (heads.length === 0 && typeof SPEED !== 'undefined') {
+            heads.push({
+              x: canvas.width / 2,
+              y: canvas.height / 2,
+              dirX: (Math.random() * 2 - 1) * SPEED,
+              dirY: (Math.random() * 2 - 1) * SPEED,
+              trail: [{ x: canvas.width / 2, y: canvas.height / 2 }]
+            });
+          }
+        }
+      }
+    }
+    
+    // Create a reset button specifically for mobile users
+    const mobileResetButton = document.createElement('button');
+    mobileResetButton.innerText = 'Fix Simulation';
+    mobileResetButton.style.cssText = `
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+      background-color: #FFD700;
+      border: none;
+      border-radius: 4px;
+      padding: 8px 12px;
+      color: #000;
+      font-weight: bold;
+      display: none;
+      z-index: 100;
+    `;
+    
+    document.getElementById('mazeContainer').appendChild(mobileResetButton);
+    
+    // Show the button only on mobile
+    function updateMobileResetButtonVisibility() {
+      if (window.innerWidth <= 768) {
+        mobileResetButton.style.display = 'block';
+      } else {
+        mobileResetButton.style.display = 'none';
+      }
+    }
+    
+    // Call the function initially
+    updateMobileResetButtonVisibility();
+    
+    // Update on resize
+    window.addEventListener('resize', updateMobileResetButtonVisibility);
+    
+    // Hook up the reset button
+    mobileResetButton.addEventListener('click', function() {
+      emergencyHeadReset();
+      
+      // Show a tooltip confirmation
+      const tooltip = document.getElementById('tooltip');
+      if (tooltip) {
+        tooltip.textContent = "Simulation fixed! Paths realigned.";
+        tooltip.style.display = 'block';
+        
+        setTimeout(() => {
+          tooltip.style.opacity = 0;
+          setTimeout(() => {
+            tooltip.style.display = 'none';
+            tooltip.style.opacity = 1;
+          }, 1000);
+        }, 3000);
+      }
+    });
+    
+    // Setup automatic checks for heads disappearing
+    setInterval(emergencyHeadReset, 5000);
+    
+    // Improve mobile touch handling by adding passive touch events
+    canvas.addEventListener('touchstart', function(e) {
+      // Special handling for very small screens
+      if (window.innerWidth <= 480) {
+        // Prevent default only for game-related touches to avoid scrolling interference
+        const rect = canvas.getBoundingClientRect();
+        const touchX = e.touches[0].clientX - rect.left;
+        const touchY = e.touches[0].clientY - rect.top;
+        
+        // Check if touch is close to a game element
+        if (typeof heads !== 'undefined') {
+          let touchedElement = false;
+          
+          // Check if touch is near any head
+          heads.forEach(head => {
+            const distance = Math.sqrt(
+              Math.pow(touchX - head.x, 2) + 
+              Math.pow(touchY - head.y, 2)
+            );
+            
+            if (distance <= DOT_RADIUS * 4) { // Larger touch area
+              touchedElement = true;
+            }
+          });
+          
+          // Check if touch is near any obstacle
+          if (typeof obstacles !== 'undefined') {
+            obstacles.forEach(obs => {
+              if (touchX >= obs.x - 30 && touchX <= obs.x + obs.width + 30 &&
+                  touchY >= obs.y - 30 && touchY <= obs.y + obs.height + 30) {
+                touchedElement = true;
+              }
+            });
+          }
+          
+          // Only prevent default if we touched a game element
+          if (touchedElement) {
+            e.preventDefault();
+          }
+        }
+      }
+    }, { passive: false }); // Non-passive to allow preventDefault()
+  }
+});
+</script>
 </body>
 </html>
