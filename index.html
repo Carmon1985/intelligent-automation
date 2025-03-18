@@ -2085,22 +2085,42 @@ function updateObjectives() {
     this.setAttribute('data-prev-value', size);
   });
   
-  // Apply container size changes only when sliding is complete
-  containerSizeSlider.addEventListener('change', function() {
-    const size = parseInt(this.value);
+ // Apply container size changes only when sliding is complete
+containerSizeSlider.addEventListener('change', function() {
+  const size = parseInt(this.value);
+  
+  // For desktop, set both width and height
+  if (window.innerWidth > 768) {
     mazeContainer.style.width = size + 'px';
     mazeContainer.style.height = size + 'px';
+  } else {
+    // For mobile, only adjust the height, keep width at 100%
+    mazeContainer.style.width = '100%';
+    mazeContainer.style.height = size + 'px';
+  }
+  
+  // Update canvas size to match container's actual dimensions
+  canvas.width = mazeContainer.clientWidth;
+  canvas.height = mazeContainer.clientHeight;
+  
+  // Ensure heads stay within bounds (improved bounds checking)
+  heads.forEach(head => {
+    head.x = Math.max(DOT_RADIUS, Math.min(head.x, canvas.width - DOT_RADIUS));
+    head.y = Math.max(DOT_RADIUS, Math.min(head.y, canvas.height - DOT_RADIUS));
     
-    // Update canvas size
-    canvas.width = size;
-    canvas.height = size;
-    
-    // Ensure heads stay within bounds
-    heads.forEach(head => {
-      head.x = Math.min(head.x, canvas.width - DOT_RADIUS);
-      head.y = Math.min(head.y, canvas.height - DOT_RADIUS);
-    });
+    // Also update trails to stay within bounds
+    head.trail = head.trail.map(point => ({
+      x: Math.max(0, Math.min(point.x, canvas.width)),
+      y: Math.max(0, Math.min(point.y, canvas.height))
+    }));
   });
+  
+  // Keep obstacles within bounds
+  obstacles.forEach(obs => {
+    obs.x = Math.max(0, Math.min(obs.x, canvas.width - obs.width));
+    obs.y = Math.max(0, Math.min(obs.y, canvas.height - obs.height));
+  });
+});
   
   // Head size slider
   headSizeSlider.addEventListener('input', function() {
@@ -2515,7 +2535,25 @@ helpModal.innerHTML = `
 });
   });
 
+  // Add window resize handler to keep game objects within bounds when screen size changes
+window.addEventListener('resize', function() {
+  // Update canvas size to match container
+  canvas.width = mazeContainer.clientWidth;
+  canvas.height = mazeContainer.clientHeight;
   
+  // Ensure heads stay within bounds
+  heads.forEach(head => {
+    // Keep heads inside boundaries
+    head.x = Math.max(DOT_RADIUS, Math.min(head.x, canvas.width - DOT_RADIUS));
+    head.y = Math.max(DOT_RADIUS, Math.min(head.y, canvas.height - DOT_RADIUS));
+  });
+  
+  // Keep obstacles within bounds
+  obstacles.forEach(obs => {
+    obs.x = Math.max(0, Math.min(obs.x, canvas.width - obs.width));
+    obs.y = Math.max(0, Math.min(obs.y, canvas.height - obs.height));
+  });
+});
   <!-- Main Game Script - Include the script.js file -->
   </script>
   
