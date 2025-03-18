@@ -3272,28 +3272,59 @@ document.addEventListener('DOMContentLoaded', function() {
   const MAX_VALUE = 800;
   const MOBILE_MAX_PERCENTAGE = 0.8; // 80% of max
   
-  // Function to enforce mobile size limits
-  function enforceMobileSizeLimits() {
+  function calculateMobileMaxValue() {
+    return MIN_VALUE + (MAX_VALUE - MIN_VALUE) * MOBILE_MAX_PERCENTAGE;
+  }
+  
+  function updateSliderForMobile() {
     const isMobile = window.innerWidth <= 768;
     
     if (isMobile) {
-      // Calculate mobile max value (80% of original max)
-      const mobileMaxValue = MIN_VALUE + (MAX_VALUE - MIN_VALUE) * MOBILE_MAX_PERCENTAGE;
-      
-      // Get current slider value
+      const mobileMaxValue = calculateMobileMaxValue();
       const currentValue = parseInt(containerSizeSlider.value);
       
-      // Only adjust if current value exceeds mobile max
+      // If current value exceeds mobile max, adjust it
       if (currentValue > mobileMaxValue) {
-        // Set slider value to mobile max
+        // Set to mobile max while maintaining aspect ratio
         containerSizeSlider.value = Math.round(mobileMaxValue);
         
-        // Trigger input event to update display and game logic
-        const event = new Event('input');
-        containerSizeSlider.dispatchEvent(event);
+        // Trigger input and change events to update game state
+        const inputEvent = new Event('input');
+        const changeEvent = new Event('change');
+        containerSizeSlider.dispatchEvent(inputEvent);
+        containerSizeSlider.dispatchEvent(changeEvent);
       }
+      
+      // Update max attribute for visual representation
+      containerSizeSlider.setAttribute('max', Math.round(mobileMaxValue));
+    } else {
+      // Reset to full range on desktop
+      containerSizeSlider.setAttribute('max', MAX_VALUE);
     }
   }
+  
+  // Initial setup
+  updateSliderForMobile();
+  
+  // Update on resize and orientation change
+  window.addEventListener('resize', updateSliderForMobile);
+  window.addEventListener('orientationchange', function() {
+    setTimeout(updateSliderForMobile, 300);
+  });
+  
+  // Optional: Log a warning if trying to exceed mobile limit
+  containerSizeSlider.addEventListener('input', function() {
+    const isMobile = window.innerWidth <= 768;
+    if (isMobile) {
+      const mobileMaxValue = calculateMobileMaxValue();
+      const currentValue = parseInt(this.value);
+      
+      if (currentValue > mobileMaxValue) {
+        console.warn('Mobile view limits container size to 80% of full range');
+      }
+    }
+  });
+});
   
   // Function to update slider constraints
   function updateSliderConstraints() {
