@@ -5,7 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>GDS Intelligent Automation Team</title>
   <style>
-  /* Mobile Optimization Styles */
+	
+	/* Mobile Optimization Styles */
 @media (max-width: 768px) {
   /* General layout improvements */
   body {
@@ -116,7 +117,6 @@
   }
 }
 
-
 /* Landscape mode optimizations */
 @media (max-width: 900px) and (orientation: landscape) {
   .game-control-wrapper {
@@ -161,9 +161,8 @@
     display: none !important;
   }
 }
-  </style>
-  <style>
-  .qr-code-container {
+
+.qr-code-container {
   position: fixed;
   bottom: 200px;
   right: 20px;
@@ -174,315 +173,282 @@
   justify-content: center;
 }
   
-  .qr-code-inner {
-    background-color: #222;
-    border-radius: 10px;
-    padding: 15px;
-    box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
-    text-align: center;
-    border: 1px solid rgba(255, 215, 0, 0.5);
-  }
+.objective-status.complete {
+  background-color: #50C878;
+  border: 1px solid #fff;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.2); opacity: 0.7; }
+  100% { transform: scale(1); opacity: 1; }
+}
   
-  .qr-code-inner h3 {
-    color: #FFD700;
-    margin-top: 0;
-    margin-bottom: 10px;
-    font-size: 16px;
-  }
+.kpi-value {
+  color: white;
+  font-size: 1.2rem;
+  font-weight: bold;
+  transition: color 0.5s;
+}
   
-  .qr-code-inner p {
-    color: #fff;
-    font-size: 12px;
-    margin-top: 10px;
-    margin-bottom: 0;
-    word-break: break-all;
-  }
+.qr-code-inner {
+  background-color: #222;
+  border-radius: 10px;
+  padding: 15px;
+  box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+  text-align: center;
+  border: 1px solid rgba(255, 215, 0, 0.5);
+}
   
-  #qrcode {
-    padding: 10px;
-    background-color: white;
-    border-radius: 5px;
-    display: inline-block;
-  }
+.qr-code-inner h3 {
+  color: #FFD700;
+  margin-top: 0;
+  margin-bottom: 10px;
+  font-size: 16px;
+}
   
-  /* Mobile optimization toggle button */
-  .mobile-toggle {
-    position: fixed;
-    top: 10px;
-    right: 10px;
-    background-color: #FFD700;
-    color: #000;
-    border: none;
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    z-index: 1000;
-    box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
-  }
+.qr-code-inner p {
+  color: #fff;
+  font-size: 12px;
+  margin-top: 10px;
+  margin-bottom: 0;
+  word-break: break-all;
+}
   
-  /* Responsive adjustments */
-  @media (max-width: 768px) {
+#qrcode {
+  padding: 10px;
+  background-color: white;
+  border-radius: 5px;
+  display: inline-block;
+}
+  
+/* Mobile optimization toggle button */
+.mobile-toggle {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  background-color: #FFD700;
+  color: #000;
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 1000;
+  box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+}
+  
+/* Responsive adjustments */
+@media (max-width: 768px) {
   .qr-code-container {
     position: static;
     margin: 20px auto 60px auto;
   }
     
-    /* Additional mobile optimizations */
-    .controls-wrapper {
-      padding: 0 10px;
-    }
-    
-    .standard-controls, .advanced-controls {
-      margin-bottom: 15px;
-    }
-    
-    /* Increase tap target sizes */
-    .slider {
-      height: 20px;
-    }
-    
-    .slider::-webkit-slider-thumb {
-      width: 25px;
-      height: 25px;
-    }
-    
-    /* Make buttons more tappable */
-    #clearButton, #restartButton {
-      padding: 15px 20px;
-      margin: 10px 0;
-      width: 100%;
-    }
-    
-    /* Improve mobile section headers */
-    .section-header h3 {
-      font-size: 16px;
-    }
+  /* Additional mobile optimizations */
+  .controls-wrapper {
+    padding: 0 10px;
   }
-</style>
-  <style>
-    /* Main site styling */
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      margin: 0;
-      padding: 0;
-      background-color: #000;
-      color: #fff;
-    }
-    
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 20px;
-    }
-    
-    header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding-bottom: 20px;
-      border-bottom: 1px solid rgba(255, 215, 0, 0.3);
-    }
-    
-    .logo {
-      display: flex;
-      align-items: center;
-      font-size: 1.5rem;
-      color: #fff;
-    }
-    
-    .logo-image {
-      height: 40px;
-      margin-right: 10px;
-    }
-    
-    nav ul {
-      display: flex;
-      list-style: none;
-      padding: 0;
-    }
-    
-    nav ul li {
-      margin-left: 20px;
-    }
-    
-    nav ul li a {
-      color: #fff;
-      text-decoration: none;
-    }
-    
-    .hero {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 40px;
-      padding: 60px 0;
-      align-items: center;
-    }
-    
-    .hero-content h1 {
-      font-size: 2.5rem;
-      line-height: 1.2;
-    }
-    
-    .highlight {
-      color: #FFD700;
-    }
-    
-    .hero-image img {
-      width: 100%;
-      border-radius: 8px;
-    }
-    
-    .services {
-      padding: 40px 0;
-    }
-    
-    .maze-title {
-      font-size: 2rem;
-      color: #FFD700;
-      text-align: center;
-      margin-bottom: 10px;
-    }
-    
-    .maze-description {
-      text-align: center;
-      max-width: 800px;
-      margin: 0 auto 40px;
-    }
-    
-    .convai-wrapper {
-      margin-top: 60px;
-    }
-    
-    /* Game styles */
-    .game-control-wrapper {
-      display: grid;
-      grid-template-columns: auto 1fr;
-      grid-template-areas: 
-        "maze controls"
-        "process process";
-      gap: 20px;
-      margin: 20px auto;
-      overflow: hidden; /* Prevent jumping during resize */
-    }
-    
-    #mazeContainer {
-      grid-area: maze;
-      width: 530px;
-      height: 570px;
-      background-color: #000;
-      position: relative;
-      border-radius: 8px;
-      box-shadow: 0 0 20px rgba(255, 215, 0, 0.2);
-      border: none;
-      overflow: hidden;
-      transition: width 0.3s ease, height 0.3s ease; /* Smooth transition */
-    }
-    
-	.help-icon {
-	  background-color: #FFD700;
-	  color: #000;
-	  width: 18px;
-	  height: 18px;
-	  border-radius: 50%;
-	  display: flex;
-	  align-items: center;
-	  justify-content: center;
-	  font-weight: bold;
-	  font-size: 14px;
-	  cursor: pointer;
-	  margin-right: 10px;
-	}
+  
+  .standard-controls, .advanced-controls {
+    margin-bottom: 15px;
+  }
+  
+  /* Increase tap target sizes */
+  .slider {
+    height: 20px;
+  }
+  
+  .slider::-webkit-slider-thumb {
+    width: 25px;
+    height: 25px;
+  }
+  
+  /* Make buttons more tappable */
+  #clearButton, #restartButton {
+    padding: 15px 20px;
+    margin: 10px 0;
+    width: 100%;
+  }
+  
+  /* Improve mobile section headers */
+  .section-header h3 {
+    font-size: 16px;
+  }
+}
 
-	.help-modal {
-	  position: absolute;
-	  background-color: rgba(0, 0, 0, 0.9);
-	  border: 1px solid #FFD700;
-	  color: #fff;
-	  padding: 15px;
-	  border-radius: 5px;
-	  z-index: 1000;
-	  max-width: 400px;
-	  box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
-	}
+/* Main site styling */
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #000;
+  color: #fff;
+}
 
-	.help-modal h4 {
-	  color: #FFD700;
-	  margin-top: 0;
-	  margin-bottom: 10px;
-	}
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
 
-	.help-modal p {
-	  margin-bottom: 10px;
-	}
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 20px;
+  border-bottom: 1px solid rgba(255, 215, 0, 0.3);
+}
 
-	.help-modal ul {
-	  padding-left: 20px;
-	}
+.logo {
+  display: flex;
+  align-items: center;
+  font-size: 1.5rem;
+  color: #fff;
+}
 
-	.help-modal button {
-	  background-color: #FFD700;
-	  border: none;
-	  color: #000;
-	  padding: 5px 10px;
-	  border-radius: 3px;
-	  margin-top: 10px;
-	  cursor: pointer;
-	}
-	
-    .controls-wrapper {
-      grid-area: controls;
-    }
-    
-    .controls-container {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 20px;
-      margin-top: 15px;
-    }
-    
-    .advanced-controls, .standard-controls, .process-load-container {
-      background-color: #222;
-      border: none;
-      padding: 15px;
-      border-radius: 4px;
-      box-shadow: 0 0 20px rgba(255, 215, 0, 0.2);
-    }
-    
-    .section-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      cursor: pointer;
-      padding-bottom: 8px;
-      margin-bottom: 15px;
-      border-bottom: 1px solid rgba(255, 215, 0, 0.3);
-    }
-    
-    .section-header h3 {
-      margin: 0;
-      color: #FFD700;
-      font-size: 1.2rem;
-    }
-    
-    .main-controls-header {
-      background-color: #222;
-      border-radius: 4px;
-      padding: 10px 15px;
-      margin-bottom: 0;
-      box-shadow: 0 0 20px rgba(255, 215, 0, 0.2);
-      cursor: pointer;
-    }
-    
-    .collapse-icon {
-      color: #FFD700;
-      transition: transform 0.3s ease;
-    }
-    
-	.help-icon {
+.logo-image {
+  height: 40px;
+  margin-right: 10px;
+}
+
+nav ul {
+  display: flex;
+  list-style: none;
+  padding: 0;
+}
+
+nav ul li {
+  margin-left: 20px;
+}
+
+nav ul li a {
+  color: #fff;
+  text-decoration: none;
+}
+
+.hero {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  padding: 60px 0;
+  align-items: center;
+}
+
+.hero-content h1 {
+  font-size: 2.5rem;
+  line-height: 1.2;
+}
+
+.highlight {
+  color: #FFD700;
+}
+
+.hero-image img {
+  width: 100%;
+  border-radius: 8px;
+}
+
+.services {
+  padding: 40px 0;
+}
+
+.maze-title {
+  font-size: 2rem;
+  color: #FFD700;
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.maze-description {
+  text-align: center;
+  max-width: 800px;
+  margin: 0 auto 40px;
+}
+
+.convai-wrapper {
+  margin-top: 60px;
+}
+
+/* Game styles */
+.game-control-wrapper {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-areas: 
+    "maze controls"
+    "process process";
+  gap: 20px;
+  margin: 20px auto;
+  overflow: hidden; /* Prevent jumping during resize */
+}
+
+#mazeContainer {
+  grid-area: maze;
+  width: 530px;
+  height: 570px;
+  background-color: #000;
+  position: relative;
+  border-radius: 8px;
+  box-shadow: 0 0 20px rgba(255, 215, 0, 0.2);
+  border: none;
+  overflow: hidden;
+  transition: width 0.3s ease, height 0.3s ease; /* Smooth transition */
+}
+
+/* FIXED BUTTON AND CONTROLS STYLING */
+.controls-wrapper {
+  grid-area: controls;
+}
+
+.controls-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-top: 15px;
+}
+
+/* Standard controls styling - fixed to prevent button overlap */
+.standard-controls {
+  position: static;
+  padding: 15px;
+  background-color: #222;
+  border: none;
+  border-radius: 4px;
+  box-shadow: 0 0 20px rgba(255, 215, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+}
+
+.advanced-controls, .process-load-container {
+  background-color: #222;
+  border: none;
+  padding: 15px;
+  border-radius: 4px;
+  box-shadow: 0 0 20px rgba(255, 215, 0, 0.2);
+}
+
+.button-container {
+  margin-top: 10px;
+  width: 100%;
+}
+
+#clearButton {
+  width: 100%;
+  background-color: #FFD700;
+  border: none;
+  border-radius: 4px;
+  padding: 10px 20px;
+  color: #000;
+  font-weight: bold;
+  cursor: pointer;
+  margin: 0;
+}
+
+.help-icon {
   background-color: #FFD700;
   color: #000;
   width: 18px;
@@ -494,7 +460,7 @@
   font-weight: bold;
   font-size: 14px;
   cursor: pointer;
-  margin: -30px 0 10px 170px;
+  margin-right: 10px;
 }
 
 .help-modal {
@@ -532,221 +498,266 @@
   margin-top: 10px;
   cursor: pointer;
 }
-	
-    .collapse-icon.collapsed {
-      transform: rotate(-90deg);
-    }
-    
-    .section-content {
-      overflow: hidden;
-      transition: max-height 0.3s ease;
-      max-height: 500px;
-      padding: 0 5px;
-    }
-    
-    .section-content.collapsed {
-      max-height: 0;
-    }
-    
-    h3 {
-      color: #FFD700;
-      margin-top: 0;
-    }
-    
-    .control-group {
-      margin-bottom: 20px;
-    }
-    
-    .control-label {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 10px;
-      color: #FFD700;
-    }
-    
-    .control-value {
-      color: white;
-    }
-    
-    .slider {
-      width: 100%;
-      height: 5px;
-      -webkit-appearance: none;
-      background: #333;
-      outline: none;
-      border-radius: 3px;
-      cursor: pointer;
-      border: 1px solid #FFD700;
-      margin: 8px 0;
-    }
-    
-    .slider::-webkit-slider-thumb {
-      -webkit-appearance: none;
-      width: 15px;
-      height: 15px;
-      border-radius: 50%;
-      background: #FFD700;
-      cursor: pointer;
-    }
-    
-    .process-load-container {
-      grid-area: process;
-      margin-top: 20px;
-    }
-    
-    .progress-bar, .wave-progress-bar {
-      width: 100%;
-      background: #333;
-      height: 10px;
-      border-radius: 5px;
-      overflow: hidden;
-      border: 1px solid #FFD700;
-    }
-    
-    .progress, .wave-progress {
-      height: 100%;
-      background: #FFD700;
-      width: 0%;
-      transition: width 0.3s;
-    }
-    
-    .wave-progress {
-      width: 100%;
-    }
-    
-    #clearButton, #restartButton {
-      background-color: #FFD700;
-      border: none;
-      border-radius: 4px;
-      padding: 10px 20px;
-      color: #000;
-      font-weight: bold;
-      cursor: pointer;
-      margin-top: 10px;
-    }
-    
-    #tooltip {
-      position: absolute;
-      bottom: 10px;
-      left: 10px;
-      background: rgba(0, 0, 0, 0.7);
-      color: #FFD700;
-      padding: 5px 10px;
-      border-radius: 3px;
-      font-size: 0.9rem;
-      opacity: 1;
-      display: none;
-      z-index: 50;
-    }
-    
-    /* Business message style */
-    .business-message {
-      position: absolute;
-      top: 10px;
-      left: 0;
-      right: 0;
-      text-align: center;
-      color: #FFD700;
-      font-size: 1rem;
-      background: rgba(0, 0, 0, 0.5);
-      padding: 5px 15px;
-      border-radius: 3px;
-      opacity: 0;
-      transition: opacity 0.5s;
-      pointer-events: none;
-    }
-    
-    #overlayMessage {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.9);
-      display: none;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      z-index: 100;
-      color: #FFD700;
-      font-size: 1.8rem;
-      text-align: center;
-      padding: 20px;
-      box-sizing: border-box;
-    }
-    
-    /* NEW: Six Sigma KPI Styles */
-    .process-metrics-container,
-    .process-objectives-container {
-      background-color: #222;
-      border: none;
-      padding: 15px;
-      border-radius: 4px;
-      box-shadow: 0 0 20px rgba(255, 215, 0, 0.2);
-      margin-top: 20px;
-      grid-column: span 2;
-    }
-    
-    .kpi-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 10px;
-    }
-    
-    .kpi-item {
-      background-color: #333;
-      padding: 10px;
-      border-radius: 4px;
-      text-align: center;
-    }
-    
-    .kpi-label {
-      color: #FFD700;
-      font-size: 0.9rem;
-      margin-bottom: 5px;
-    }
-    
-    .kpi-value {
-      color: white;
-      font-size: 1.2rem;
-      font-weight: bold;
-    }
-    
-    .objective-list {
-      display: grid;
-      gap: 10px;
-    }
-    
-    .objective-item {
-      display: flex;
-      align-items: center;
-      padding: 10px;
-      background-color: #333;
-      border-radius: 4px;
-    }
-    
-    .objective-status {
-      width: 15px;
-      height: 15px;
-      border-radius: 50%;
-      margin-right: 10px;
-    }
-    
-    .objective-status.incomplete {
-      background-color: #666;
-      border: 1px solid #999;
-    }
-    
-    .objective-status.complete {
-      background-color: #50C878;
-      border: 1px solid #fff;
-    }
-    
-    .objective-text {
-      color: white;
-    }
-    
-    /* Media query for mobile screens */
+
+.help-icon {
+  background-color: #FFD700;
+  color: #000;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 14px;
+  cursor: pointer;
+  margin: -30px 0 10px 170px;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  padding-bottom: 8px;
+  margin-bottom: 15px;
+  border-bottom: 1px solid rgba(255, 215, 0, 0.3);
+}
+
+.section-header h3 {
+  margin: 0;
+  color: #FFD700;
+  font-size: 1.2rem;
+}
+
+.main-controls-header {
+  background-color: #222;
+  border-radius: 4px;
+  padding: 10px 15px;
+  margin-bottom: 0;
+  box-shadow: 0 0 20px rgba(255, 215, 0, 0.2);
+  cursor: pointer;
+}
+
+.collapse-icon {
+  color: #FFD700;
+  transition: transform 0.3s ease;
+}
+
+.collapse-icon.collapsed {
+  transform: rotate(-90deg);
+}
+
+.section-content {
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+  max-height: 500px;
+  padding: 0 5px;
+  margin-bottom: 10px;
+}
+
+.section-content.collapsed {
+  max-height: 0;
+}
+
+h3 {
+  color: #FFD700;
+  margin-top: 0;
+}
+
+.control-group {
+  margin-bottom: 20px;
+}
+
+.control-group:last-of-type {
+  margin-bottom: 10px;
+}
+
+.control-label {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  color: #FFD700;
+}
+
+.control-value {
+  color: white;
+}
+
+.slider {
+  width: 100%;
+  height: 5px;
+  -webkit-appearance: none;
+  background: #333;
+  outline: none;
+  border-radius: 3px;
+  cursor: pointer;
+  border: 1px solid #FFD700;
+  margin: 8px 0;
+}
+
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background: #FFD700;
+  cursor: pointer;
+}
+
+.process-load-container {
+  grid-area: process;
+  margin-top: 20px;
+}
+
+.progress-bar, .wave-progress-bar {
+  width: 100%;
+  background: #333;
+  height: 10px;
+  border-radius: 5px;
+  overflow: hidden;
+  border: 1px solid #FFD700;
+}
+
+.progress, .wave-progress {
+  height: 100%;
+  background: #FFD700;
+  width: 0%;
+  transition: width 0.3s;
+}
+
+.wave-progress {
+  width: 100%;
+}
+
+#restartButton {
+  background-color: #FFD700;
+  border: none;
+  border-radius: 4px;
+  padding: 10px 20px;
+  color: #000;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+#tooltip {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  background: rgba(0, 0, 0, 0.7);
+  color: #FFD700;
+  padding: 5px 10px;
+  border-radius: 3px;
+  font-size: 0.9rem;
+  opacity: 1;
+  display: none;
+  z-index: 50;
+}
+
+/* Business message style */
+.business-message {
+  position: absolute;
+  top: 10px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  color: #FFD700;
+  font-size: 1rem;
+  background: rgba(0, 0, 0, 0.5);
+  padding: 5px 15px;
+  border-radius: 3px;
+  opacity: 0;
+  transition: opacity 0.5s;
+  pointer-events: none;
+}
+
+#overlayMessage {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.9);
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  color: #FFD700;
+  font-size: clamp(1rem, 3vw, 1.8rem);
+  text-align: center;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+#overlayMessage button {
+  margin-top: clamp(10px, 2vw, 20px);
+  padding: clamp(8px, 1.5vw, 15px) clamp(12px, 2vw, 20px);
+  font-size: clamp(0.9rem, 1.5vw, 1.2rem);
+}
+
+/* NEW: Six Sigma KPI Styles */
+.process-metrics-container,
+.process-objectives-container {
+  background-color: #222;
+  border: none;
+  padding: 15px;
+  border-radius: 4px;
+  box-shadow: 0 0 20px rgba(255, 215, 0, 0.2);
+  margin-top: 20px;
+  grid-column: span 2;
+}
+
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+.kpi-item {
+  background-color: #333;
+  padding: 10px;
+  border-radius: 4px;
+  text-align: center;
+}
+
+.kpi-label {
+  color: #FFD700;
+  font-size: 0.9rem;
+  margin-bottom: 5px;
+}
+
+.objective-list {
+  display: grid;
+  gap: 10px;
+}
+
+.objective-item {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  background-color: #333;
+  border-radius: 4px;
+}
+
+.objective-status {
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+.objective-status.incomplete {
+  background-color: #666;
+  border: 1px solid #999;
+}
+
+.objective-text {
+  color: white;
+}
+
+/* Media query for mobile screens */
 /* Media query for mobile screens */
 @media (max-width: 1024px) {
   .game-control-wrapper {
@@ -799,6 +810,7 @@
     display: none !important;
   }
 }
+	
   </style>
 </head>
 <body>
@@ -850,51 +862,53 @@
             <span class="collapse-icon">▼</span>
           </div>
           <div class="controls-container">
-            <!-- Standard Controls -->
-            <div class="standard-controls">
-              <div class="section-header">
-                <h3>Process Documentation & Standardization</h3>
-                <span class="collapse-icon">▼</span>
-              </div>
-              <div class="section-content">
-                <div class="control-group">
-                  <div class="control-label">
-                    <span>Process Documentation Level</span>
-                    <span class="control-value" id="containerSizeValue">Standard (100%)</span>
-                  </div>
-                  <input type="range" min="450" max="800" value="570" class="slider" id="containerSizeSlider">
-                </div>
-                <div class="control-group">
-                  <div class="control-label">
-                    <span>Process Standardization</span>
-                    <span class="control-value" id="headSizeValue">Level 5</span>
-                  </div>
-                  <input type="range" min="3" max="20" value="7.5" step="0.5" class="slider" id="headSizeSlider">
-                </div>
-                <div class="control-group">
-                  <div class="control-label">
-                    <span>Knowledge Base Coverage</span>
-                    <span class="control-value" id="trailLengthValue">6M</span>
-                  </div>
-                  <input type="range" min="1000" max="8000" value="2000" step="100" class="slider" id="trailLengthSlider">
-                </div>
-                <div class="control-group">
-                  <div class="control-label">
-                    <span>Process Execution Rate</span>
-                    <span class="control-value" id="speedValue">1h</span>
-                  </div>
-                  <input type="range" min="0.5" max="8" value="2" step="0.5" class="slider" id="speedSlider">
-                </div>
-                <div class="control-group">
-                  <div class="control-label">
-                    <span>Workforce Capacity Allocation</span>
-                    <span class="control-value" id="numHeadsValue">Single Stream</span>
-                  </div>
-                  <input type="range" min="1" max="3" value="1" step="1" class="slider" id="numHeadsSlider">
-                </div>
-                <button id="clearButton">Reset Simulation</button>
-              </div>
-            </div>
+  <!-- Standard Controls -->
+  <div class="standard-controls">
+    <div class="section-header">
+      <h3>Process Documentation & Standardization</h3>
+      <span class="collapse-icon">▼</span>
+    </div>
+    <div class="section-content">
+      <div class="control-group">
+        <div class="control-label">
+          <span>Process Documentation Level</span>
+          <span class="control-value" id="containerSizeValue">Standard (100%)</span>
+        </div>
+        <input type="range" min="450" max="800" value="570" class="slider" id="containerSizeSlider">
+      </div>
+      <div class="control-group">
+        <div class="control-label">
+          <span>Process Standardization</span>
+          <span class="control-value" id="headSizeValue">Level 5</span>
+        </div>
+        <input type="range" min="3" max="20" value="7.5" step="0.5" class="slider" id="headSizeSlider">
+      </div>
+      <div class="control-group">
+        <div class="control-label">
+          <span>Knowledge Base Coverage</span>
+          <span class="control-value" id="trailLengthValue">6M</span>
+        </div>
+        <input type="range" min="1000" max="8000" value="2000" step="100" class="slider" id="trailLengthSlider">
+      </div>
+      <div class="control-group">
+        <div class="control-label">
+          <span>Process Execution Rate</span>
+          <span class="control-value" id="speedValue">1h</span>
+        </div>
+        <input type="range" min="0.5" max="8" value="2" step="0.5" class="slider" id="speedSlider">
+      </div>
+      <div class="control-group">
+        <div class="control-label">
+          <span>Workforce Capacity Allocation</span>
+          <span class="control-value" id="numHeadsValue">Single Stream</span>
+        </div>
+        <input type="range" min="1" max="3" value="1" step="1" class="slider" id="numHeadsSlider">
+      </div>
+    </div>
+    <div class="button-container">
+      <button id="clearButton">Reset Simulation</button>
+    </div>
+  </div>
             
             <!-- Advanced Controls: Business Parameters -->
             <div class="advanced-controls">
@@ -1632,7 +1646,31 @@ let wallCollisionCount = 0; // Track wall collisions separately
     lastCollisionCount = collisionCount;
     
     // Update objectives based on KPIs
+	
+	
     updateObjectives();
+	
+	// HIGHLIGHT VALUES THAT CHANGED
+  const highlightIfChanged = (element, prevValue, newValue) => {
+    if (prevValue !== newValue) {
+      element.style.color = '#FFD700'; // Highlight to gold
+      setTimeout(() => {
+        element.style.color = ''; // Reset to default (white)
+      }, 500);
+    }
+  };
+  
+  const prevCycleTime = leadTimeValue.textContent;
+const prevTimeSavings = valueAddedValue.textContent;
+const prevComplexity = sigmaLevelValue.textContent;
+const prevSuccess = fttValue.textContent;
+
+  highlightIfChanged(leadTimeValue, prevCycleTime, leadTimeValue.textContent);
+  highlightIfChanged(valueAddedValue, prevTimeSavings, valueAddedValue.textContent);
+  highlightIfChanged(sigmaLevelValue, prevComplexity, sigmaLevelValue.textContent);
+  highlightIfChanged(fttValue, prevSuccess, fttValue.textContent);
+	
+	
   }
   
   /**
@@ -1848,113 +1886,126 @@ function updateObjectives() {
     }
   }
   
-  // Draw game state
-  function draw() {
-    // Clear the canvas
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+// Draw game state
+function draw() {
+  // Clear the canvas
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  
+  // Draw static trails with gradient effect
+  staticTrails.forEach(trail => {
+    if (trail.length < 2) return;
     
-    // Draw static trails with gradient effect
-    staticTrails.forEach(trail => {
-      if (trail.length < 2) return;
+    for (let i = 1; i < trail.length; i++) {
+      // Calculate opacity based on position in trail - brighter at the end
+      const opacity = i / trail.length;
       
-      for (let i = 1; i < trail.length; i++) {
-        // Calculate opacity based on position in trail - brighter at the end
-        const opacity = i / trail.length;
-        
-        ctx.beginPath();
-        ctx.moveTo(trail[i-1].x, trail[i-1].y);
-        ctx.lineTo(trail[i].x, trail[i].y);
-        ctx.strokeStyle = `rgba(255, 255, 255, ${opacity})`;
-        ctx.lineWidth = LINE_WIDTH;
-        ctx.stroke();
-      }
-    });
+      ctx.beginPath();
+      ctx.moveTo(trail[i-1].x, trail[i-1].y);
+      ctx.lineTo(trail[i].x, trail[i].y);
+      ctx.strokeStyle = `rgba(255, 255, 255, ${opacity})`;
+      ctx.lineWidth = LINE_WIDTH;
+      ctx.stroke();
+    }
+  });
+  
+  // Draw head trails with gradient effect - white at head, darker at the end
+  heads.forEach(head => {
+    if (head.trail.length < 2) return;
     
-    // Draw head trails with gradient effect - white at head, darker at the end
-    heads.forEach(head => {
-      if (head.trail.length < 2) return;
+    for (let i = 1; i < head.trail.length; i++) {
+      // Calculate opacity based on position in trail - brighter near head
+      const opacity = (i / head.trail.length);
       
-      for (let i = 1; i < head.trail.length; i++) {
-        // Calculate opacity based on position in trail - brighter near head
-        const opacity = (i / head.trail.length);
-        
-        ctx.beginPath();
-        ctx.moveTo(head.trail[i-1].x, head.trail[i-1].y);
-        ctx.lineTo(head.trail[i].x, head.trail[i].y);
-        ctx.strokeStyle = `rgba(255, 255, 255, ${opacity})`;
-        ctx.lineWidth = LINE_WIDTH;
-        ctx.stroke();
-      }
-    });
+      ctx.beginPath();
+      ctx.moveTo(head.trail[i-1].x, head.trail[i-1].y);
+      ctx.lineTo(head.trail[i].x, head.trail[i].y);
+      ctx.strokeStyle = `rgba(255, 255, 255, ${opacity})`;
+      ctx.lineWidth = LINE_WIDTH;
+      ctx.stroke();
+    }
+  });
+  
+  // Draw obstacles as different types of business challenges
+  obstacles.forEach((obstacle, index) => {
+    ctx.save();
     
-    // Draw obstacles as different types of business challenges
-    obstacles.forEach((obstacle, index) => {
-      ctx.save();
-      const centerX = obstacle.x + obstacle.width / 2;
-      const centerY = obstacle.y + obstacle.height / 2;
-      ctx.translate(centerX, centerY);
-      
-      // Assign obstacle type based on index (evenly distribute types)
-      const obstacleType = index % 4;
-      
-      switch(obstacleType) {
-        case 0: // Quality issues (red diamonds)
-          ctx.rotate(Math.PI / 4);
-          ctx.fillStyle = "#FF5555";
-          ctx.shadowColor = "#FF5555";
-          ctx.fillRect(-obstacle.width / 2, -obstacle.height / 2, obstacle.width, obstacle.height);
-          break;
-          
-        case 1: // Resource constraints (orange squares)
-          ctx.fillStyle = "#FF8C00";
-          ctx.shadowColor = "#FF8C00";
-          ctx.fillRect(-obstacle.width / 2, -obstacle.height / 2, obstacle.width, obstacle.height);
-          break;
-          
-        case 2: // Compliance risks (purple hexagons)
-          ctx.beginPath();
-          for (let i = 0; i < 6; i++) {
-            const angle = (Math.PI / 3) * i;
-            const x = Math.cos(angle) * (obstacle.width / 2);
-            const y = Math.sin(angle) * (obstacle.height / 2);
-            if (i === 0) ctx.moveTo(x, y);
-            else ctx.lineTo(x, y);
-          }
-          ctx.closePath();
-          ctx.fillStyle = "#9370DB";
-          ctx.shadowColor = "#9370DB";
-          ctx.fill();
-          break;
-          
-        case 3: // Technical debt (gray circles)
-          ctx.beginPath();
-          ctx.arc(0, 0, obstacle.width / 2, 0, Math.PI * 2);
-          ctx.fillStyle = "#A9A9A9";
-          ctx.shadowColor = "#A9A9A9";
-          ctx.fill();
-          break;
-      }
-      
-      ctx.shadowBlur = 15;
-      ctx.restore();
-    });
+    // First calculate the center coordinates
+    const centerX = obstacle.x + obstacle.width / 2;
+    const centerY = obstacle.y + obstacle.height / 2;
     
-    // Draw particles
-    if (isEffectActive) {
-      particles.forEach(particle => particle.draw());
+    // Add subtle animation
+    const time = performance.now() / 1000;
+    const wobble = Math.sin(time * 2 + index) * 2; // Small wobble effect
+    
+    ctx.translate(centerX, centerY);
+    
+    // Subtle rotation for some obstacle types
+    if (index % 4 === 2) { // Only rotate certain obstacles
+      const rotateAmount = Math.sin(time * 0.5 + index) * 0.1;
+      ctx.rotate(rotateAmount);
     }
     
-    // Draw heads
-    heads.forEach(head => {
-      ctx.beginPath();
-      ctx.arc(head.x, head.y, DOT_RADIUS, 0, Math.PI * 2);
-      ctx.fillStyle = '#ecd404';
-      ctx.shadowBlur = 15;
-      ctx.shadowColor = '#ecd404';
-      ctx.fill();
-      ctx.shadowBlur = 0;
-    });
+    // Assign obstacle type based on index (evenly distribute types)
+    const obstacleType = index % 4;
+    
+    switch(obstacleType) {
+      case 0: // Quality issues (red diamonds)
+        ctx.rotate(Math.PI / 4);
+        ctx.fillStyle = "#FF5555";
+        ctx.shadowColor = "#FF5555";
+        ctx.fillRect(-obstacle.width / 2, -obstacle.height / 2, obstacle.width, obstacle.height);
+        break;
+        
+      case 1: // Resource constraints (orange squares)
+        ctx.fillStyle = "#FF8C00";
+        ctx.shadowColor = "#FF8C00";
+        ctx.fillRect(-obstacle.width / 2, -obstacle.height / 2, obstacle.width, obstacle.height);
+        break;
+        
+      case 2: // Compliance risks (purple hexagons)
+        ctx.beginPath();
+        for (let i = 0; i < 6; i++) {
+          const angle = (Math.PI / 3) * i;
+          const x = Math.cos(angle) * (obstacle.width / 2);
+          const y = Math.sin(angle) * (obstacle.height / 2);
+          if (i === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        }
+        ctx.closePath();
+        ctx.fillStyle = "#9370DB";
+        ctx.shadowColor = "#9370DB";
+        ctx.fill();
+        break;
+        
+      case 3: // Technical debt (gray circles)
+        ctx.beginPath();
+        ctx.arc(0, 0, obstacle.width / 2, 0, Math.PI * 2);
+        ctx.fillStyle = "#A9A9A9";
+        ctx.shadowColor = "#A9A9A9";
+        ctx.fill();
+        break;
+    }
+    
+    ctx.shadowBlur = 15;
+    ctx.restore();
+  });
+  
+  // Draw particles
+  if (isEffectActive) {
+    particles.forEach(particle => particle.draw());
   }
+  
+  // Draw heads
+  heads.forEach(head => {
+    ctx.beginPath();
+    ctx.arc(head.x, head.y, DOT_RADIUS, 0, Math.PI * 2);
+    ctx.fillStyle = '#ecd404';
+    ctx.shadowBlur = 15;
+    ctx.shadowColor = '#ecd404';
+    ctx.fill();
+    ctx.shadowBlur = 0;
+  });
+}
   
   // Game loop
   function gameLoop() {
@@ -2089,37 +2140,52 @@ function updateObjectives() {
 containerSizeSlider.addEventListener('change', function() {
   const size = parseInt(this.value);
   
+  // Remove any previous inline styles
+  mazeContainer.removeAttribute('style');
+  
   // For desktop, set both width and height
   if (window.innerWidth > 768) {
-    mazeContainer.style.width = size + 'px';
-    mazeContainer.style.height = size + 'px';
+    // Set dimensions for desktop
+    mazeContainer.style.cssText = `
+      width: ${size}px;
+      height: ${size}px;
+      max-width: none;
+      max-height: none;
+    `;
   } else {
-    // For mobile, only adjust the height, keep width at 100%
-    mazeContainer.style.width = '100%';
-    mazeContainer.style.height = size + 'px';
+    // For mobile, adjust height while maintaining responsive width
+    mazeContainer.style.cssText = `
+      width: 100% !important;
+      height: ${size}px !important;
+      max-width: none !important;
+      max-height: none !important;
+    `;
   }
   
-  // Update canvas size to match container's actual dimensions
-  canvas.width = mazeContainer.clientWidth;
-  canvas.height = mazeContainer.clientHeight;
-  
-  // Ensure heads stay within bounds (improved bounds checking)
-  heads.forEach(head => {
-    head.x = Math.max(DOT_RADIUS, Math.min(head.x, canvas.width - DOT_RADIUS));
-    head.y = Math.max(DOT_RADIUS, Math.min(head.y, canvas.height - DOT_RADIUS));
+  // Allow CSS to apply
+  setTimeout(() => {
+    // Update canvas size
+    canvas.width = mazeContainer.clientWidth;
+    canvas.height = mazeContainer.clientHeight;
     
-    // Also update trails to stay within bounds
-    head.trail = head.trail.map(point => ({
-      x: Math.max(0, Math.min(point.x, canvas.width)),
-      y: Math.max(0, Math.min(point.y, canvas.height))
-    }));
-  });
-  
-  // Keep obstacles within bounds
-  obstacles.forEach(obs => {
-    obs.x = Math.max(0, Math.min(obs.x, canvas.width - obs.width));
-    obs.y = Math.max(0, Math.min(obs.y, canvas.height - obs.height));
-  });
+    // Ensure heads stay within bounds
+    heads.forEach(head => {
+      head.x = Math.max(DOT_RADIUS, Math.min(head.x, canvas.width - DOT_RADIUS));
+      head.y = Math.max(DOT_RADIUS, Math.min(head.y, canvas.height - DOT_RADIUS));
+      
+      // Also update trails to stay within bounds
+      head.trail = head.trail.map(point => ({
+        x: Math.max(0, Math.min(point.x, canvas.width)),
+        y: Math.max(0, Math.min(point.y, canvas.height))
+      }));
+    });
+    
+    // Keep obstacles within bounds
+    obstacles.forEach(obs => {
+      obs.x = Math.max(0, Math.min(obs.x, canvas.width - obs.width));
+      obs.y = Math.max(0, Math.min(obs.y, canvas.height - obs.height));
+    });
+  }, 10);
 });
   
   // Head size slider
@@ -2372,20 +2438,81 @@ containerSizeSlider.addEventListener('change', function() {
   });
   
   // Canvas click event - only create particles when clicking on heads or obstacles
-  canvas.addEventListener('click', function(event) {
-    // Skip if the game is frozen
-    if (isGameFrozen) return;
+canvas.addEventListener('click', function(event) {
+  // Skip if the game is frozen
+  if (isGameFrozen) return;
+  
+  const rect = canvas.getBoundingClientRect();
+  const mouseX = event.clientX - rect.left;
+  const mouseY = event.clientY - rect.top;
+  
+  // Check if clicked on a head or near it (improved hit detection)
+  for (let i = 0; i < heads.length; i++) {
+    const head = heads[i];
+    const distance = Math.sqrt(Math.pow(mouseX - head.x, 2) + Math.pow(mouseY - head.y, 2));
+    // Increased detection radius for better usability
+    if (distance <= DOT_RADIUS * 1.5) {
+      changeDirection(i);
+      createParticles(head.x, head.y);
+      showTooltip("Workflow redirected - applying automation to maximize efficiency!");
+      return;
+    }
+  }
+  
+  // Check if clicked on an obstacle - more lenient detection
+  for (let i = obstacles.length - 1; i >= 0; i--) {
+    const obs = obstacles[i];
+    const centerX = obs.x + obs.width / 2;
+    const centerY = obs.y + obs.height / 2;
     
+    // More generous hit detection for obstacles (square-based)
+    if (mouseX >= obs.x - 10 && mouseX <= obs.x + obs.width + 10 &&
+        mouseY >= obs.y - 10 && mouseY <= obs.y + obs.height + 10) {
+      createParticles(centerX, centerY);
+      obstacles.splice(i, 1);
+      showTooltip("Exception handled - process knowledge base updated!");
+      return;
+    }
+  }
+  
+  // Removed particle creation on empty space clicks
+});
+
+// ADD THE TOUCH CONTROLS IMMEDIATELY AFTER THIS SECTION
+// Touch controls for mobile
+let touchStartX = 0;
+let touchStartY = 0;
+let touchStartTime = 0;
+
+canvas.addEventListener('touchstart', function(e) {
+  touchStartX = e.touches[0].clientX;
+  touchStartY = e.touches[0].clientY;
+  touchStartTime = new Date().getTime();
+  e.preventDefault(); // Prevent scrolling while touching game
+});
+
+canvas.addEventListener('touchend', function(e) {
+  const touchEndX = e.changedTouches[0].clientX;
+  const touchEndY = e.changedTouches[0].clientY;
+  const touchEndTime = new Date().getTime();
+  
+  // Calculate swipe distance and time
+  const diffX = touchEndX - touchStartX;
+  const diffY = touchEndY - touchStartY;
+  const diffTime = touchEndTime - touchStartTime;
+  
+  // Handle quick taps as regular clicks
+  if (diffTime < 300 && Math.abs(diffX) < 10 && Math.abs(diffY) < 10) {
+    // Use built-in click detection logic you already have
     const rect = canvas.getBoundingClientRect();
-    const mouseX = event.clientX - rect.left;
-    const mouseY = event.clientY - rect.top;
+    const mouseX = touchEndX - rect.left;
+    const mouseY = touchEndY - rect.top;
     
-    // Check if clicked on a head or near it (improved hit detection)
+    // Check if clicked on a head
     for (let i = 0; i < heads.length; i++) {
       const head = heads[i];
       const distance = Math.sqrt(Math.pow(mouseX - head.x, 2) + Math.pow(mouseY - head.y, 2));
-      // Increased detection radius for better usability
-      if (distance <= DOT_RADIUS * 1.5) {
+      if (distance <= DOT_RADIUS * 2) { // Larger tap area for mobile
         changeDirection(i);
         createParticles(head.x, head.y);
         showTooltip("Workflow redirected - applying automation to maximize efficiency!");
@@ -2393,24 +2520,57 @@ containerSizeSlider.addEventListener('change', function() {
       }
     }
     
-    // Check if clicked on an obstacle - more lenient detection
+    // Check if clicked on an obstacle - more generous hit area
     for (let i = obstacles.length - 1; i >= 0; i--) {
       const obs = obstacles[i];
-      const centerX = obs.x + obs.width / 2;
-      const centerY = obs.y + obs.height / 2;
-      
-      // More generous hit detection for obstacles (square-based)
-      if (mouseX >= obs.x - 10 && mouseX <= obs.x + obs.width + 10 &&
-          mouseY >= obs.y - 10 && mouseY <= obs.y + obs.height + 10) {
-        createParticles(centerX, centerY);
+      // Larger hit area for mobile
+      if (mouseX >= obs.x - 20 && mouseX <= obs.x + obs.width + 20 &&
+          mouseY >= obs.y - 20 && mouseY <= obs.y + obs.height + 20) {
+        createParticles(obs.x + obs.width/2, obs.y + obs.height/2);
         obstacles.splice(i, 1);
         showTooltip("Exception handled - process knowledge base updated!");
         return;
       }
     }
+    return;
+  }
+  
+  // Only handle significant swipes
+  if (Math.abs(diffX) > 30 || Math.abs(diffY) > 30) {
+    // Find closest head to the touch point
+    let closestHead = null;
+    let closestDist = Infinity;
+    let closestIndex = -1;
     
-    // Removed particle creation on empty space clicks
-  });
+    heads.forEach((head, index) => {
+      const rect = canvas.getBoundingClientRect();
+      const touchX = touchStartX - rect.left;
+      const touchY = touchStartY - rect.top;
+      
+      const dist = Math.sqrt(Math.pow(head.x - touchX, 2) + Math.pow(head.y - touchY, 2));
+      if (dist < closestDist) {
+        closestDist = dist;
+        closestHead = head;
+        closestIndex = index;
+      }
+    });
+    
+    // If we found a head within reasonable distance
+    if (closestHead && closestDist < 150) {
+      // Calculate direction based on swipe
+      const angle = Math.atan2(diffY, diffX);
+      const force = Math.min(Math.sqrt(diffX*diffX + diffY*diffY) / 100, 1) * SPEED * 2;
+      
+      // Update head direction
+      closestHead.dirX = Math.cos(angle) * force;
+      closestHead.dirY = Math.sin(angle) * force;
+      
+      // Show effect
+      createParticles(closestHead.x, closestHead.y);
+      showTooltip("Direction changed by swipe!");
+    }
+  }
+});
   
 // Initialize all sliders to minimum values
 const allSliders = document.querySelectorAll('.slider');
@@ -2536,23 +2696,109 @@ helpModal.innerHTML = `
   });
 
   // Add window resize handler to keep game objects within bounds when screen size changes
+// Improved window resize handler
 window.addEventListener('resize', function() {
+  // Store the previous dimensions to calculate ratio
+  const prevWidth = canvas.width;
+  const prevHeight = canvas.height;
+  
   // Update canvas size to match container
   canvas.width = mazeContainer.clientWidth;
   canvas.height = mazeContainer.clientHeight;
   
-  // Ensure heads stay within bounds
+  // Calculate the scaling factors
+  const scaleX = canvas.width / prevWidth;
+  const scaleY = canvas.height / prevHeight;
+  
+  // Adjust heads and their trails to new scale
   heads.forEach(head => {
-    // Keep heads inside boundaries
+    // Scale position
+    head.x *= scaleX;
+    head.y *= scaleY;
+    
+    // Make sure heads stay within bounds
     head.x = Math.max(DOT_RADIUS, Math.min(head.x, canvas.width - DOT_RADIUS));
     head.y = Math.max(DOT_RADIUS, Math.min(head.y, canvas.height - DOT_RADIUS));
+    
+    // Scale all trail points
+    head.trail = head.trail.map(point => ({
+      x: Math.min(Math.max(point.x * scaleX, 0), canvas.width),
+      y: Math.min(Math.max(point.y * scaleY, 0), canvas.height)
+    }));
   });
   
-  // Keep obstacles within bounds
+  // Scale static trails as well
+  staticTrails = staticTrails.map(trail => 
+    trail.map(point => ({
+      x: Math.min(Math.max(point.x * scaleX, 0), canvas.width),
+      y: Math.min(Math.max(point.y * scaleY, 0), canvas.height)
+    }))
+  );
+  
+  // Adjust obstacles to new scale
   obstacles.forEach(obs => {
+    // Scale position
+    obs.x *= scaleX;
+    obs.y *= scaleY;
+    
+    // Keep obstacles within bounds
     obs.x = Math.max(0, Math.min(obs.x, canvas.width - obs.width));
     obs.y = Math.max(0, Math.min(obs.y, canvas.height - obs.height));
   });
+});
+
+// Similarly improve the orientation change handler
+window.addEventListener('orientationchange', function() {
+  // Wait for browser to update dimensions after orientation change
+  setTimeout(() => {
+    // Store the previous dimensions to calculate ratio
+    const prevWidth = canvas.width;
+    const prevHeight = canvas.height;
+    
+    // Update canvas size
+    canvas.width = mazeContainer.clientWidth;
+    canvas.height = mazeContainer.clientHeight;
+    
+    // Calculate the scaling factors
+    const scaleX = canvas.width / prevWidth;
+    const scaleY = canvas.height / prevHeight;
+    
+    // Adjust heads and their trails to new scale
+    heads.forEach(head => {
+      // Scale position
+      head.x *= scaleX;
+      head.y *= scaleY;
+      
+      // Make sure heads stay within bounds
+      head.x = Math.max(DOT_RADIUS, Math.min(head.x, canvas.width - DOT_RADIUS));
+      head.y = Math.max(DOT_RADIUS, Math.min(head.y, canvas.height - DOT_RADIUS));
+      
+      // Scale all trail points
+      head.trail = head.trail.map(point => ({
+        x: Math.min(Math.max(point.x * scaleX, 0), canvas.width),
+        y: Math.min(Math.max(point.y * scaleY, 0), canvas.height)
+      }));
+    });
+    
+    // Scale static trails as well
+    staticTrails = staticTrails.map(trail => 
+      trail.map(point => ({
+        x: Math.min(Math.max(point.x * scaleX, 0), canvas.width),
+        y: Math.min(Math.max(point.y * scaleY, 0), canvas.height)
+      }))
+    );
+    
+    // Adjust obstacles to new scale
+    obstacles.forEach(obs => {
+      // Scale position
+      obs.x *= scaleX;
+      obs.y *= scaleY;
+      
+      // Keep obstacles within bounds
+      obs.x = Math.max(0, Math.min(obs.x, canvas.width - obs.width));
+      obs.y = Math.max(0, Math.min(obs.y, canvas.height - obs.height));
+    });
+  }, 300);
 });
   <!-- Main Game Script - Include the script.js file -->
   </script>
@@ -2562,7 +2808,6 @@ window.addEventListener('resize', function() {
   <div class="qr-code-inner">
     <h3>Scan to try on your device</h3>
     <div id="qrcode"></div>
-    <p>https://carmon1985.github.io/intelligent-automation/</p>
   </div>
 </div>
   
