@@ -2327,19 +2327,28 @@ containerSizeSlider.addEventListener('change', function() {
   const windowWidth = window.innerWidth;
   const containerWidth = document.querySelector('.container').clientWidth;
   
-  // Calculate the raw value that corresponds to 80 on the slider scale
-  const rawValueFor80 = 450 + ((80 - 20) / (100 - 20)) * (800 - 450); // approx 670
+  // Determine max value based on screen size
+  const originalMin = 450;
+  const originalMax = 800;
+  const MAX_VALUE = windowWidth <= 768 
+    ? originalMin + (originalMax - originalMin) * 0.8  // Mobile: 80% of range
+    : originalMax;  // Desktop: full range
   
-  // Set the threshold one tick lower than 80
-  // Assuming each step is about 5-10 units on the raw scale
-  const threshold = rawValueFor80 - 10; // One tick earlier than 80
+  // Ensure value doesn't exceed max for current device
+  const finalSliderValue = Math.min(sliderValue, Math.round(MAX_VALUE));
+  
+  // Use finalSliderValue for all subsequent logic
+  this.value = finalSliderValue;
   
   // Remove any existing layout fix first
   const existingFix = document.getElementById('layout-fix');
   if (existingFix) existingFix.remove();
   
-  // Check if we're at or exceeding the threshold (slightly before value 80)
-  const isAtThresholdOrAbove = sliderValue >= threshold;
+  // Check if we're at or exceeding the threshold
+  const rawValueFor80 = 450 + ((80 - 20) / (100 - 20)) * (800 - 450);
+  const threshold = rawValueFor80 - 10;
+  
+  const isAtThresholdOrAbove = finalSliderValue >= threshold;
   
   // At or above threshold, we need to ensure all sliders are visible
   if (isAtThresholdOrAbove) {
@@ -2357,8 +2366,8 @@ containerSizeSlider.addEventListener('change', function() {
         /* Center maze */
         #mazeContainer {
           margin: 0 auto !important;
-          width: ${sliderValue}px !important;
-          height: ${sliderValue}px !important;
+          width: ${finalSliderValue}px !important;
+          height: ${finalSliderValue}px !important;
         }
         
         /* Make controls container display properly */
@@ -2400,8 +2409,8 @@ containerSizeSlider.addEventListener('change', function() {
           }
           
           #mazeContainer {
-            width: ${sliderValue}px !important;
-            height: ${sliderValue}px !important;
+            width: ${finalSliderValue}px !important;
+            height: ${finalSliderValue}px !important;
           }
         }
       </style>
@@ -2451,7 +2460,6 @@ containerSizeSlider.addEventListener('change', function() {
     isResizing = false;
   });
 });
-
   
   // Head size slider
   headSizeSlider.addEventListener('input', function() {
