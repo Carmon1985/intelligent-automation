@@ -3145,12 +3145,17 @@ window.addEventListener('resize', function() {
   // Set resize state
   isResizing = true;
   
-  // Store position ratios
-  const headPositions = heads.map(head => ({
-    xRatio: head.x / canvas.width,
-    yRatio: head.y / canvas.height,
-    head: head
-  }));
+  // Store position ratios - Add safety check for heads
+  const headPositions = [];
+  if (typeof heads !== 'undefined' && Array.isArray(heads)) {
+    heads.forEach(head => {
+      headPositions.push({
+        xRatio: head.x / canvas.width,
+        yRatio: head.y / canvas.height,
+        head: head
+      });
+    });
+  }
   
   // Fix layout to ensure controls stay visible
   fixLayoutAfterResize();
@@ -3204,11 +3209,16 @@ window.addEventListener('resize', function() {
 
 window.addEventListener('orientationchange', function() {
   // Store positions as percentages before resizing
-  const headPositions = heads.map(head => ({
-    xPercent: head.x / canvas.width,
-    yPercent: head.y / canvas.height,
-    head: head
-  }));
+  const headPositions = [];
+  if (typeof heads !== 'undefined' && Array.isArray(heads)) {
+    heads.forEach(head => {
+      headPositions.push({
+        xPercent: head.x / canvas.width,
+        yPercent: head.y / canvas.height,
+        head: head
+      });
+    });
+  }
   
   // Wait longer for browser to update dimensions after orientation change
   setTimeout(() => {
@@ -3372,12 +3382,12 @@ document.addEventListener('DOMContentLoaded', function() {
       updateSliderConstraints();
       enforceMobileSizeLimits();
     }, 300);
-  });
   
+  });
   // Initial setup
   updateSliderConstraints();
   enforceMobileSizeLimits();
-});
+
   
   // Set mobile constraints to containerSizeSlider
   function updateSliderConstraints() {
@@ -3420,6 +3430,33 @@ document.addEventListener('DOMContentLoaded', function() {
     }, 300);
   });
   
+  function enforceMobileSizeLimits() {
+  const isMobile = window.innerWidth <= 768;
+  const containerSizeSlider = document.getElementById('containerSizeSlider');
+  
+  if (!containerSizeSlider) return;
+  
+  if (isMobile) {
+    // Calculate appropriate max value based on screen size
+    let maxValue;
+    if (window.innerWidth <= 375) {
+      maxValue = 350; // Very small screens
+    } else if (window.innerWidth <= 480) {
+      maxValue = 400; // Small mobile
+    } else {
+      maxValue = 450; // Regular mobile
+    }
+    
+    // Apply constraint if needed
+    if (parseInt(containerSizeSlider.value) > maxValue) {
+      containerSizeSlider.value = maxValue;
+      // Trigger change event
+      const event = new Event('input');
+      containerSizeSlider.dispatchEvent(event);
+    }
+  }
+}
+  
   // Initial setup
   updateSliderConstraints();
   enforceMobileSizeLimits();
@@ -3435,7 +3472,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Then enforce our mobile limits
     enforceMobileSizeLimits();
   });
-});
+
 // Improved mobile touch handling and head disappearance fix
 document.addEventListener('DOMContentLoaded', function() {
   // Find the canvas element (it's created dynamically, so we'll look for it once the game initializes)
@@ -3603,6 +3640,142 @@ document.addEventListener('DOMContentLoaded', function() {
     }, { passive: false }); // Non-passive to allow preventDefault()
   }
 });
+
+function embedElevenLabsWidget(container) {
+  // Find the actual elevenlabs-convai element from your page
+  const originalWidget = document.querySelector('elevenlabs-convai');
+  
+  if (originalWidget) {
+    // Clone the widget for use in the animation
+    const widgetClone = originalWidget.cloneNode(true);
+    widgetClone.style.width = '100%';
+    widgetClone.style.height = '100%';
+    widgetClone.style.border = 'none';
+    widgetClone.style.borderRadius = '12px';
+    
+    // Clear the container and append the clone
+    container.innerHTML = '';
+    container.appendChild(widgetClone);
+  } else {
+    // If widget not found, use a stylized placeholder
+    container.innerHTML = `
+      <div style="width: 100%; height: 100%; display: flex; flex-direction: column; 
+           justify-content: center; align-items: center; color: white; 
+           font-family: Arial, sans-serif; padding: 20px; box-sizing: border-box; text-align: center;">
+        <h2 style="margin-bottom: 15px;">Intelligent Automation Assistant</h2>
+        <p style="margin-bottom: 20px;">How can I help you automate your business processes today?</p>
+        <div style="width: 90%; height: 60px; background: #333; border-radius: 8px; 
+             display: flex; align-items: center; padding: 0 15px; margin-bottom: 20px;">
+          <span style="opacity: 0.7;">Ask me about RPA, Power Platform, or process optimization...</span>
+        </div>
+        <div style="display: flex; gap: 15px; margin-bottom: 20px;">
+          <button style="background: #FFD700; color: black; border: none; 
+                  padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: bold;">
+            Ask Question
+          </button>
+        </div>
+        <div style="width: 90%; height: 30px; background: #333; border-radius: 8px; position: relative;">
+          <div style="position: absolute; top: 50%; left: 0; transform: translateY(-50%); 
+               height: 20px; width: 0%; background: linear-gradient(90deg, #FFD700, #FFA500); 
+               border-radius: 6px; margin-left: 5%; animation: pulse 2s infinite;">
+          </div>
+        </div>
+      </div>
+      <style>
+        @keyframes pulse {
+          0% { width: 0%; }
+          50% { width: 90%; }
+          100% { width: 0%; }
+        }
+      </style>
+    `;
+  }
+  
+  // Add a close button to the widget container
+  const closeButton = document.createElement('button');
+  closeButton.textContent = '×';
+  closeButton.style.position = 'absolute';
+  closeButton.style.top = '10px';
+  closeButton.style.right = '10px';
+  closeButton.style.zIndex = '1002'; // Add this line to ensure it's above the widget
+  closeButton.style.background = '#FFD700';
+  closeButton.style.color = 'black';
+  closeButton.style.border = 'none';
+  closeButton.style.borderRadius = '50%';
+  closeButton.style.width = '30px';
+  closeButton.style.height = '30px';
+  closeButton.style.fontSize = '20px';
+  closeButton.style.cursor = 'pointer';
+  closeButton.style.display = 'flex';
+  closeButton.style.justifyContent = 'center';
+  closeButton.style.alignItems = 'center';
+  closeButton.style.zIndex = '1001';
+  
+  closeButton.addEventListener('click', function(e) {
+    e.stopPropagation();
+    // Trigger the canvas click event to close the animation
+    const canvas = document.querySelector('.cinematic-canvas');
+    if (canvas) {
+      canvas.click();
+    }
+  });
+  
+  container.appendChild(closeButton);
+}
+
+
+///face
+
+////end face
+
+// Add this directly after the closing of the self-executing function
+// This ensures the button is properly connected regardless of when the script runs
+document.addEventListener('DOMContentLoaded', function() {
+  const restartButton = document.getElementById('restartButton');
+  if (restartButton) {
+    // Remove any existing event listeners
+    const newButton = restartButton.cloneNode(true);
+    restartButton.parentNode.replaceChild(newButton, restartButton);
+    
+    // Add new event listener
+    newButton.addEventListener('click', function() {
+  // Close the overlay message
+  const overlayMessage = document.getElementById('overlayMessage');
+  if (overlayMessage) {
+    overlayMessage.style.display = 'none';
+  }
+  
+  // Reset the game by triggering the clearButton's click event
+  const clearButton = document.getElementById('clearButton');
+  if (clearButton) {
+    clearButton.click();
+  }
+});
+  }
+});
+// Add window resize handler to the animation
+window.addEventListener('resize', function() {
+  // If animation is active, update canvas dimensions
+  const canvas = document.querySelector('.cinematic-canvas');
+  if (canvas) {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    
+    // Adjust widget position and size for mobile
+    const widgetContainer = document.querySelector('.elevenlabs-widget-container');
+    if (widgetContainer) {
+      // On small screens, use nearly full width
+      if (window.innerWidth < 768) {
+        const newWidth = Math.min(window.innerWidth * 0.9, 400);
+        widgetContainer.style.width = newWidth + 'px';
+      } else {
+        // Reset to default on larger screens
+        widgetContainer.style.width = '600px'; // Hard-coded default width
+      }
+    }
+  }
+});
+
 </script>
 </body>
 </html>
